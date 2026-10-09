@@ -34,8 +34,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" suppressHydrationWarning>
-      <body className={inter.variable}>
+    <html lang="es" suppressHydrationWarning className="w-full p-0 m-0">
+      <body
+        className={`${inter.variable} w-full min-h-screen bg-[#0B0F17] text-foreground overflow-x-hidden p-0 m-0 antialiased`}
+      >
         {children}
       </body>
     </html>

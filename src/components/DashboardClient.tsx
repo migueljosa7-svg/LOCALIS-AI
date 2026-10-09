@@ -13,8 +13,8 @@ export default function DashboardClient() {
   const [activeBusiness] = useState(SAMPLE_BUSINESSES[0]);
 
   return (
-    <div id="demo" className="py-20 lg:py-28 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div id="demo" className="w-full py-20 lg:py-28 relative overflow-hidden">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="inline-block px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold uppercase tracking-wider mb-4">
             Demo interactiva

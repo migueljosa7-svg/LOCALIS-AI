@@ -23,13 +23,13 @@ export default function Header({ scrolled, mobileMenuOpen, setMobileMenuOpen }: 
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
+        "w-full sticky top-0 z-50 backdrop-blur-md transition-all duration-300",
         scrolled
-          ? "bg-background/80 backdrop-blur-lg border-b border-border/40 shadow-lg"
-          : "bg-transparent"
+          ? "bg-[#0B0F17]/90 border-b border-white/10 shadow-lg"
+          : "bg-[#0B0F17]/80 border-b border-white/10"
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
@@ -74,7 +74,7 @@ export default function Header({ scrolled, mobileMenuOpen, setMobileMenuOpen }: 
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden glass p-2 rounded-xl border border-glass-border"
+            className="lg:hidden glass p-2 rounded-xl border border-glass-border cursor-pointer hover:scale-[1.02] transition-all"
             aria-label="Abrir menú"
           >
             {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}

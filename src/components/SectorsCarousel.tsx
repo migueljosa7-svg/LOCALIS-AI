@@ -18,8 +18,8 @@ export default function SectorsCarousel() {
   };
 
   return (
-    <div id="sectores" className="py-20 lg:py-28 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div id="sectores" className="w-full py-20 lg:py-28 relative overflow-hidden">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="inline-block px-3 py-1 rounded-full bg-cobalt-500/10 border border-cobalt-500/20 text-cobalt-400 text-xs font-semibold uppercase tracking-wider mb-4">
             Sectorización
@@ -39,7 +39,7 @@ export default function SectorsCarousel() {
                 key={sector.id}
                 onClick={() => setActiveId(sector.id)}
                 className={cn(
-                  "w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all",
+                  "w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all cursor-pointer hover:scale-[1.02] active:scale-95",
                   activeId === sector.id
                     ? "bg-cyan-500/10 border border-cyan-500/30"
                     : "glass text-foreground border border-border hover:border-cyan-500/20"

@@ -21,18 +21,20 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground antialiased">
+    <div className="w-full min-w-0 min-h-screen bg-background text-foreground antialiased overflow-x-hidden">
       <Header
         scrolled={scrolled}
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
       />
-      <HeroSection />
-      <StellaAiSimulator />
-      <GpsModuleSection />
-      <SectorsCarousel />
-      <PricingSection />
-      <DashboardClient />
+      <main className="w-full min-w-0">
+        <HeroSection />
+        <StellaAiSimulator />
+        <GpsModuleSection />
+        <SectorsCarousel />
+        <PricingSection />
+        <DashboardClient />
+      </main>
       <Footer />
     </div>
   );
