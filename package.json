@@ -2,6 +2,9 @@
   "name": "localis-ai",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "description": "LOCALIS AI - Plataforma SaaS con IA Stella y GPS en tiempo real",
   "scripts": {
     "dev": "next dev",
