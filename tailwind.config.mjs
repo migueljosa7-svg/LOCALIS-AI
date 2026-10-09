@@ -1,38 +1,44 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: ["class"],
   content: [
-    "./src/pages/**/*.tsx",
-    "./src/components/**/*.tsx",
-    "./src/app/**/*.tsx",
-    "./src/**/*.tsx",
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
-        background: {
-          DEFAULT: "#0B0F17",
-          foreground: "#E2E8F0",
-        },
+        background: "#0B0F17",
+        foreground: "#E2E8F0",
         surface: {
           DEFAULT: "#111827",
           elevated: "#1F2937",
           card: "#1A2332",
         },
+        muted: "#94A3B8",
+        border: "rgba(255, 255, 255, 0.1)",
         cyan: {
           DEFAULT: "#00F2FE",
+          400: "#22D3EE",
           500: "#00F2FE",
           600: "#00C2C8",
           700: "#0099A0",
         },
         emerald: {
           DEFAULT: "#10B981",
+          400: "#34D399",
           500: "#10B981",
           600: "#059669",
           700: "#047857",
         },
         cobalt: {
           DEFAULT: "#3B82F6",
+          400: "#60A5FA",
           500: "#3B82F6",
           600: "#2563EB",
           700: "#1D4ED8",

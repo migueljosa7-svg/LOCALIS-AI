@@ -267,6 +267,7 @@ body {
   background: rgba(245, 158, 11, 0.08);
   border-color: var(--cobalt);
   color: var(--text);
+}
 
 /* ── Hero 3D Glass Card ─────────────────────────────── */
 .hero-card {
@@ -285,6 +286,3 @@ body {
   pointer-events: none;
 }
 
-}
-
-/* -- Hero 3D Glass Card ------------------------------- */
