@@ -5,9 +5,16 @@ import { motion } from "framer-motion";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PLANTS } from "@/lib/plans";
+import { useLead } from "@/components/lead/LeadProvider";
 
 export default function PricingSection() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const { openLead } = useLead();
+
+  const handleCta = (planId: string, planName: string) => {
+    setSelectedPlan(planId);
+    openLead(planName);
+  };
 
   return (
     <div id="precios" className="w-full py-20 lg:py-28 bg-surface-elevated relative overflow-hidden">
@@ -64,7 +71,7 @@ export default function PricingSection() {
 
               <button
                 type="button"
-                onClick={() => setSelectedPlan(plan.id === selectedPlan ? null : plan.id)}
+                onClick={() => handleCta(plan.id, plan.name)}
                 className={cn(
                   "w-full py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer hover:scale-[1.02] active:scale-95",
                   plan.highlighted
@@ -72,11 +79,11 @@ export default function PricingSection() {
                     : "glass text-foreground border border-border hover:border-cyan-500/30"
                 )}
               >
-                {selectedPlan === plan.id ? "Plan seleccionado" : plan.cta}
+                {plan.cta}
               </button>
               {selectedPlan === plan.id && (
                 <p className="mt-3 text-xs text-cyan-400 flex items-center justify-center gap-1">
-                  <ArrowRight size={12} /> Continua hacia el alta de {plan.name}
+                  <ArrowRight size={12} /> Completa tus datos para contratar {plan.name}
                 </p>
               )}
             </motion.div>

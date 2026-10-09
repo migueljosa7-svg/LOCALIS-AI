@@ -9,10 +9,13 @@ import {
   Smartphone,
   CheckCircle2,
   Zap,
+  Sparkles,
 } from "lucide-react";
 import HeroShowcaseCard from "./HeroShowcaseCard";
+import { useLead } from "@/components/lead/LeadProvider";
 
 export default function HeroContent() {
+  const { openLead } = useLead();
   return (
     <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 lg:pt-32 lg:pb-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
@@ -56,6 +59,13 @@ export default function HeroContent() {
               >
                 <Smartphone size={18} /> Ver Video Interactivo
               </Link>
+              <button
+                type="button"
+                onClick={() => openLead("Hero")}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl glass text-foreground font-semibold text-sm border border-cyan-500/40 hover:border-cyan-500/60 hover:scale-[1.02] transition-all cursor-pointer text-cyan-400"
+              >
+                <Sparkles size={18} /> Solicitar Demo
+              </button>
             </div>
             <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 text-sm text-muted">
               <div className="flex items-center gap-2">

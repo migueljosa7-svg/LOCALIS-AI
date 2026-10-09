@@ -30,7 +30,10 @@ export default function AnimatedCounter({
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
   const reduced = useReducedMotion();
-  const [display, setDisplay] = useState(reduced ? value : 0);
+  // Inicializamos SIEMPRE en 0 para que el render del servidor y el primer
+  // render del cliente coincidan (evita el error de hidratación #418 de React).
+  // La animación / valor final se aplican en el efecto tras el montaje.
+  const [display, setDisplay] = useState(0);
 
   useEffect(() => {
     if (!inView || reduced) {

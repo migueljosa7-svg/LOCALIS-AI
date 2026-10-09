@@ -9,6 +9,8 @@ import SectorsShowcase from "@/components/SectorsShowcase";
 import PricingSection from "@/components/PricingSection";
 import DashboardClient from "@/components/DashboardClient";
 import Footer from "@/components/Footer";
+import { LeadProvider } from "@/components/lead/LeadProvider";
+import LeadCaptureModal from "@/components/lead/LeadCaptureModal";
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
@@ -21,21 +23,24 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="w-full min-w-0 min-h-screen bg-background text-foreground antialiased overflow-x-hidden">
-      <Header
-        scrolled={scrolled}
-        mobileMenuOpen={mobileMenuOpen}
-        setMobileMenuOpen={setMobileMenuOpen}
-      />
-      <main className="w-full min-w-0">
-        <HeroSection />
-        <StellaConsole />
-        <GpsModuleSection />
-        <SectorsShowcase />
-        <PricingSection />
-        <DashboardClient />
-      </main>
-      <Footer />
-    </div>
+    <LeadProvider>
+      <div className="w-full min-w-0 min-h-screen bg-background text-foreground antialiased overflow-x-hidden">
+        <Header
+          scrolled={scrolled}
+          mobileMenuOpen={mobileMenuOpen}
+          setMobileMenuOpen={setMobileMenuOpen}
+        />
+        <main className="w-full min-w-0">
+          <HeroSection />
+          <StellaConsole />
+          <GpsModuleSection />
+          <SectorsShowcase />
+          <PricingSection />
+          <DashboardClient />
+        </main>
+        <Footer />
+        <LeadCaptureModal />
+      </div>
+    </LeadProvider>
   );
 }

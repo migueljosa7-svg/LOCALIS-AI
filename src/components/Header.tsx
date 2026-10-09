@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useLead } from "@/components/lead/LeadProvider";
 
 const navLinks = [
   { label: "Soluciones", href: "#inicio" },
@@ -20,6 +21,7 @@ export default function Header({ scrolled, mobileMenuOpen, setMobileMenuOpen }: 
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (v: boolean) => void;
 }) {
+  const { openLead } = useLead();
   return (
     <header
       className={cn(
@@ -63,12 +65,13 @@ export default function Header({ scrolled, mobileMenuOpen, setMobileMenuOpen }: 
             >
               Probar Demo
             </Link>
-            <Link
-              href="#demo"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass text-foreground font-semibold text-sm border border-glass-border hover:border-cyan-500/30 transition-all"
+            <button
+              type="button"
+              onClick={() => openLead("Acceso Negocios")}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass text-foreground font-semibold text-sm border border-glass-border hover:border-cyan-500/30 transition-all cursor-pointer"
             >
               Acceso Negocios
-            </Link>
+            </button>
           </div>
 
           {/* Mobile menu button */}
@@ -110,13 +113,16 @@ export default function Header({ scrolled, mobileMenuOpen, setMobileMenuOpen }: 
                 >
                   Probar Demo
                 </Link>
-                <Link
-                  href="#demo"
-                  className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl glass text-foreground font-semibold text-sm border border-glass-border hover:border-cyan-500/30 transition-all"
-                  onClick={() => setMobileMenuOpen(false)}
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl glass text-foreground font-semibold text-sm border border-glass-border hover:border-cyan-500/30 transition-all cursor-pointer"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openLead("Acceso Negocios");
+                  }}
                 >
                   Acceso Negocios
-                </Link>
+                </button>
               </div>
             </div>
           </motion.div>
