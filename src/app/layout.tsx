@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import CursorGlow from "@/components/effects/CursorGlow";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 
@@ -38,6 +39,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} w-full min-h-screen bg-[#0B0F17] text-foreground overflow-x-hidden p-0 m-0 antialiased`}
       >
+        <CursorGlow />
         {children}
       </body>
     </html>

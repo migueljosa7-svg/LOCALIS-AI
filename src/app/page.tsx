@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import StellaAiSimulator from "@/components/StellaAiSimulator";
-import GpsModuleSection from "@/components/GpsModuleSection";
-import SectorsCarousel from "@/components/SectorsCarousel";
+import StellaConsole from "@/components/stella/StellaConsole";
+import GpsModuleSection from "@/components/gps/GpsModuleSection";
+import SectorsShowcase from "@/components/SectorsShowcase";
 import PricingSection from "@/components/PricingSection";
 import DashboardClient from "@/components/DashboardClient";
 import Footer from "@/components/Footer";
@@ -29,9 +29,9 @@ export default function LandingPage() {
       />
       <main className="w-full min-w-0">
         <HeroSection />
-        <StellaAiSimulator />
+        <StellaConsole />
         <GpsModuleSection />
-        <SectorsCarousel />
+        <SectorsShowcase />
         <PricingSection />
         <DashboardClient />
       </main>

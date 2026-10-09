@@ -10,7 +10,7 @@ export default function PricingSection() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
   return (
-    <div id="precios" className="w-full py-20 lg:py-28 bg-bg-elevated relative overflow-hidden">
+    <div id="precios" className="w-full py-20 lg:py-28 bg-surface-elevated relative overflow-hidden">
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,_rgba(16,185,129,0.12),_transparent_50%)]" />
       </div>
