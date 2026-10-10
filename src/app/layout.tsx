@@ -2,14 +2,29 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import CursorGlow from "@/components/effects/CursorGlow";
+import LegalBanner from "@/components/LegalBanner";
+import JsonLd from "@/components/JsonLd";
 import PwaSetup from "@/components/pwa/PwaSetup";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "LOCALIS AI — La primera plataforma web con IA Autónoma y GPS Integrado para tu negocio",
-  description: "Automatiza tu agenda, emite facturas, atiende a tus clientes 24/7 con la IA Stella y controla tus repartos en tiempo real sin comisiones.",
-  keywords: ["IA", "GPS", "plataforma", "entrega", "reparto", "Stella AI", "locales", "administración", "facturación", "agenda"],
+  title: "LOCALIS AI — Páginas Web con IA y GPS para Negocios",
+  description:
+    "AUTOMATIZA tu negocio con LOCALIS AI: IA Stella para citas y facturación, GPS en tiempo real sin comisiones y venta 24/7. Plantea provecho de negocio para municipios, restaurantes y talleres.",
+  keywords: [
+    "LOCALIS AI",
+    "IA para negocios",
+    "plataforma IA GPS",
+    "control reparto sin comisiones",
+    "facturación automática IA",
+    "agenda inteligente IA",
+    "gestión de pedidos",
+    "Stella AI",
+    "reparto en tiempo real",
+    "B2B",
+    "SaaS España",
+  ],
   authors: [{ name: "LOCALIS AI" }],
   creator: "LOCALIS AI",
   applicationName: "LOCALIS AI",
@@ -20,16 +35,27 @@ export const metadata: Metadata = {
     title: "LOCALIS AI",
   },
   openGraph: {
-    title: "LOCALIS AI — IA y GPS para tu negocio",
-    description: "Automatiza tu agenda, emite facturas y controla tus repartos en tiempo real sin comisiones.",
+    title: "LOCALIS AI — Páginas Web con IA y GPS para Negocios",
+    description:
+      "AUTOMATIZA tu negocio con IA Stella y GPS en tiempo real sin comisiones. Plantea provecho de negocio para municipios, restaurantes y talleres.",
     type: "website",
     siteName: "LOCALIS AI",
     locale: "es_ES",
+    images: [
+      {
+        url: "https://localis.ai/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "LOCALIS AI — IA y GPS para Negocios",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LOCALIS AI — IA y GPS para tu negocio",
-    description: "Automatiza tu agenda, emite facturas y controla tus repartos en tiempo real sin comisiones.",
+    title: "LOCALIS AI — Páginas Web con IA y GPS para Negocios",
+    description:
+      "AUTOMATIZA tu negocio con IA Stella y GPS en tiempo real sin comisiones.",
+    images: ["https://localis.ai/og-image.png"],
   },
   icons: {
     icon: [
@@ -57,12 +83,14 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning className="w-full p-0 m-0">
       <head>
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        <JsonLd />
       </head>
       <body
         className={`${inter.variable} w-full min-h-screen bg-[#0B0F17] text-foreground overflow-x-hidden p-0 m-0 antialiased`}
       >
         <PwaSetup />
         <CursorGlow />
+        <LegalBanner />
         {children}
       </body>
     </html>

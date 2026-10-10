@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import LiveMapWrapper from "@/components/map/LiveMapWrapper";
+import SvgMapWrapper from "@/components/map/SvgMapWrapper";
 import MapPanel from "@/components/map/MapPanel";
 import RoiCalculator from "./RoiCalculator";
 import { remainingMeters, type LngLat } from "@/lib/routes";
@@ -33,7 +33,11 @@ export default function GpsModuleSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 w-full">
           <RevealBox className="lg:col-span-3">
-            <LiveMapWrapper height={430} onPositionChange={setPos} />
+            <SvgMapWrapper
+              height={430}
+              position={pos}
+              onPositionChange={setPos}
+            />
             <p className="text-[11px] text-muted mt-2 text-center">
               Tiles CARTO dark · marcador animado en bucle · scroll desactivado para no secuestrar la rueda
             </p>

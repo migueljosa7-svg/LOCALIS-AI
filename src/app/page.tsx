@@ -8,6 +8,8 @@ import GpsModuleSection from "@/components/gps/GpsModuleSection";
 import SectorsShowcase from "@/components/SectorsShowcase";
 import PricingSection from "@/components/PricingSection";
 import DashboardClient from "@/components/DashboardClient";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import AiImpactBlock from "@/components/AiImpactBlock";
 import Footer from "@/components/Footer";
 import { LeadProvider } from "@/components/lead/LeadProvider";
 import LeadCaptureModal from "@/components/lead/LeadCaptureModal";
@@ -37,6 +39,8 @@ export default function LandingPage() {
           <SectorsShowcase />
           <PricingSection />
           <DashboardClient />
+          <TestimonialsSection />
+          <AiImpactBlock />
         </main>
         <Footer />
         <LeadCaptureModal />

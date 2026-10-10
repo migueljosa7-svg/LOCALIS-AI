@@ -2,36 +2,47 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Mic, MapPin, CalendarDays, ReceiptText, X, Truck } from "lucide-react";
+import { Send, Mic, MapPin, CalendarDays, ReceiptText, X, Truck, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CalendarCard, CalendarModal } from "./StellaActions";
 import { InvoiceCard, InvoiceModal } from "./InvoiceModal";
+import { SummaryModal } from "./SummaryModal";
 import LiveMapWrapper from "@/components/map/LiveMapWrapper";
 import { remainingMeters, haversineMeters, DEMO_ROUTE, type LngLat } from "@/lib/routes";
+import {
+  detectIntent,
+  type StellaMode,
+  type StellaAction,
+  type IntentId,
+} from "./stellaEngine";
 
-type Mode = "citas" | "facturacion" | "gps";
-type Action = "calendar" | "invoice" | "tracking" | null;
+type Mode = StellaMode;
+type Action = StellaAction;
 
 interface Msg {
   id: string;
   role: "user" | "ai";
   text: string;
   action?: Action;
+  intent?: IntentId;
 }
 
 const MODES: { id: Mode; label: string; icon: typeof CalendarDays }[] = [
+  { id: "general", label: "Stella (todo)", icon: CalendarDays },
   { id: "citas", label: "Citas y agenda", icon: CalendarDays },
   { id: "facturacion", label: "Facturación ERP", icon: ReceiptText },
   { id: "gps", label: "Rastreo GPS", icon: MapPin },
 ];
 
 const GREETINGS: Record<Mode, string> = {
+  general: "Hola 👋 Soy Stella. Pídeme una factura, el resumen de ventas, una cita o el GPS de un pedido.",
   citas: "Hola 👋 Estoy en Modo Citas. Pregúntame por huecos libres o pide una cita.",
   facturacion: "Modo Facturación activo 🧾 Pide una factura y te la preparo al instante.",
   gps: "Modo GPS activo 📍 Dime el pedido y abro el mapa en vivo del repartidor.",
 };
 
 const SCRIPTS: Record<Mode, string[]> = {
+  general: ["Genera la factura de Pepe", "Resumen del día", "¿Dónde está el pedido #104?"],
   citas: ["Tiene hueco el jueves a las 11:00", "¿Qué citas tengo mañana?"],
   facturacion: ["Genera la factura de Frutería Pepe", "¿Cuánto llevo facturado este mes?"],
   gps: ["¿Dónde está el pedido #104?", "¿Cuánto falta para la entrega?"],
@@ -39,34 +50,15 @@ const SCRIPTS: Record<Mode, string[]> = {
 
 const GENERIC_CHIPS = ["¿Qué puedes hacer?", "Resumen del día"];
 
-function pickAction(mode: Mode, text: string): { reply: string; action: Action } {
-  const t = text.toLowerCase();
-  if (mode === "citas" || t.includes("cita") || t.includes("jueves") || t.includes("agenda")) {
-    return {
-      reply: "He verificado tu agenda: el jueves 11:00 hay hueco libre ✅\nHe reservado y enviado confirmación por WhatsApp al cliente. Revisa la tarjeta:",
-      action: "calendar",
-    };
-  }
-  if (mode === "facturacion" || t.includes("factura") || t.includes("pepe")) {
-    return {
-      reply: "He generado la factura con IVA aplicado y la he dejado lista para enviar 🧾",
-      action: "invoice",
-    };
-  }
-  return {
-    reply: "Localizando al repartidor del pedido #104… está en camino 🚚",
-    action: "tracking",
-  };
-}
-
 export default function StellaConsole() {
-  const [mode, setMode] = useState<Mode>("citas");
-  const [msgs, setMsgs] = useState<Msg[]>([{ id: "g0", role: "ai", text: GREETINGS.citas }]);
+  const [mode, setMode] = useState<Mode>("general");
+  const [msgs, setMsgs] = useState<Msg[]>([{ id: "g0", role: "ai", text: GREETINGS.general }]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [listening, setListening] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
   const [invOpen, setInvOpen] = useState(false);
+  const [sumOpen, setSumOpen] = useState(false);
   const [trackOpen, setTrackOpen] = useState(false);
   const [pos, setPos] = useState<LngLat>(DEMO_ROUTE[0]);
 
@@ -81,11 +73,15 @@ export default function StellaConsole() {
     setMsgs((p) => [...p, { id: uid, role: "user", text }]);
     setInput("");
     setTyping(true);
-    const { reply, action } = pickAction(mode, text);
+    const { reply, action, intent } = detectIntent(text, mode);
     window.setTimeout(() => {
-      setMsgs((p) => [...p, { id: "a" + Date.now(), role: "ai", text: reply, action }]);
+      setMsgs((p) => [...p, { id: "a" + Date.now(), role: "ai", text: reply, action, intent }]);
       setTyping(false);
+      // Despliega la tarjeta/modal/drawer asociada a la intención detectada.
       if (action === "tracking") setTrackOpen(true);
+      if (action === "invoice") setInvOpen(true);
+      if (action === "calendar") setCalOpen(true);
+      if (action === "summary") setSumOpen(true);
     }, 850);
   };
 
@@ -169,6 +165,23 @@ export default function StellaConsole() {
                       </div>
                       {m.action === "calendar" && <CalendarCard onOpen={() => setCalOpen(true)} />}
                       {m.action === "invoice" && <InvoiceCard onOpen={() => setInvOpen(true)} />}
+                      {m.action === "summary" && (
+                        <div className="border-glow rounded-xl p-4 bg-background/60 max-w-xs">
+                          <div className="flex items-center gap-2 mb-1">
+                            <TrendingUp size={14} className="text-cyan-400" />
+                            <p className="text-xs font-semibold">Resumen operativo de hoy</p>
+                          </div>
+                          <p className="text-sm font-bold">+18% facturado vs ayer</p>
+                          <p className="text-xs text-muted mt-0.5">1.463 € · 12 citas · 27 clientes</p>
+                          <button
+                            type="button"
+                            onClick={() => setSumOpen(true)}
+                            className="mt-2 text-xs text-cyan-400 hover:text-cyan-300 font-semibold cursor-pointer transition-all hover:scale-[1.02]"
+                          >
+                            Ver gráfico y citas →
+                          </button>
+                        </div>
+                      )}
                       {m.action === "tracking" && (
                         <div className="border-glow rounded-xl p-4 bg-background/60 max-w-xs">
                           <div className="flex items-center gap-2 mb-1">
@@ -260,6 +273,7 @@ export default function StellaConsole() {
 
       <CalendarModal open={calOpen} onClose={() => setCalOpen(false)} />
       <InvoiceModal open={invOpen} onClose={() => setInvOpen(false)} />
+      <SummaryModal open={sumOpen} onClose={() => setSumOpen(false)} />
 
       <AnimatePresence>
         {trackOpen && (
