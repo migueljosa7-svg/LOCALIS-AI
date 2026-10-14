@@ -32,9 +32,9 @@ export default function TermsPage() {
         <section className="space-y-4 border-border border-l-2 pl-4">
           <h2 className="text-xl font-bold font-display">1. IdentificaciÃ³n del partido</h2>
           <p className="text-muted">
-            <strong>LOCALIS AI</strong>, c/ Demo 1, 28001 Madrid (EspaÃ±a),
+            <strong>LOCALIS AI</strong>, Zaragoza (EspaÃ±a),
             con representaciÃ³n en toda la UniÃ³n Europea.
-            <a href="mailto:hola@localis.ai" className="text-cyan-400 underline underline-offset-2">hola@localis.ai</a>
+            <a href="mailto:migueljosa7@gmail.com" className="text-cyan-400 underline underline-offset-2">migueljosa7@gmail.com</a>
           </p>
         </section>
 
@@ -91,7 +91,7 @@ export default function TermsPage() {
           <p className="text-muted">
             Este aviso legal se regula por las leyes espaÃ±olas. Cualquier discusiÃ³n o
             litigio derivado del uso del servicio serÃ¡ resuelto por los juzgados y
-            tribunales de Madrid, sin perjuicio del artÃ­culo 24.1 de la ConvenciÃ³n
+            tribunales de Zaragoza, sin perjuicio del artÃ­culo 24.1 de la ConvenciÃ³n
             Europea de Derechos Humanos.
           </p>
         </section>

@@ -52,7 +52,7 @@ export default function Header() {
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-cobalt-500 flex items-center justify-center text-white shadow-neonglow group-hover:shadow-neonglow transition-shadow">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M9 3C6.23858 3 4 5.23858 4 8C4 9.65685 5.656885 11 7.5 11C8.33795 11 9 10.3379 9 9.5C9 9.22386 8.77614 9 8.5 9C8.223386 9 8 9.22386 8 9.5C8 10.3379 8.66205 11 9.5 11C11.3431 11 13 9.656855 13 8C13 5.23858 10.7614 3 9 3Z" fill="currentColor" className="text-cyan-400" fillOpacity="0.3" />
-                <path d="M9 5.5C8.44772 5.5 8 5.94772 8 6.5C8 7.05228 8.44772 7.5 9 7.5C9.55228 7.5 10 7.05228 10 6.5C10 5.94772 9.55228 5.5 5 9 5.5Z" fill="currentColor" className="text-cyan-400" />
+                <path d="M9 5.5C8.44772 5.5 8 5.94772 8 6.5C8 7.05228 8.44772 7.5 9 7.5C9.55228 7.5 10 7.05228 10 6.5C10 5.94772 9.55228 5.5 9 5.5Z" fill="currentColor" className="text-cyan-400" />
               </svg>
             </div>
             <span className="text-lg font-bold font-display gradient-text tracking-tight">LOCALIS AI</span>

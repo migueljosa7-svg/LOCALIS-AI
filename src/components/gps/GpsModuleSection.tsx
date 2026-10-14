@@ -64,7 +64,7 @@ export default function GpsModuleSection() {
             <ErrorBoundary>
               <SvgMapWrapper
                 height={430}
-                position={[40.4188, -3.7038]}
+                position={[41.6566, -0.8782]}
                 onPositionChange={noop}
               />
             </ErrorBoundary>

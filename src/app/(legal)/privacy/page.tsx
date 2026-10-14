@@ -38,7 +38,7 @@ export default function PrivacyPolicyPage() {
             , operado por LOCALIS AI.
           </p>
           <p className="text-muted">
-            <strong>Responsable del tratamiento:</strong> LOCALIS AI, c/ Demo 1, 28001 Madrid (EspaÃ±a).
+            <strong>Responsable del tratamiento:</strong> LOCALIS AI, Zaragoza (EspaÃ±a).
           </p>
         </section>
 

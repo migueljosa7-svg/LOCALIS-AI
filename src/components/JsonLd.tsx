@@ -45,13 +45,13 @@ const LOCALIS_BUSINESS = {
     "Automatización de negocios con IA Stella y GPS en tiempo real sin comisiones. Servicios para restaurantes, talleres, municipios y B2B.",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Madrid",
+    addressLocality: "Zaragoza",
     addressCountry: "ES",
-    postalCode: "28001",
-    streetAddress: "C/ Demo 1",
+    postalCode: "50001",
+    streetAddress: "Av. de la Independencia",
   },
-  phone: "+34912345678",
-  email: "hola@localis.ai",
+  phone: "+34640809238",
+  email: "migueljosa7@gmail.com",
   priceRange: "€€€",
   sameAs: [
     "https://linkedin.com/company/localis-ai",

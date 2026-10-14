@@ -5,6 +5,7 @@ import CursorGlow from '@/components/effects/CursorGlow';
 import LegalBanner from '@/components/LegalBanner';
 import JsonLd from '@/components/JsonLd';
 import PwaSetup from '@/components/pwa/PwaSetup';
+import WhatsAppFloat from '@/components/WhatsAppFloat';
 import { env } from '@/lib/env';
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], display: 'swap', variable: '--font-display' });
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PwaSetup />
         <CursorGlow />
         <LegalBanner />
+        <WhatsAppFloat />
         {children}
       </body>
     </html>

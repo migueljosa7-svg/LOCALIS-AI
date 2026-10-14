@@ -23,7 +23,7 @@ export const env = {
   googleClientSecret: str("GOOGLE_CLIENT_SECRET", ""),
   whatsappToken: str("WHATSAPP_ACCESS_TOKEN", ""),
   whatsappPhoneNumberId: str("WHATSAPP_PHONE_NUMBER_ID", ""),
-  leadInbox: str("LEAD_INBOX_EMAIL", "hola@localis.ai"),
+  leadInbox: str("LEAD_INBOX_EMAIL", "migueljosa7@gmail.com"),
 } as const;
 
 export type AppEnv = typeof env;

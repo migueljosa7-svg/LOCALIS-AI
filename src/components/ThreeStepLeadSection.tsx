@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Building2, Smartphone, Sparkles, ArrowRight, CheckCircle2, Loader2, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { submitLead } from '@/lib/lead';
 
 type Service = 'web' | 'gps' | 'ia';
 
@@ -53,6 +54,36 @@ export default function ThreeStepLeadSection({ onSuccess, triggerLabel = 'Solici
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email)) errs.email = 'Email no valido';
     }
     return errs;
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (submitting) return;
+    const errs = validate(1, form);
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+    setSubmitting(true);
+    const sector =
+      form.service === "web"
+        ? "Servicio: Pagina web"
+        : form.service === "gps"
+          ? "Servicio: Sistema GPS de reparto"
+          : "Servicio: Asistente IA para citas";
+    try {
+      await submitLead({
+        businessName: form.businessName,
+        sector,
+        contactName: form.contactName,
+        phone: form.phone,
+        email: form.email,
+        source: "landing-cita-3pasos",
+      });
+    } finally {
+      setSubmitting(false);
+      setStep(2);
+    }
   };
 
   const renderStep = () => {
@@ -108,7 +139,7 @@ export default function ThreeStepLeadSection({ onSuccess, triggerLabel = 'Solici
           </div>
           <div>
             <label className="text-xs font-medium text-muted mb-1.5 block"><Smartphone size={14} className="inline mr-1 text-cyan-400" />Telefono / WhatsApp</label>
-            <input type="tel" value={form.phone} onChange={(e) => update("phone")(e.target.value)} placeholder="+34 640 80 92 38" className={"w-full rounded-xl bg-[#0B0F17]/70 border border-white/10 px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all" + (errors.phone ? " border-red-500/50" : "")} autoComplete="tel" />
+            <input type="tel" value={form.phone} onChange={(e) => update("phone")(e.target.value)} placeholder="Ej. 612 345 678" className={"w-full rounded-xl bg-[#0B0F17]/70 border border-white/10 px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all" + (errors.phone ? " border-red-500/50" : "")} autoComplete="tel" />
             {errors.phone && <p className="text-[11px] text-red-400 mt-1">{errors.phone}</p>}
           </div>
           <div>
@@ -159,25 +190,56 @@ export default function ThreeStepLeadSection({ onSuccess, triggerLabel = 'Solici
 
           <AnimatePresence mode="wait">
             <motion.div key={step} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.2 }}>
-              <form onSubmit={(e) => { e.preventDefault(); }}>
+              <form onSubmit={handleSubmit} noValidate>
                 {renderStep()}
 
-                {step === 1 && (
+                {step === 0 && (
                   <div className="pt-2">
-                    <button type="button" onClick={() => { if (Object.keys(validate(1, form)).length > 0) { setErrors(validate(1, form)); return; } setStep(2); }} className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">Continuar a validación</button>
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      Continuar <ArrowRight size={16} />
+                    </button>
                   </div>
                 )}
 
-                {step === 2 && (
+                {step === 1 && (
                   <div className="pt-2">
-                    <button type="submit" className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2" disabled={submitting}>
-                      {submitting ? <><Loader2 size={16} className="animate-spin" /> Enviando...</> : <><CheckCircle2 size={16} /> Recibir tu demo en menos de 2h</>}
+                    <button
+                      type="submit"
+                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      disabled={submitting}
+                    >
+                      {submitting ? (
+                        <><Loader2 size={16} className="animate-spin" /> Enviando...</>
+                      ) : (
+                        <><CheckCircle2 size={16} /> Recibir mi demo en menos de 2h</>
+                      )}
                     </button>
                   </div>
                 )}
               </form>
             </motion.div>
           </AnimatePresence>
+        </div>
+
+        {/* WhatsApp directo */}
+        <div className="mt-8 flex flex-col items-center gap-3">
+          <p className="text-sm text-muted">¿Prefieres hablar ahora? Escríbenos directo por WhatsApp:</p>
+          <a
+            href="https://wa.me/34640809238?text=Hola%20LOCALIS%20AI%2C%20quiero%20reservar%20una%20auditor%C3%ADa%20gratuita%20para%20mi%20negocio%20en%20Zaragoza"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5A] text-white font-bold text-sm transition-all cursor-pointer shadow-lg shadow-emerald-600/20 focus:outline-none focus:ring-2 focus:ring-[#25D366]/50"
+            aria-label="Hablar por WhatsApp con LOCALIS AI - +34 640 80 92 38"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
+            Hablar por WhatsApp - 640 80 92 38
+          </a>
         </div>
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-xs text-muted">
