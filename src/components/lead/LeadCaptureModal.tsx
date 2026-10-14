@@ -41,6 +41,7 @@ export default function LeadCaptureModal() {
   const [form, setForm] = useState<LeadData>(EMPTY);
   const [errors, setErrors] = useState<LeadErrors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "done">("idle");
+  const [degraded, setDegraded] = useState(false);
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
   // Reset al abrir + foco inicial + bloqueo de scroll + cierre con Escape.
@@ -49,6 +50,7 @@ export default function LeadCaptureModal() {
     setForm(EMPTY);
     setErrors({});
     setStatus("idle");
+    setDegraded(false);
     const t = setTimeout(() => firstFieldRef.current?.focus(), 220);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -74,6 +76,7 @@ export default function LeadCaptureModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === "submitting") return;
     const found = validateLead(form);
     setErrors(found);
     if (Object.keys(found).length > 0) {
@@ -82,8 +85,16 @@ export default function LeadCaptureModal() {
       return;
     }
     setStatus("submitting");
-    await submitLead({ ...form, source });
-    setStatus("done");
+    try {
+      const res = await submitLead({ ...form, source });
+      if (!res.ok) throw new Error("submit-failed");
+      setDegraded(Boolean(res.degraded));
+      setStatus("done");
+    } catch {
+      // Sin red / API caída: no perdemos la solicitud (ya persistida en local).
+      setDegraded(true);
+      setStatus("done");
+    }
   };
 
   return (
@@ -118,7 +129,7 @@ export default function LeadCaptureModal() {
 
             <AnimatePresence mode="wait">
               {status === "done" ? (
-                <SuccessView onClose={closeLead} />
+                <SuccessView onClose={closeLead} degraded={degraded} />
               ) : (
                 <motion.div
                   key="form"
@@ -242,7 +253,7 @@ export default function LeadCaptureModal() {
 }
 
 
-function SuccessView({ onClose }: { onClose: () => void }) {
+function SuccessView({ onClose, degraded }: { onClose: () => void; degraded?: boolean }) {
   return (
     <motion.div
       key="success"
@@ -251,6 +262,8 @@ function SuccessView({ onClose }: { onClose: () => void }) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
       className="relative p-8 text-center"
+      role="status"
+      aria-live="polite"
     >
       <motion.div
         initial={{ scale: 0, rotate: -30 }}
@@ -267,12 +280,18 @@ function SuccessView({ onClose }: { onClose: () => void }) {
         Un especialista de <span className="text-cyan-400 font-semibold">LOCALIS AI</span> te contactará
         en breve para agendar tu demo personalizada.
       </p>
+      {degraded && (
+        <p className="mt-3 text-[11px] text-amber-300/90">
+          Conexión inestable: guardamos tu solicitud en este dispositivo para no perderla.
+        </p>
+      )}
       <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
         <Sparkles size={12} /> Respuesta habitual en menos de 24 h
       </div>
       <button
         type="button"
         onClick={onClose}
+        autoFocus
         className="mt-7 w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer"
       >
         Cerrar

@@ -8,14 +8,9 @@ import type { LngLat } from "@/lib/routes";
  * LOCALIS GPS - Mapa SVG puro (sin API keys, sin dependencias externas).
  * Diseño futurista / night-mode: cuadrícula estelar, camino animado,
  * marcador del repartidor en movimiento y puntos de entrega.
- * La proyección equirectangular mapea [lat,lng] a viewBox="0 0 720 420".
  */
 const SVG_WIDTH = 720;
 const SVG_HEIGHT = 420;
-const LAT_MIN = 40.4188;
-const LAT_MAX = 40.4204;
-const LNG_MIN = -3.704;
-const LNG_MAX = -3.688;
 
 const ROUTE_SVG: [number, number][] = [
   [52, 400],
@@ -41,12 +36,6 @@ export interface SvgMapProps {
   interactive?: boolean;
 }
 
-function project([lat, lng]: LngLat): [number, number] {
-  const x = 16 + ((lng - LNG_MIN) / (LNG_MAX - LNG_MIN)) * (SVG_WIDTH - 32);
-  const y = (SVG_HEIGHT - 16) - ((lat - LAT_MIN) / (LAT_MAX - LAT_MIN)) * (SVG_HEIGHT - 32);
-  return [x, y] as [number, number];
-}
-
 function interpolateRoute(route: [number, number][], t: number): [number, number] {
   const segments = route.length - 1;
   const clamped = Math.min(1, Math.max(0, t));
@@ -60,24 +49,38 @@ function interpolateRoute(route: [number, number][], t: number): [number, number
 
 
 export default function SvgMap({
-  position,
+  position: _position,
   onPositionChange,
   height = 420,
   className,
-  interactive = true,
+  interactive: _interactive = true,
 }: SvgMapProps) {
   const [t, setT] = useState(0);
   const cbRef = useRef(onPositionChange);
   cbRef.current = onPositionChange;
 
+  // Bucle de animación con rAF + prefers-reduced-motion (antes: setInterval a 10fps
+  // con setState continuo que forzaba re-render del padre vía onPositionChange).
   useEffect(() => {
-    const id = window.setInterval(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setT(0.35);
+      return;
+    }
+    let raf = 0;
+    let last = performance.now();
+    const DURATION = 26000; // 26 s por vuelta completa
+    const tick = (now: number) => {
+      const dt = now - last;
+      last = now;
       setT((prev) => {
-        const next = prev + 0.006;
-        return next > 1.15 ? 0 : next;
+        const next = prev + dt / DURATION;
+        return next > 1.02 ? 0 : next;
       });
-    }, 100);
-    return () => window.clearInterval(id);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   const driverPos = useMemo<[number, number]>(
@@ -85,7 +88,8 @@ export default function SvgMap({
     [t],
   );
 
-  const projectedPos = useMemo(() => project(position), [position]);
+  // El progreso se deriva del propio `t` (0..1) — sin haversine por frame.
+  const progressPct = Math.round(Math.min(1, Math.max(0, t)) * 100);
 
   return (
     <div
@@ -188,22 +192,45 @@ export default function SvgMap({
             </g>
           );
         })}
+
+        {/* Destino */}
+        <g>
+          <circle cx={DEST_SVG[0]} cy={DEST_SVG[1]} r={14} fill="rgba(16,185,129,0.15)" />
+          <circle cx={DEST_SVG[0]} cy={DEST_SVG[1]} r={6} fill="#10B981" stroke="#0B0F17" strokeWidth={2} />
+        </g>
+
+        {/* Repartidor (posición animada real) */}
+        <g>
+          <circle cx={driverPos[0]} cy={driverPos[1]} r={16} fill="rgba(0,242,254,0.18)">
+            <animate attributeName="r" values="10;20;10" dur="1.8s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.8s" repeatCount="indefinite" />
+          </circle>
+          <circle
+            cx={driverPos[0]}
+            cy={driverPos[1]}
+            r={DRIVER_RADIUS}
+            fill="#00F2FE"
+            stroke="#0B0F17"
+            strokeWidth={2.5}
+            style={{ filter: "drop-shadow(0 0 8px rgba(0,242,254,0.9))" }}
+          />
+          <circle cx={driverPos[0]} cy={driverPos[1]} r={2.5} fill="#0B0F17" />
+        </g>
+
+        {/* Etiqueta de progreso */}
+        <g>
+          <rect x={16} y={16} width={176} height={34} rx={10} fill="rgba(11,15,23,0.82)" stroke="rgba(0,242,254,0.25)" />
+          <circle cx={34} cy={33} r={5} fill="#00F2FE">
+            <animate attributeName="opacity" values="1;0.4;1" dur="1.4s" repeatCount="indefinite" />
+          </circle>
+          <text x={46} y={30} fontSize={11} fill="#E2E8F0" fontWeight={700} fontFamily="monospace">
+            REPARTIDOR EN VIVO
+          </text>
+          <text x={46} y={43} fontSize={10} fill="#00F2FE" fontFamily="monospace">
+            Ruta {progressPct}% · ETA ~{Math.max(1, Math.round((100 - progressPct) / 12))} min
+          </text>
+        </g>
       </svg>
     </div>
   );
-}
-
-function distanceAlongRoute(route: [number, number][], pos: [number, number]): number {
-  let total = 0;
-  for (let i = 0; i < route.length - 1; i++) {
-    const [x1, y1] = route[i];
-    const [x2, y2] = route[i + 1];
-    const seg = Math.hypot(x2 - x1, y2 - y1);
-    const [px, py] = pos;
-    const d1 = Math.hypot(px - x1, py - y1);
-    const d2 = Math.hypot(px - x2, py - y2);
-    if (d1 <= d2) total += d1;
-    else total += seg + d2;
-  }
-  return total;
 }

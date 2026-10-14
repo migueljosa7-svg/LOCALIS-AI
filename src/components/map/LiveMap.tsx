@@ -34,14 +34,22 @@ export default function LiveMap({
   const cbRef = useRef(onPositionChange);
   cbRef.current = onPositionChange;
 
+  // Throttle: el GPS emite a 10 Hz pero solo re-renderizamos ~2 Hz
+  // (el marcador CSS se anima solo). Respeta reduced-motion.
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const p = interpolateRoute(DEMO_ROUTE, 0.35);
+      setPos(p);
+      return;
+    }
     const id = window.setInterval(() => {
-      tRef.current += 0.006;
+      tRef.current += 0.03;
       if (tRef.current > 1.15) tRef.current = 0;
       const p = interpolateRoute(DEMO_ROUTE, Math.min(1, tRef.current));
       setPos(p);
       cbRef.current?.(p);
-    }, 100);
+    }, 500);
     return () => window.clearInterval(id);
   }, []);
 

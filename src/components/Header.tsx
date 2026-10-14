@@ -16,12 +16,27 @@ const navLinks = [
   { label: "Demo Interactiva", href: "#demo" },
 ];
 
-export default function Header({ scrolled, mobileMenuOpen, setMobileMenuOpen }: {
-  scrolled: boolean;
-  mobileMenuOpen: boolean;
-  setMobileMenuOpen: (v: boolean) => void;
-}) {
+export default function Header() {
   const { openLead } = useLead();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        setScrolled(window.scrollY > 40);
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
   return (
     <header
       className={cn(

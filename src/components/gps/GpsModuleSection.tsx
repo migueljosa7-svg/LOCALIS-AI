@@ -1,19 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import SvgMapWrapper from "@/components/map/SvgMapWrapper";
 import MapPanel from "@/components/map/MapPanel";
 import RoiCalculator from "./RoiCalculator";
-import { remainingMeters, type LngLat } from "@/lib/routes";
+import ErrorBoundary from "@/components/map/ErrorBoundary";
 
 export default function GpsModuleSection() {
-  const [pos, setPos] = useState<LngLat>([40.4188, -3.7038]);
+  // Progreso simulado estable (0..1) sin re-render a 10 Hz: el mapa SVG
+  // anima su propio marcador por rAF y aquí solo mostramos métricas demo.
+  const [progress] = useState(0.35);
 
-  const distance = remainingMeters(pos);
+  const distance = Math.round(1240 * (1 - progress));
   const etaMin = Math.max(1, Math.round(distance / 200));
   const speedKmh = 24;
   const savedEuro = 6.45;
+  const noop = useCallback(() => {}, []);
 
   return (
     <section id="gps" className="w-full py-20 lg:py-28 bg-surface-elevated relative overflow-hidden">
@@ -33,11 +36,13 @@ export default function GpsModuleSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 w-full">
           <RevealBox className="lg:col-span-3">
-            <SvgMapWrapper
-              height={430}
-              position={pos}
-              onPositionChange={setPos}
-            />
+            <ErrorBoundary>
+              <SvgMapWrapper
+                height={430}
+                position={[40.4188, -3.7038]}
+                onPositionChange={noop}
+              />
+            </ErrorBoundary>
             <p className="text-[11px] text-muted mt-2 text-center">
               Tiles CARTO dark · marcador animado en bucle · scroll desactivado para no secuestrar la rueda
             </p>

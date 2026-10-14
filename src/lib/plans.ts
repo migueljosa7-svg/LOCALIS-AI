@@ -8,7 +8,7 @@ export const PLANTS: Plan[] = [
     priceYear: 190,
     description: "Para fruterías, panaderías y comercios locales que quieren automatizar su agenda y facturación.",
     features: [
-      "Web completo con Marta IA",
+      "Web completa con Stella IA",
       "Agenda inteligente (Google Calendar)",
       "Facturación básica PDF",
       "WhatsApp empresarial integrado",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Mic, MapPin, CalendarDays, ReceiptText, X, Truck, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -61,6 +61,16 @@ export default function StellaConsole() {
   const [sumOpen, setSumOpen] = useState(false);
   const [trackOpen, setTrackOpen] = useState(false);
   const [pos, setPos] = useState<LngLat>(DEMO_ROUTE[0]);
+  const timersRef = useRef<number[]>([]);
+
+  // Limpieza: evita setState en componente desmontado (memory leak).
+  useEffect(() => {
+    const timers = timersRef.current;
+    return () => {
+      timers.forEach((t) => window.clearTimeout(t));
+      timers.length = 0;
+    };
+  }, []);
 
   const switchMode = (m: Mode) => {
     setMode(m);
@@ -74,7 +84,7 @@ export default function StellaConsole() {
     setInput("");
     setTyping(true);
     const { reply, action, intent } = detectIntent(text, mode);
-    window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setMsgs((p) => [...p, { id: "a" + Date.now(), role: "ai", text: reply, action, intent }]);
       setTyping(false);
       // Despliega la tarjeta/modal/drawer asociada a la intención detectada.
@@ -83,16 +93,18 @@ export default function StellaConsole() {
       if (action === "calendar") setCalOpen(true);
       if (action === "summary") setSumOpen(true);
     }, 850);
+    timersRef.current.push(timer);
   };
 
   const speak = () => {
     if (typing || listening) return;
     setListening(true);
-    window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setListening(false);
       const line = SCRIPTS[mode][Math.floor(Math.random() * SCRIPTS[mode].length)];
       send(line);
     }, 1400);
+    timersRef.current.push(timer);
   };
 
   const chips = [
