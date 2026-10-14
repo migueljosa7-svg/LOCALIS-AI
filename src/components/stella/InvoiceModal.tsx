@@ -4,20 +4,29 @@ import { useState } from "react";
 import { FileText, Download, Send, CheckCircle2 } from "lucide-react";
 import { AppModal } from "./StellaActions";
 
+function totalFor(who: string): string {
+  let h = 0;
+  for (let i = 0; i < who.length; i++) h = (h * 31 + who.charCodeAt(i)) | 0;
+  const v = 34 + (Math.abs(h) % 60) + ((Math.abs(h) % 99) / 100);
+  return v.toFixed(2).replace(".", ",");
+}
+
 const INVOICE_ITEMS = [
   { d: "Manzanas Fuji 1kg", q: 3, p: 4.5, t: 13.5 },
   { d: "Peras Victoria 1kg", q: 2, p: 5.2, t: 10.4 },
   { d: "Naranjas 800g", q: 4, p: 3.0, t: 12.0 },
 ];
 
-export function InvoiceCard({ onOpen }: { onOpen: () => void }) {
+export function InvoiceCard({ onOpen, client }: { onOpen: () => void; client?: string }) {
+  const who = client ?? "Fruteria Pepe";
+  const total = totalFor(who);
   return (
     <div className="border-glow rounded-xl p-4 bg-background/60 max-w-xs">
       <div className="flex items-center gap-2 mb-2">
         <FileText size={14} className="text-emerald-400" />
         <p className="text-xs font-semibold">Factura INV-2026-104 · lista</p>
       </div>
-      <p className="text-sm font-bold">Fruteria Pepe · 42,36 EUR</p>
+      <p className="text-sm font-bold">{who} · {total} EUR</p>
       <p className="text-xs text-muted mt-1">IVA 21% incluido · vence el 16 sept</p>
       <button
         type="button"
@@ -30,15 +39,16 @@ export function InvoiceCard({ onOpen }: { onOpen: () => void }) {
   );
 }
 
-export function InvoiceModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function InvoiceModal({ open, onClose, client }: { open: boolean; onClose: () => void; client?: string }) {
   const [sent, setSent] = useState(false);
+  const who = client ?? "Fruteria Pepe";
   const subtotal = 35.9;
   const iva = 6.46;
   const total = 42.36;
 
   const download = () => {
     const html = `<html><body style="font-family:sans-serif;padding:32px">
-      <h2>FACTURA INV-2026-104</h2><p>Fruteria Pepe · 10/09/2026</p>
+      <h2>FACTURA INV-2026-104</h2><p>${who} · 10/09/2026</p>
       <table border="1" cellpadding="6" cellspacing="0">
       <tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Total</th></tr>
       ${INVOICE_ITEMS.map((i) => `<tr><td>${i.d}</td><td>${i.q}</td><td>${i.p} EUR</td><td>${i.t} EUR</td></tr>`).join("")}
@@ -54,10 +64,10 @@ export function InvoiceModal({ open, onClose }: { open: boolean; onClose: () => 
   };
 
   return (
-    <AppModal open={open} onClose={onClose} title="Factura INV-2026-104">
+    <AppModal open={open} onClose={onClose} title={`Factura INV-2026-104 · ${who}`}>
       <div className="rounded-xl border border-border bg-background/60 p-4 text-sm space-y-3">
         <div className="flex justify-between text-xs text-muted">
-          <span>LOCALIS AI Store (emisor)</span>
+          <span>LOCALIS AI Store (emisor) → {who}</span>
           <span>10/09/2026</span>
         </div>
         <table className="w-full text-left">

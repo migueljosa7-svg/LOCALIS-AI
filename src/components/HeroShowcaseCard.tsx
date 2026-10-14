@@ -1,16 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Calendar, Smartphone } from "lucide-react";
 
 export default function HeroShowcaseCard() {
   return (
-    <motion.div
-      className="hero-card rounded-2xl p-4 sm:p-6 lg:p-8 w-full min-w-0"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.8, delay: 0.2 }}
-    >
+    <div className="hero-card hero-enter rounded-2xl p-4 sm:p-6 lg:p-8 w-full min-w-0">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 w-full">
         <div className="glass rounded-xl p-4 lg:p-5 flex flex-col w-full min-w-0">
           <div className="flex items-center gap-2 mb-3">
@@ -53,6 +47,6 @@ export default function HeroShowcaseCard() {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

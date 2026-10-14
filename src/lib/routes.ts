@@ -1,13 +1,14 @@
 export type LngLat = [number, number];
 
-// Ruta de demo por el centro de Madrid (Gran Via -> Serrano)
+// ── Demo LOCALIS GPS: centro de ZARAGOZA ─────────────────
+// Eje: Plaza del Pilar → C/ Alfonso I → Coso → Pza. España → Independencia
 export const DEMO_ROUTE: LngLat[] = [
-  [40.4188, -3.7038],
-  [40.4192, -3.7010],
-  [40.4196, -3.6975],
-  [40.4199, -3.6940],
-  [40.4202, -3.6905],
-  [40.4204, -3.6880],
+  [41.6566, -0.8782],
+  [41.6559, -0.8774],
+  [41.6549, -0.8763],
+  [41.6538, -0.8749],
+  [41.6527, -0.8737],
+  [41.6517, -0.8726],
 ];
 
 export const DEMO_DEST: LngLat = DEMO_ROUTE[DEMO_ROUTE.length - 1];

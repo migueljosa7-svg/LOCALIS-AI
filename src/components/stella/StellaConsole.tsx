@@ -9,12 +9,7 @@ import { InvoiceCard, InvoiceModal } from "./InvoiceModal";
 import { SummaryModal } from "./SummaryModal";
 import LiveMapWrapper from "@/components/map/LiveMapWrapper";
 import { remainingMeters, haversineMeters, DEMO_ROUTE, type LngLat } from "@/lib/routes";
-import {
-  detectIntent,
-  type StellaMode,
-  type StellaAction,
-  type IntentId,
-} from "./stellaEngine";
+import { detectIntent, type StellaMode, type StellaAction, type IntentId, type StellaSlots } from "./stellaEngine";
 
 type Mode = StellaMode;
 type Action = StellaAction;
@@ -25,6 +20,8 @@ interface Msg {
   text: string;
   action?: Action;
   intent?: IntentId;
+  slots?: StellaSlots;
+  chips?: string[];
 }
 
 const MODES: { id: Mode; label: string; icon: typeof CalendarDays }[] = [
@@ -61,16 +58,34 @@ export default function StellaConsole() {
   const [sumOpen, setSumOpen] = useState(false);
   const [trackOpen, setTrackOpen] = useState(false);
   const [pos, setPos] = useState<LngLat>(DEMO_ROUTE[0]);
+  const [lastSlots, setLastSlots] = useState<StellaSlots>({});
+  const [invoiceClient, setInvoiceClient] = useState("Frutería Pepe");
+  const [trackOrder, setTrackOrder] = useState("#104");
+  const [visible, setVisible] = useState(true);
+  const sectionRef = useRef<HTMLElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const timersRef = useRef<number[]>([]);
 
-  // Limpieza: evita setState en componente desmontado (memory leak).
+  // Limpieza + pausa inteligente: si la consola no está visible,
+  // no se abren modales/drawers automáticamente (evita layout shift).
   useEffect(() => {
     const timers = timersRef.current;
+    const el = sectionRef.current;
+    let obs: IntersectionObserver | null = null;
+    if (el && typeof IntersectionObserver !== "undefined") {
+      obs = new IntersectionObserver((entries) => setVisible(entries[0]?.isIntersecting ?? true), { threshold: 0.05 });
+      obs.observe(el);
+    }
     return () => {
       timers.forEach((t) => window.clearTimeout(t));
       timers.length = 0;
+      obs?.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [msgs, typing]);
 
   const switchMode = (m: Mode) => {
     setMode(m);
@@ -83,16 +98,20 @@ export default function StellaConsole() {
     setMsgs((p) => [...p, { id: uid, role: "user", text }]);
     setInput("");
     setTyping(true);
-    const { reply, action, intent } = detectIntent(text, mode);
+    const { reply, action, intent, slots, chips } = detectIntent(text, mode);
+    if (slots) setLastSlots(slots);
+    if (slots?.client) setInvoiceClient(slots.client);
+    if (slots?.orderId) setTrackOrder(slots.orderId);
     const timer = window.setTimeout(() => {
-      setMsgs((p) => [...p, { id: "a" + Date.now(), role: "ai", text: reply, action, intent }]);
+      setMsgs((p) => [...p, { id: "a" + Date.now(), role: "ai", text: reply, action, intent, slots, chips }]);
       setTyping(false);
-      // Despliega la tarjeta/modal/drawer asociada a la intención detectada.
+      // Solo auto-despliega si la sección está visible (60fps + sin sorpresas).
+      if (!visible) return;
       if (action === "tracking") setTrackOpen(true);
       if (action === "invoice") setInvOpen(true);
       if (action === "calendar") setCalOpen(true);
       if (action === "summary") setSumOpen(true);
-    }, 850);
+    }, 650);
     timersRef.current.push(timer);
   };
 
@@ -107,15 +126,16 @@ export default function StellaConsole() {
     timersRef.current.push(timer);
   };
 
-  const chips = [
+  const lastAi = [...msgs].reverse().find((m) => m.role === "ai" && m.chips?.length);
+  const chips = lastAi?.chips?.map((c) => ({ label: c, text: c })) ?? [
     ...SCRIPTS[mode].map((s) => ({ label: s, text: s })),
     { label: GENERIC_CHIPS[0], text: GENERIC_CHIPS[0] },
     { label: GENERIC_CHIPS[1], text: GENERIC_CHIPS[1] },
   ];
 
   return (
-    <section id="stella" className="w-full py-20 lg:py-28 relative overflow-hidden">
-      <div className="orb orb-cyan w-[420px] h-[420px] -top-40 -left-32 animate-float" aria-hidden />
+    <section id="stella" ref={sectionRef} className="w-full py-20 lg:py-28 relative overflow-hidden">
+      <div className="orb orb-cyan w-[420px] h-[420px] -top-40 -left-32" aria-hidden />
       <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <span className="inline-block px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold uppercase tracking-wider mb-4">
@@ -154,14 +174,15 @@ export default function StellaConsole() {
               </span>
             </div>
 
-            <div className="h-72 lg:h-96 overflow-y-auto p-4 space-y-3 w-full">
+            <div ref={scrollRef} className="h-72 lg:h-96 overflow-y-auto p-4 space-y-3 w-full">
               <AnimatePresence initial={false}>
                 {msgs.map((m) => (
                   <motion.div
                     key={m.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.18 }}
                     className={cn("flex w-full", m.role === "user" ? "justify-end" : "justify-start")}
                   >
                     <div className="max-w-[85%] space-y-2">
@@ -175,8 +196,17 @@ export default function StellaConsole() {
                       >
                         {m.text}
                       </div>
-                      {m.action === "calendar" && <CalendarCard onOpen={() => setCalOpen(true)} />}
-                      {m.action === "invoice" && <InvoiceCard onOpen={() => setInvOpen(true)} />}
+                      {m.action === "calendar" && (
+                        <CalendarCard
+                          onOpen={() => setCalOpen(true)}
+                          dayLabel={m.slots?.dayLabel}
+                          dayDate={m.slots?.dayDate}
+                          time={m.slots?.time}
+                          service={m.slots?.service}
+                          kind={m.slots?.kind}
+                        />
+                      )}
+                      {m.action === "invoice" && <InvoiceCard onOpen={() => setInvOpen(true)} client={m.slots?.client} />}
                       {m.action === "summary" && (
                         <div className="border-glow rounded-xl p-4 bg-background/60 max-w-xs">
                           <div className="flex items-center gap-2 mb-1">
@@ -198,13 +228,13 @@ export default function StellaConsole() {
                         <div className="border-glow rounded-xl p-4 bg-background/60 max-w-xs">
                           <div className="flex items-center gap-2 mb-1">
                             <Truck size={14} className="text-emerald-400" />
-                            <p className="text-xs font-semibold">Pedido #104 · en ruta</p>
+                            <p className="text-xs font-semibold">Pedido {m.slots?.orderId ?? "#104"} · en ruta</p>
                           </div>
-                          <p className="text-sm font-bold">Luis García · ETA 4 min</p>
+                          <p className="text-sm font-bold">{trackOrder === (m.slots?.orderId ?? "#104") ? "En camino · ETA en vivo" : "En camino"} · abre el mapa</p>
                           <button
                             type="button"
-                            onClick={() => setTrackOpen(true)}
-                            className="mt-2 text-xs text-emerald-400 hover:text-emerald-300 font-semibold cursor-pointer transition-all hover:scale-[1.02]"
+                            onClick={() => { if (m.slots?.orderId) setTrackOrder(m.slots.orderId); setTrackOpen(true); }}
+                            className="mt-2 text-xs text-emerald-400 hover:text-emerald-300 font-semibold cursor-pointer transition-colors"
                           >
                             Abrir mapa en vivo →
                           </button>
@@ -283,8 +313,16 @@ export default function StellaConsole() {
         </div>
       </div>
 
-      <CalendarModal open={calOpen} onClose={() => setCalOpen(false)} />
-      <InvoiceModal open={invOpen} onClose={() => setInvOpen(false)} />
+      <CalendarModal
+        open={calOpen}
+        onClose={() => setCalOpen(false)}
+        dayLabel={lastSlots.dayLabel}
+        dayDate={lastSlots.dayDate}
+        time={lastSlots.time}
+        service={lastSlots.service}
+        client={lastSlots.client}
+      />
+      <InvoiceModal open={invOpen} onClose={() => setInvOpen(false)} client={invoiceClient} />
       <SummaryModal open={sumOpen} onClose={() => setSumOpen(false)} />
 
       <AnimatePresence>
@@ -293,11 +331,11 @@ export default function StellaConsole() {
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
             className="fixed top-0 right-0 h-full w-full sm:w-[420px] z-[60] bg-[#0B0F17] border-l border-border p-4 flex flex-col gap-3 overflow-y-auto"
           >
             <div className="flex items-center justify-between">
-              <h3 className="font-bold font-display">Pedido #104 · en vivo</h3>
+              <h3 className="font-bold font-display">Pedido {trackOrder} · en vivo</h3>
               <button
                 type="button"
                 onClick={() => setTrackOpen(false)}
@@ -307,7 +345,7 @@ export default function StellaConsole() {
                 <X size={16} />
               </button>
             </div>
-            <LiveMapWrapper height={300} onPositionChange={setPos} />
+            {trackOpen && <LiveMapWrapper height={300} onPositionChange={setPos} />}
             <div className="grid grid-cols-3 gap-3 text-center text-sm">
               <div className="glass rounded-xl p-3">
                 <p className="font-bold text-cyan-400">{Math.round(remainingMeters(pos))} m</p>

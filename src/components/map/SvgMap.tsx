@@ -1,236 +1,222 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
-import type { LngLat } from "@/lib/routes";
+import { useEffect, useMemo, useState } from "react";
 
-/**
- * LOCALIS GPS - Mapa SVG puro (sin API keys, sin dependencias externas).
- * Diseño futurista / night-mode: cuadrícula estelar, camino animado,
- * marcador del repartidor en movimiento y puntos de entrega.
- */
-const SVG_WIDTH = 720;
-const SVG_HEIGHT = 420;
+// Mapa callejero de Zaragoza con animacion de repartidor en tiempo real.
+const SVGW = 700;
+const SVHH = 500;
 
-const ROUTE_SVG: [number, number][] = [
-  [52, 400],
-  [120, 362],
-  [200, 316],
-  [292, 272],
-  [396, 236],
-  [498, 214],
-  [588, 200],
-  [656, 189],
-  [700, 182],
+const MAIN_ROUTE = [
+  { x: 50, y: 440 }, { x: 100, y: 410 }, { x: 170, y: 380 },
+  { x: 250, y: 350 }, { x: 340, y: 320 }, { x: 420, y: 290 },
+  { x: 500, y: 260 }, { x: 580, y: 230 }, { x: 650, y: 210 },
+  { x: 690, y: 200 },
 ];
-const DEST_SVG: [number, number] = [700, 182];
-const DELIVERY_INDICES = [3, 5, 7];
-const DRIVER_RADIUS = 8;
-const DELIVERY_RADIUS = 5;
 
-export interface SvgMapProps {
-  position: LngLat;
-  onPositionChange?: (pos: LngLat) => void;
-  height?: number;
-  className?: string;
-  interactive?: boolean;
+const STREETS = [
+  { x1: 80, y1: 420, x2: 120, y2: 400 },
+  { x1: 160, y1: 390, x2: 200, y2: 370 },
+  { x1: 240, y1: 360, x2: 280, y2: 340 },
+  { x1: 350, y1: 330, x2: 390, y2: 310 },
+  { x1: 440, y1: 300, x2: 480, y2: 280 },
+  { x1: 520, y1: 270, x2: 560, y2: 250 },
+];
+
+const POIS = [
+  { id: "pilar", label: "Plaza del Pilar", x: 50, y: 440 },
+  { id: "catedral", label: "Catedral", x: 250, y: 350 },
+  { id: "espana", label: "Pza. Espana", x: 500, y: 260 },
+  { id: "festival", label: "Fiestas del Pilar", x: 580, y: 230 },
+];
+
+const C = {
+  bg: "#0B0F17",
+  street: "#64748b",
+  mainStreet: "#a78bfa",
+  repartidor: "#22d3ee",
+  poi: "#f472b6",
+};
+
+function buildRoutePath() {
+  return MAIN_ROUTE.map(function (p, i) {
+    return (i === 0 ? "M " : "L ") + p.x + " " + p.y;
+  }).join(" ");
 }
 
-function interpolateRoute(route: [number, number][], t: number): [number, number] {
-  const segments = route.length - 1;
-  const clamped = Math.min(1, Math.max(0, t));
-  const raw = clamped * segments;
-  const i = Math.min(segments - 1, Math.floor(raw));
-  const f = raw - i;
-  const a = route[i];
-  const b = route[i + 1];
-  return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f] as [number, number];
+function buildVehiclePoints(x: number, y: number) {
+  return x + "," + (y - 5) + " " + (x + 6) + "," + (y + 5) + " " + (x - 6) + "," + (y + 5);
 }
 
 
-export default function SvgMap({
-  position: _position,
-  onPositionChange,
-  height = 420,
-  className,
-  interactive: _interactive = true,
-}: SvgMapProps) {
-  const [t, setT] = useState(0);
-  const cbRef = useRef(onPositionChange);
-  cbRef.current = onPositionChange;
+export default function SvgMap() {
+  const [progress, setProgress] = useState(0.35);
+  const [playing, setPlaying] = useState(true);
 
-  // Bucle de animación con rAF + prefers-reduced-motion (antes: setInterval a 10fps
-  // con setState continuo que forzaba re-render del padre vía onPositionChange).
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setT(0.35);
-      return;
-    }
-    let raf = 0;
-    let last = performance.now();
-    const DURATION = 26000; // 26 s por vuelta completa
-    const tick = (now: number) => {
-      const dt = now - last;
-      last = now;
-      setT((prev) => {
-        const next = prev + dt / DURATION;
-        return next > 1.02 ? 0 : next;
-      });
-      raf = requestAnimationFrame(tick);
+    if (!playing) return;
+    let frame = 0;
+    let alive = true;
+    let t = progress;
+    const step = function () {
+      if (!alive) return;
+      t += 0.006;
+      if (t >= 1) t = 0;
+      setProgress(t);
+      frame = requestAnimationFrame(step);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, []);
+    frame = requestAnimationFrame(step);
+    return function () {
+      alive = false;
+      cancelAnimationFrame(frame);
+    };
+  }, [playing]);
 
-  const driverPos = useMemo<[number, number]>(
-    () => interpolateRoute(ROUTE_SVG, Math.min(1, t)),
-    [t],
-  );
+  const currentPos = useMemo(function () {
+    const segs = MAIN_ROUTE.length - 1;
+    const idx = Math.min(segs - 1, Math.floor(progress * segs));
+    const f = progress * segs - idx;
+    const a = MAIN_ROUTE[idx];
+    const b = MAIN_ROUTE[idx + 1];
+    return { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f };
+  }, [progress]);
 
-  // El progreso se deriva del propio `t` (0..1) — sin haversine por frame.
-  const progressPct = Math.round(Math.min(1, Math.max(0, t)) * 100);
+  const routePath = buildRoutePath();
+  const vehiclePoints = buildVehiclePoints(currentPos.x, currentPos.y);
+  const viewBox = "0 0 " + SVGW + " " + SVHH;
 
   return (
-    <div
-      className={cn(
-        "relative w-full overflow-hidden rounded-xl border border-border bg-[#0B0F17] select-none",
-        "shadow-2xl shadow-cyan-500/5",
-        className,
-      )}
-      style={{ height, minHeight: height }}
-      role="region"
-      aria-label="Mapa GPS LOCALIS - rastreo en vivo del repartidor"
-    >
-      <svg
-        className="w-full h-full"
-        viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
-        preserveAspectRatio="xMidYMid meet"
-        style={{ display: "block" }}
-      >
-        <rect
-          x={0}
-          y={0}
-          width={SVG_WIDTH}
-          height={SVG_HEIGHT}
-          fill="#0B0F17"
-        />
+    <div className="w-full rounded-2xl bg-[#0B0F17] border border-white/10 overflow-hidden" style={{ minHeight: 400 }}>
+      <div className="relative w-full h-full">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0B0F17] via-[#0F172A] to-[#0B0F17]" />
+        <svg
+          width="100%"
+          height="100%"
+          viewBox={viewBox}
+          className="relative z-10"
+          role="application"
+          aria-label="Mapa GPS interactivo de reparto en tiempo real de Zaragoza"
+        >
+          <title>Mapa GPS LOCALIS AI - Zaragoza</title>
+          <rect x="0" y="0" width={SVGW} height={SVHH} fill={C.bg} rx="12" />
 
-        {Array.from({ length: 28 }, (_, i) => (
-          <line
-            key={`v-${i}`}
-            x1={i * 25.714 + 4}
-            y1={0}
-            x2={i * 25.714 + 4}
-            y2={SVG_HEIGHT}
-            stroke="rgba(255,255,255,0.04)"
-            strokeDasharray="2 6"
-            strokeWidth={1}
+
+          {STREETS.map(function (s, i) {
+            return (
+              <line
+                key={"sec" + i}
+                x1={s.x1}
+                y1={s.y1}
+                x2={s.x2}
+                y2={s.y2}
+                stroke={C.street}
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.6"
+              />
+            );
+          })}
+
+          {MAIN_ROUTE.map(function (p, i) {
+            const next = MAIN_ROUTE[Math.min(i + 1, MAIN_ROUTE.length - 1)];
+            return (
+              <line
+                key={"main" + i}
+                x1={p.x}
+                y1={p.y}
+                x2={next.x}
+                y2={next.y}
+                stroke={C.mainStreet}
+                strokeWidth="3"
+                strokeLinecap="round"
+                opacity="0.7"
+              />
+            );
+          })}
+
+          {POIS.map(function (poi) {
+            return (
+              <g key={poi.id}>
+                <circle cx={poi.x} cy={poi.y} r="6" fill={C.poi} stroke="#fff" strokeWidth="2" />
+                <text x={poi.x} y={poi.y - 12} textAnchor="middle" fontSize="9" fill={C.poi} fontWeight="bold">
+                  {poi.label}
+                </text>
+              </g>
+            );
+          })}
+
+
+          <path
+            d={routePath}
+            fill="none"
+            stroke={C.repartidor}
+            strokeWidth="3"
+            strokeDasharray="6 8"
+            opacity="0.5"
           />
-        ))}
-        {Array.from({ length: 16 }, (_, i) => (
-          <line
-            key={`h-${i}`}
-            x1={0}
-            y1={i * 26.25 + 4}
-            x2={SVG_WIDTH}
-            y2={i * 26.25 + 4}
-            stroke="rgba(255,255,255,0.04)"
-            strokeDasharray="2 6"
-            strokeWidth={1}
-          />
-        ))}
 
-        <circle cx={24} cy={24} r={8} fill="rgba(0,242,254,0.06)" stroke="rgba(0,242,254,0.15)" strokeWidth={1} />
-        <circle cx={SVG_WIDTH - 24} cy={24} r={8} fill="rgba(0,242,254,0.06)" stroke="rgba(0,242,254,0.15)" strokeWidth={1} />
-        <circle cx={24} cy={SVG_HEIGHT - 24} r={8} fill="rgba(0,242,254,0.06)" stroke="rgba(0,242,254,0.15)" strokeWidth={1} />
-        <circle cx={SVG_WIDTH - 24} cy={SVG_HEIGHT - 24} r={8} fill="rgba(0,242,254,0.06)" stroke="rgba(0,242,254,0.15)" strokeWidth={1} />
-
-        <line x1={0} y1={250} x2={SVG_WIDTH} y2={250} stroke="rgba(255,255,255,0.07)" strokeWidth={2} />
-        <line x1={330} y1={0} x2={330} y2={SVG_HEIGHT} stroke="rgba(255,255,255,0.07)" strokeWidth={2} />
-        <line x1={480} y1={0} x2={480} y2={SVG_HEIGHT} stroke="rgba(255,255,255,0.07)" strokeWidth={2} />
-
-        <path
-          d={`M ${ROUTE_SVG.map((p) => p.join(",")).join(" L ")}`}
-          fill="none"
-          stroke="rgba(0,242,254,0.18)"
-          strokeWidth={3}
-          strokeDasharray="14 9"
-          strokeLinecap="round"
-        />
-
-        {DELIVERY_INDICES.map((idx, i) => {
-          const [x, y] = ROUTE_SVG[idx];
-          return (
-            <g key={`delivery-${i}`}>
-              <circle
-                cx={x}
-                cy={y}
-                r={DELIVERY_RADIUS}
-                fill="rgba(16,185,129,0.25)"
-                stroke="#10B981"
-                strokeWidth={2}
-              >
-                <animate
-                  attributeName="opacity"
-                  values="0.3;1;0.3"
-                  dur={2.2 + i * 0.4 + "s"}
-                  repeatCount="indefinite"
-                />
-              </circle>
-              <text
-                x={x + 12}
-                y={y - 10}
-                fontSize={10}
-                fill="#10B981"
-                fontFamily="monospace"
-                fontWeight={700}
-                opacity={0.9}
-              >
-                #{i + 1}
-              </text>
-            </g>
-          );
-        })}
-
-        {/* Destino */}
-        <g>
-          <circle cx={DEST_SVG[0]} cy={DEST_SVG[1]} r={14} fill="rgba(16,185,129,0.15)" />
-          <circle cx={DEST_SVG[0]} cy={DEST_SVG[1]} r={6} fill="#10B981" stroke="#0B0F17" strokeWidth={2} />
-        </g>
-
-        {/* Repartidor (posición animada real) */}
-        <g>
-          <circle cx={driverPos[0]} cy={driverPos[1]} r={16} fill="rgba(0,242,254,0.18)">
-            <animate attributeName="r" values="10;20;10" dur="1.8s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.8s" repeatCount="indefinite" />
+          <circle cx={currentPos.x} cy={currentPos.y} r="12" fill="transparent" />
+          <circle
+            cx={currentPos.x}
+            cy={currentPos.y}
+            r="9"
+            fill={C.repartidor}
+            stroke="#fff"
+            strokeWidth="3"
+            opacity="0.3"
+          >
+            <animate attributeName="r" values="9;14;9" dur="1.6s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.4;0;0.4" dur="1.6s" repeatCount="indefinite" />
           </circle>
           <circle
-            cx={driverPos[0]}
-            cy={driverPos[1]}
-            r={DRIVER_RADIUS}
-            fill="#00F2FE"
-            stroke="#0B0F17"
-            strokeWidth={2.5}
-            style={{ filter: "drop-shadow(0 0 8px rgba(0,242,254,0.9))" }}
+            cx={currentPos.x}
+            cy={currentPos.y}
+            r="6"
+            fill={C.repartidor}
+            stroke="#fff"
+            strokeWidth="3"
           />
-          <circle cx={driverPos[0]} cy={driverPos[1]} r={2.5} fill="#0B0F17" />
-        </g>
+          <polygon points={vehiclePoints} fill={C.repartidor} />
 
-        {/* Etiqueta de progreso */}
-        <g>
-          <rect x={16} y={16} width={176} height={34} rx={10} fill="rgba(11,15,23,0.82)" stroke="rgba(0,242,254,0.25)" />
-          <circle cx={34} cy={33} r={5} fill="#00F2FE">
-            <animate attributeName="opacity" values="1;0.4;1" dur="1.4s" repeatCount="indefinite" />
-          </circle>
-          <text x={46} y={30} fontSize={11} fill="#E2E8F0" fontWeight={700} fontFamily="monospace">
-            REPARTIDOR EN VIVO
-          </text>
-          <text x={46} y={43} fontSize={10} fill="#00F2FE" fontFamily="monospace">
-            Ruta {progressPct}% · ETA ~{Math.max(1, Math.round((100 - progressPct) / 12))} min
-          </text>
-        </g>
-      </svg>
+          <g>
+            <rect x="12" y="12" width="230" height="180" rx="10" fill="rgba(11,15,23,0.92)" stroke="#334155" strokeWidth="1" />
+            <text x="26" y="36" fontSize="12" fill="#e2e8f0" fontWeight="bold">LOCALIS GPS - en vivo</text>
+            <text x="26" y="56" fontSize="10" fill="#94a3b8">Repartidor: Miguel</text>
+            <text x="26" y="74" fontSize="10" fill="#94a3b8">Pedido: 104 (Fruteria Pepe)</text>
+            <text x="26" y="92" fontSize="10" fill="#94a3b8">Zona: Centro - Zaragoza</text>
+            <text x="26" y="110" fontSize="10" fill="#94a3b8">Calle actual: C/ Buenos Aires</text>
+            <text x="26" y="128" fontSize="10" fill="#22d3ee">ETA: 24 min - 1.240 m restantes</text>
+            <text x="26" y="146" fontSize="10" fill="#34d399">Ahorro vs Glovo: 6,45 EUR</text>
+            <text x="26" y="166" fontSize="9" fill="#64748b">Actualizacion: cada 15 s</text>
+          </g>
+        </svg>
+
+        <div className="absolute bottom-4 right-4 flex flex-col sm:flex-row gap-2">
+          <button
+            type="button"
+            onClick={function () { setPlaying(function (p) { return !p; }); }}
+            className="px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer flex items-center gap-2"
+            aria-label={playing ? "Pausar animacion del repartidor" : "Reanudar animacion del repartidor"}
+          >
+            {playing ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <polygon points="5,3 19,12 5,21" />
+              </svg>
+            )}
+            <span className="hidden sm:inline">{playing ? "Pausar" : "Ver como funciona"}</span>
+          </button>
+        </div>
+
+        <div className="absolute top-4 left-4 pointer-events-none">
+          <div className="px-3 py-2 rounded-lg bg-[#0B0F17]/85 border border-white/10 text-white text-xs font-semibold">
+            MAPA EN VIVO - ZARAGOZA, ARAGON
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

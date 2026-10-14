@@ -32,10 +32,12 @@ export default function LiveMap({
   const [pos, setPos] = useState<LngLat>(DEMO_ROUTE[0]);
   const tRef = useRef(0);
   const cbRef = useRef(onPositionChange);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const runRef = useRef(true);
   cbRef.current = onPositionChange;
 
-  // Throttle: el GPS emite a 10 Hz pero solo re-renderizamos ~2 Hz
-  // (el marcador CSS se anima solo). Respeta reduced-motion.
+  // Pausa fuera de pantalla: el drawer solo monta el mapa al abrirse,
+  // y el intervalo se detiene con IntersectionObserver + document.hidden.
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -43,14 +45,27 @@ export default function LiveMap({
       setPos(p);
       return;
     }
+    const el = wrapRef.current;
+    let obs: IntersectionObserver | null = null;
+    if (el && typeof IntersectionObserver !== "undefined") {
+      obs = new IntersectionObserver(
+        (entries) => { runRef.current = entries[0]?.isIntersecting ?? true; },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    }
     const id = window.setInterval(() => {
+      if (document.hidden || !runRef.current) return;
       tRef.current += 0.03;
       if (tRef.current > 1.15) tRef.current = 0;
       const p = interpolateRoute(DEMO_ROUTE, Math.min(1, tRef.current));
       setPos(p);
       cbRef.current?.(p);
     }, 500);
-    return () => window.clearInterval(id);
+    return () => {
+      window.clearInterval(id);
+      obs?.disconnect();
+    };
   }, []);
 
   const center = useMemo<LngLat>(
@@ -59,7 +74,7 @@ export default function LiveMap({
   );
 
   return (
-    <div className="map-container rounded-xl overflow-hidden border border-border" style={{ height, minHeight: height }}>
+    <div ref={wrapRef} className="map-container rounded-xl overflow-hidden border border-border" style={{ height, minHeight: height }}>
       <MapContainer
         center={center}
         zoom={15}

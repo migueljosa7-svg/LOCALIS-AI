@@ -51,18 +51,21 @@ export function AppModal({
   );
 }
 
-export function CalendarCard({ onOpen }: { onOpen: () => void }) {
+export function CalendarCard({ onOpen, dayLabel, dayDate, time, service, kind }: { onOpen: () => void; dayLabel?: string; dayDate?: string; time?: string; service?: string; kind?: "availability" | "booking" }) {
+  const title = service ?? "Corte + barba · Cliente nuevo";
+  const when = dayLabel && dayDate && time ? `${cap(dayLabel)} ${dayDate} · ${time} (45 min)` : "Jueves 10 de septiembre · 11:00 (45 min)";
+  const badge = kind === "availability" ? "huecos libres detectados" : "hueco libre confirmado";
   return (
     <div className="border-glow rounded-xl p-4 bg-background/60 max-w-xs">
       <div className="flex items-center gap-2 mb-2">
         <Calendar size={14} className="text-cyan-400" />
         <p className="text-xs font-semibold">Google Calendar · sincronizado</p>
       </div>
-      <p className="text-sm font-bold">Corte + barba · Cliente nuevo</p>
-      <p className="text-xs text-muted mt-1">Jueves 10 de septiembre · 11:00 (45 min)</p>
+      <p className="text-sm font-bold">{title}</p>
+      <p className="text-xs text-muted mt-1">{when}</p>
       <div className="flex gap-2 mt-3">
         <span className="text-[10px] px-2 py-1 rounded-md bg-cyan-500/15 text-cyan-400 font-medium">
-          hueco libre confirmado
+          {badge}
         </span>
         <span className="text-[10px] px-2 py-1 rounded-md bg-emerald-500/15 text-emerald-400 font-medium">
           WhatsApp enviado
@@ -79,16 +82,22 @@ export function CalendarCard({ onOpen }: { onOpen: () => void }) {
   );
 }
 
-export function CalendarModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+function cap(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+export function CalendarModal({ open, onClose, dayLabel, dayDate, time, service, client }: { open: boolean; onClose: () => void; dayLabel?: string; dayDate?: string; time?: string; service?: string; client?: string }) {
+  const title = service ? `${service} · ${client ?? "Cliente nuevo"}` : "Corte + barba · Cliente nuevo";
+  const when = dayLabel && dayDate && time ? `${cap(dayLabel)} ${dayDate} · ${time} - ${addMinutes(time, 45)}` : "Jueves 10 sept · 11:00 - 11:45";
   return (
     <AppModal open={open} onClose={onClose} title="Vista previa de cita">
       <div className="space-y-3">
         <div className="rounded-xl border border-border bg-background/60 overflow-hidden">
           <div className="h-2 bg-gradient-to-r from-cyan-500 to-cobalt-500" />
           <div className="p-4 space-y-2 text-sm">
-            <p className="font-bold">Corte + barba · Cliente nuevo</p>
-            <p className="text-muted">Jueves 10 sept · 11:00 - 11:45</p>
-            <p className="text-muted">Cliente: Carlos Ruiz · +34 623 456 789</p>
+            <p className="font-bold">{title}</p>
+            <p className="text-muted">{when}</p>
+            <p className="text-muted">Cliente: {client ?? "Carlos Ruiz"} · +34 623 456 789</p>
             <p className="text-xs text-emerald-400">Recordatorio: WhatsApp 15 min antes</p>
           </div>
         </div>
@@ -102,4 +111,10 @@ export function CalendarModal({ open, onClose }: { open: boolean; onClose: () =>
       </div>
     </AppModal>
   );
+}
+
+function addMinutes(hhmm: string, mins: number): string {
+  const [h, m] = hhmm.split(":").map(Number);
+  const d = new Date(2026, 0, 1, h, m + mins);
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }

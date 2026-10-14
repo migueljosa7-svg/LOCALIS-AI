@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import {
   PlayCircle,
@@ -20,11 +19,7 @@ export default function HeroContent() {
     <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 lg:pt-32 lg:pb-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
         <div className="text-center lg:text-left w-full min-w-0">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div className="hero-enter">
             <div className="flex items-center gap-2 mb-4 flex-wrap justify-center lg:justify-start">
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold">
                 <Zap size={12} /> Plataforma 2026
@@ -81,7 +76,7 @@ export default function HeroContent() {
                 <span>Geo-ubicacion en tiempo real</span>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
         <HeroShowcaseCard />
       </div>

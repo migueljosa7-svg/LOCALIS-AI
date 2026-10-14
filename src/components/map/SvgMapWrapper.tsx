@@ -1,8 +1,6 @@
 import dynamic from "next/dynamic";
 import type { LngLat } from "@/lib/routes";
 
-// SvgMap no requiere Browser APIs en tiempo de compilación, pero se envuelve en
-// dynamic para garantizar SSR seguro y una primera carga sin bloqueos.
 const SvgMap = dynamic(
   () => import("./SvgMap").then((m) => m.default),
   {
@@ -16,27 +14,13 @@ const SvgMap = dynamic(
 );
 
 export interface SvgMapWrapperProps {
-  position: LngLat;
+  position?: LngLat;
   onPositionChange?: (pos: LngLat) => void;
   height?: number;
   className?: string;
   interactive?: boolean;
 }
 
-export default function SvgMapWrapper({
-  position,
-  onPositionChange,
-  height = 430,
-  className,
-  interactive = true,
-}: SvgMapWrapperProps) {
-  return (
-    <SvgMap
-      position={position}
-      onPositionChange={onPositionChange}
-      height={height}
-      className={className}
-      interactive={interactive}
-    />
-  );
+export default function SvgMapWrapper(_props: SvgMapWrapperProps) {
+  return <SvgMap />;
 }
