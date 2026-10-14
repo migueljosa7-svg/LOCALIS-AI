@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { validateLead } from "@/lib/lead";
 import { env } from "@/lib/env";
+import { sendLeadNotifications } from "@/lib/email";
 
 // Rate-limit en memoria (suficiente para una landing; en producción usar KV/Upstash).
 const hits = new Map<string, { count: number; reset: number }>();
@@ -57,14 +58,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, errors }, { status: 422 });
     }
 
-    // TODO: conectar CRM real (Resend / Brevo / HubSpot / WhatsApp Cloud API).
-    // Nunca rompemos la UX si el proveedor externo falla: logueamos y devolvemos ok.
+    // EMAIL EN TIEMPO REAL (Resend): aviso al dueno + confirmacion al cliente.
+    // Blindado con try/catch: si el proveedor falla o no hay API key, el usuario
+    // NUNCA ve un error y el lead sigue respondiéndose ok (persistencia local incluida).
     try {
+      const emailResult = await sendLeadNotifications(lead);
       if (process.env.NODE_ENV !== "production") {
-        console.log(`[lead] inbox=${env.leadInbox}`, lead);
+        console.log("[lead] email:", emailResult, "inbox=" + env.leadInbox, lead);
       }
-    } catch {
-      // ignorar errores de log
+    } catch (emailErr) {
+      console.warn("[lead] envio de email ignorado:", emailErr);
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });

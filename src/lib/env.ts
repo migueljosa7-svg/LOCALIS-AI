@@ -24,6 +24,9 @@ export const env = {
   whatsappToken: str("WHATSAPP_ACCESS_TOKEN", ""),
   whatsappPhoneNumberId: str("WHATSAPP_PHONE_NUMBER_ID", ""),
   leadInbox: str("LEAD_INBOX_EMAIL", "migueljosa7@gmail.com"),
+  // Email de leads (Resend): sin API key el formulario funciona pero no envia correos.
+  resendApiKey: str("RESEND_API_KEY", ""),
+  emailFrom: str("EMAIL_FROM", "LOCALIS AI <onboarding@resend.dev>"),
 } as const;
 
 export type AppEnv = typeof env;
