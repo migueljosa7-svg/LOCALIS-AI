@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Mic, MapPin, CalendarDays, ReceiptText, X, Truck, TrendingUp } from "lucide-react";
+import { Send, Mic, MapPin, CalendarDays, ReceiptText, X, Truck, TrendingUp, Bot, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CalendarCard, CalendarModal } from "./StellaActions";
 import { InvoiceCard, InvoiceModal } from "./InvoiceModal";
@@ -32,20 +32,20 @@ const MODES: { id: Mode; label: string; icon: typeof CalendarDays }[] = [
 ];
 
 const GREETINGS: Record<Mode, string> = {
-  general: "Hola 👋 Soy Stella. Pídeme una factura, el resumen de ventas, una cita o el GPS de un pedido.",
-  citas: "Hola 👋 Estoy en Modo Citas. Pregúntame por huecos libres o pide una cita.",
+  general: "Hola 👋 Soy Stella, tu asistente virtual IA 24/7 para negocios en Zaragoza. Pídeme una cita, una factura, el resumen de ventas, o pide una auditoría gratuita para tu PYME.",
+  citas: "Hola 👋 Estoy en Modo Citas. Pregúntame por huecos libres o pide una cita para tu negocio en Zaragoza.",
   facturacion: "Modo Facturación activo 🧾 Pide una factura y te la preparo al instante.",
-  gps: "Modo GPS activo 📍 Dime el pedido y abro el mapa en vivo del repartidor.",
+  gps: "Modo GPS activo 📍 Dime el pedido y abro el mapa en vivo del repartidor en Zaragoza.",
 };
 
 const SCRIPTS: Record<Mode, string[]> = {
-  general: ["Genera la factura de Pepe", "Resumen del día", "¿Dónde está el pedido #104?"],
-  citas: ["Tiene hueco el jueves a las 11:00", "¿Qué citas tengo mañana?"],
+  general: ["📅 Pedir cita para mi negocio", "Genera la factura de Pepe", "Resumen del día", "¿Dónde está el pedido #104?"],
+  citas: ["Tiene hueco el jueves a las 11:00", "¿Qué citas tengo mañana?", "📅 Pedir cita para mi negocio"],
   facturacion: ["Genera la factura de Frutería Pepe", "¿Cuánto llevo facturado este mes?"],
   gps: ["¿Dónde está el pedido #104?", "¿Cuánto falta para la entrega?"],
 };
 
-const GENERIC_CHIPS = ["¿Qué puedes hacer?", "Resumen del día"];
+const GENERIC_CHIPS = ["📅 Pedir cita para mi negocio", "¿Qué puedes hacer?", "Resumen del día"];
 
 export default function StellaConsole() {
   const [mode, setMode] = useState<Mode>("general");
@@ -134,19 +134,51 @@ export default function StellaConsole() {
   ];
 
   return (
-    <section id="stella" ref={sectionRef} className="w-full py-20 lg:py-28 relative overflow-hidden">
+    <section id="stella" ref={sectionRef} className="w-full py-20 lg:py-28 relative overflow-hidden scroll-mt-20">
+      <div id="ai" className="relative -top-28 pointer-events-none" />
       <div className="orb orb-cyan w-[420px] h-[420px] -top-40 -left-32" aria-hidden />
       <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <span className="inline-block px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold uppercase tracking-wider mb-4">
-            Stella AI · Demo completa
+            Stella IA · Asistente Virtual 24/7 para Negocios en Zaragoza
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display">
-            Elige un modo y <span className="gradient-text">habla con Stella</span>
+            Tu Asistente Virtual Inteligente: <span className="gradient-text">Atención y Citas 24/7</span>
           </h2>
-          <p className="mt-4 text-muted max-w-2xl mx-auto text-lg">
-            Consola multi-modal: voz, texto y escenarios reales por sector.
+          <p className="mt-4 text-muted max-w-2xl mx-auto text-base sm:text-lg">
+            Diseñada para PYMEs y comercios locales de Zaragoza. Resuelve dudas de clientes al instante, sincroniza citas con Google Calendar y deriva solicitudes directas a tu agenda.
           </p>
+        </div>
+
+        {/* 3 Pilares visuales de Stella */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 max-w-4xl mx-auto">
+          <div className="glass rounded-xl p-4 border border-border/60 flex items-start gap-3">
+            <div className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
+              <Bot size={18} />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-foreground">Atención 24/7 sin esperas</h4>
+              <p className="text-[11px] text-muted mt-0.5">Responde dudas sobre horarios, tarifas y servicios de tu negocio en Zaragoza.</p>
+            </div>
+          </div>
+          <div className="glass rounded-xl p-4 border border-border/60 flex items-start gap-3">
+            <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+              <CalendarDays size={18} />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-foreground">Agenda y confirma citas</h4>
+              <p className="text-[11px] text-muted mt-0.5">Comprueba huecos libres y sincroniza con Google Calendar y avisos por WhatsApp.</p>
+            </div>
+          </div>
+          <div className="glass rounded-xl p-4 border border-border/60 flex items-start gap-3">
+            <div className="w-9 h-9 rounded-lg bg-cobalt-500/10 border border-cobalt-500/20 flex items-center justify-center text-cobalt-400 shrink-0">
+              <ArrowRight size={18} />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-foreground">Derivación directa (#cita)</h4>
+              <p className="text-[11px] text-muted mt-0.5">Cualifica las peticiones y transfiere al cliente directamente a tu formulario.</p>
+            </div>
+          </div>
         </div>
 
         <div className="w-full max-w-4xl mx-auto">
@@ -170,7 +202,7 @@ export default function StellaConsole() {
               ))}
               <span className="ml-auto hidden sm:inline-flex items-center gap-1.5 text-[11px] text-emerald-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Online
+                Online en Zaragoza
               </span>
             </div>
 
@@ -205,6 +237,21 @@ export default function StellaConsole() {
                           service={m.slots?.service}
                           kind={m.slots?.kind}
                         />
+                      )}
+                      {m.action === "referral" && (
+                        <div className="border-glow rounded-xl p-4 bg-gradient-to-r from-cyan-500/10 via-cobalt-500/10 to-transparent border border-cyan-500/40 max-w-sm">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <CalendarDays size={16} className="text-cyan-400" />
+                            <p className="text-xs font-bold text-foreground">Reserva de Auditoría Gratuita en Zaragoza</p>
+                          </div>
+                          <p className="text-xs text-muted mb-3">En menos de 2 horas analizamos tu negocio y preparamos tu demo con Stella IA sin compromiso.</p>
+                          <a
+                            href="#cita"
+                            className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-xs shadow-md shadow-cyan-500/20 hover:scale-[1.02] active:scale-95 transition-all"
+                          >
+                            Pedir Cita en el Formulario (#cita) →
+                          </a>
+                        </div>
                       )}
                       {m.action === "invoice" && <InvoiceCard onOpen={() => setInvOpen(true)} client={m.slots?.client} />}
                       {m.action === "summary" && (

@@ -1,4 +1,4 @@
-﻿import Header from '@/components/Header';
+import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import Footer from '@/components/Footer';
 import { LeadProvider } from '@/components/lead/LeadProvider';
@@ -13,6 +13,7 @@ const StellaConsole = dynamic(() => import('@/components/stella/StellaConsole'),
 const GpsModuleSection = dynamic(() => import('@/components/gps/GpsModuleSection'), {
   loading: () => <div className="w-full py-20 text-center text-sm text-muted animate-pulse">Cargando módulo GPS...</div>,
 });
+const WebDesignSection = dynamic(() => import('@/components/WebDesignSection'));
 const SectorsShowcase = dynamic(() => import('@/components/SectorsShowcase'));
 const PricingSection = dynamic(() => import('@/components/PricingSection'));
 const DashboardClient = dynamic(() => import('@/components/DashboardClient'), {
@@ -29,6 +30,7 @@ export default function LandingPage() {
         <main className="w-full min-w-0">
           <HeroSection />
           <ThreeStepLeadSection />
+          <WebDesignSection />
           <StellaConsole />
           <GpsModuleSection />
           <SectorsShowcase />

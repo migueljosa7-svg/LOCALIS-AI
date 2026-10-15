@@ -78,7 +78,7 @@ const TESTIMONIALS: Testimonial[] = [
 
 export default function TestimonialsSection() {
   return (
-    <section id="testimonios" className="w-full py-20 lg:py-28 bg-surface-elevated relative overflow-hidden">
+    <section id="testimonios" className="w-full py-20 lg:py-28 bg-surface-elevated relative overflow-hidden scroll-mt-20">
       <div className="orb orb-cyan w-[380px] h-[380px] top-10 -left-32 animate-float" aria-hidden />
       <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">

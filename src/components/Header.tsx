@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -8,12 +8,12 @@ import { cn } from '@/lib/utils';
 import { useLead } from '@/components/lead/LeadProvider';
 
 const navLinks = [
-  { label: 'Soluciones', href: '#inicio' },
-  { label: 'Stella IA (ERP)', href: '#stella' },
-  { label: 'Modulo GPS', href: '#gps' },
+  { label: 'Diseño Web', href: '#web' },
+  { label: 'Stella IA', href: '#stella' },
+  { label: 'Reparto GPS', href: '#reparto' },
   { label: 'Precios', href: '#precios' },
-  { label: 'Demo Interactiva', href: '#demo' },
-  { label: 'Pídeme una Cita', href: '#cita' },
+  { label: 'Demo', href: '#demo' },
+  { label: 'Pedir Cita', href: '#cita' },
 ];
 
 export default function Header() {
@@ -72,10 +72,10 @@ export default function Header() {
 
           <div className="hidden lg:flex items-center gap-3">
             <Link
-              href="#demo"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all"
+              href="#cita"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer"
             >
-              Probar Demo
+              Pedir Cita Gratuita
             </Link>
             <button
               type="button"
@@ -117,11 +117,11 @@ export default function Header() {
               ))}
               <div className="flex flex-col gap-3 pt-3 border-t border-glass-border">
                 <Link
-                  href="#demo"
-                  className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 0 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all"
+                  href="#cita"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Probar Demo
+                  Pedir Cita Gratuita
                 </Link>
                 <button
                   type="button"

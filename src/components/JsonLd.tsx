@@ -39,10 +39,10 @@ const LOCALIS_APPLICATION = {
 const LOCALIS_BUSINESS = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "LOCALIS AI",
-  image: "https://localis.ai/og-image.png",
+  name: "LOCALIS AI - Diseño Web e IA en Zaragoza",
+  image: "https://localis.ai/icons/icon-512.png",
   description:
-    "Automatización de negocios con IA Stella y GPS en tiempo real sin comisiones. Servicios para restaurantes, talleres, municipios y B2B.",
+    "Agencia de diseño web e inteligencia artificial en Zaragoza. Páginas web modernas, asistentes virtuales de IA (Stella 24/7) y software de reparto GPS para PYMEs y comercios locales.",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Zaragoza",

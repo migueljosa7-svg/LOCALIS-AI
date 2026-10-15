@@ -44,18 +44,19 @@ export default function GpsModuleSection() {
   const orders = ["#104", "#108", "#111"];
 
   return (
-    <section id="gps" ref={sectionRef} className="w-full py-20 lg:py-28 bg-surface-elevated relative overflow-hidden" style={{ contentVisibility: "auto" }}>
+    <section id="reparto" ref={sectionRef} className="w-full py-20 lg:py-28 bg-surface-elevated relative overflow-hidden scroll-mt-20" style={{ contentVisibility: "auto" }}>
+      <div id="gps" className="relative -top-28 pointer-events-none" />
       <div className="orb orb-emerald w-[380px] h-[380px] top-10 -right-24" aria-hidden />
       <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <span className="inline-block px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-4">
-            LOCALIS GPS · en vivo
+            LOCALIS GPS · Reparto en Zaragoza en vivo
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display">
-            Logística en tiempo real <span className="gradient-text">sin comisiones</span>
+            Seguimiento de reparto en tiempo real <span className="gradient-text">sin comisiones</span>
           </h2>
           <p className="mt-4 text-muted max-w-2xl mx-auto text-lg">
-            Mapa oscuro interactivo, repartidor animado y panel de entrega en directo.
+            Control de tus pedidos y repartidores en Zaragoza en mapa interactivo. Sin intermediarios ni pagar el 30% a plataformas de delivery.
           </p>
         </div>
 

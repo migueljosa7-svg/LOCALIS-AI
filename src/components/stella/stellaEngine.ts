@@ -9,9 +9,9 @@ export type StellaMode = "citas" | "facturacion" | "gps" | "general";
 export type IntentId =
   | "greeting" | "capabilities" | "pricing" | "availability"
   | "booking" | "invoice" | "summary" | "tracking"
-  | "hours" | "thanks" | "farewell" | "fallback";
+  | "hours" | "thanks" | "farewell" | "fallback" | "referral";
 
-export type StellaAction = "calendar" | "invoice" | "summary" | "tracking" | null;
+export type StellaAction = "calendar" | "invoice" | "summary" | "tracking" | "referral" | null;
 
 export interface StellaSlots {
   dayLabel?: string; dayDate?: string; time?: string;
@@ -125,21 +125,36 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
   const original = text.trim();
   if (!original) return { intent: "fallback", reply: "Escríbeme qué necesitas y lo ejecuto al momento.", action: null };
   if (/^(hola|buenas|buenos dias|buenas tardes|hey|saludos|que tal)\b/.test(t) && original.length < 40) {
-    return { intent: "greeting",
-      reply: "¡Hola! Soy Stella, tu operativa con IA. Hoy puedo:\n• Buscar huecos y reservar citas con Calendar\n• Generar facturas con IVA y PDF\n• Darte el resumen de ventas del día\n• Rastrear tus repartos por GPS en vivo\n\nDime, ¿empezamos por una cita, una factura o un pedido?",
+    return {
+      intent: "greeting",
+      reply: "¡Hola! Soy Stella, tu asistente virtual con IA 24/7 para negocios en Zaragoza.\n\nPuedo ayudarte con:\n• Resolver dudas de clientes y gestionar citas automáticamente\n• Sincronizar reservas con Google Calendar y WhatsApp\n• Derivar solicitudes directas al formulario de auditoría (#cita)\n• Emitir facturas con IVA y rastrear repartos GPS en vivo\n\n¿Quieres probar una reserva o pedir una cita para tu negocio?",
       action: null,
-      chips: ["¿Qué puedes hacer?", "Tienes hueco el viernes?", "Genera la factura de Pepe", "¿Dónde está el pedido #104?"] };
+      chips: ["📅 Pedir cita para mi negocio", "¿Qué puedes hacer?", "Tienes hueco mañana?", "Genera la factura de Pepe"]
+    };
+  }
+  if (has(t, ["auditoria", "cita zaragoza", "pedir cita", "formulario", "demo personalizada", "quiero cita", "agendar auditoria", "como gestionas citas", "como gestionas"])) {
+    return {
+      intent: "referral",
+      reply: "¡Excelente! Como asistente virtual IA para Zaragoza, atiendo a tus clientes 24/7, respondo preguntas de catálogo y derivo las solicitudes directamente al formulario de citas. Puedes reservar tu auditoría gratuita y demo personalizada ahora mismo:",
+      action: "referral",
+      chips: ["¿Qué puedes hacer?", "Tienes hueco mañana?", "Resumen de hoy"]
+    };
   }
   if (has(t, ["que puedes hacer", "que sabes hacer", "ayuda", "como funciona", "que haces", "capacidades", "para que sirves"])) {
-    return { intent: "capabilities",
-      reply: "Puedo operar tu negocio de punta a punta:\n\nCITAS — pregúntame huecos o pide reserva y sincronizo Calendar + WhatsApp.\nFACTURACIÓN — dime cliente y preparo desglose con IVA, PDF y envío.\nRESUMEN — dime resumen de hoy y te doy caja, citas y ticket medio.\nGPS — dime número de pedido y abro el mapa en vivo con ETA.\n\nPrueba: quiero reservar el jueves a las 11.",
+    return {
+      intent: "capabilities",
+      reply: "Como asistente IA para comercios y PYMEs en Zaragoza, opero tu negocio 24/7:\n\n1. GESTIÓN DE CITAS — Verifico huecos libres y sincronizo Calendar + WhatsApp.\n2. ATENCIÓN AL CLIENTE — Respondo dudas sobre servicios, precios y horarios sin esperas.\n3. DERIVACIÓN DIRECTA — Cualifico al cliente y lo dirijo a tu formulario de reserva (#cita).\n4. FACTURACIÓN Y GPS — Emito facturas y muestro el mapa de reparto en tiempo real.\n\nPrueba a escribir: 'Pedir cita para mi negocio' o 'Tienes hueco mañana'.",
       action: null,
-      chips: ["Tienes hueco mañana?", "Reserva el jueves a las 11:00", "Resumen de hoy", "¿Dónde está el pedido #104?"] };
+      chips: ["📅 Pedir cita para mi negocio", "Tienes hueco mañana?", "Resumen de hoy", "¿Dónde está el pedido #104?"]
+    };
   }
   if (has(t, ["cuanto cuesta", "cuanto vale", "precio", "precios", "planes", "tarifa", "cuota", "suscripcion"])) {
-    return { intent: "pricing",
-      reply: "Precios sin comisiones:\n• Starter 29 €/mes: agenda + Stella básica.\n• Pro 49 €/mes: citas + facturación + GPS en vivo.\n• Enterprise a medida: multi-local y API.\n\nCon 300 pedidos de 18 € al mes te ahorras unos 1.570 € frente al 30% de Glovo/Uber.",
-      action: null, chips: ["¿Qué puedes hacer?", "Genera la factura de Pepe", "Resumen de hoy"] };
+    return {
+      intent: "pricing",
+      reply: "Planes transparentes y sin comisiones para Zaragoza:\n• Iniciar (19 €/mes): web completa con Stella IA y agenda inteligente.\n• Pro (49 €/mes): citas, facturación y módulo GPS de reparto en tiempo real.\n• Empresarial: flota avanzada y soporte dedicado.\n\nSin comisiones de intermediarios (ahorra el 30% que cobran Glovo o Just Eat).",
+      action: null,
+      chips: ["📅 Pedir cita para mi negocio", "¿Qué puedes hacer?", "Resumen de hoy"]
+    };
   }
   if (has(t, ["gracias", "genial", "perfecto", "estupendo"])) {
     return { intent: "thanks", reply: "¡De nada! Para eso estoy. Sigo con lo siguiente: otro hueco, una factura o un reparto.",

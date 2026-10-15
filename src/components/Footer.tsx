@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 export default function Footer() {
@@ -24,9 +24,10 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-4">Soluciones</h4>
             <ul className="space-y-2 text-sm text-muted">
-              <li><Link href="#stella" className="hover:text-cyan-400 transition-all">Stella IA</Link></li>
-              <li><Link href="#gps" className="hover:text-cyan-400 transition-all">Modulo GPS</Link></li>
-              <li><Link href="#cita" className="hover:text-cyan-400 transition-all">Pídeme una Cita</Link></li>
+              <li><Link href="#web" className="hover:text-cyan-400 transition-all">Diseño Web Zaragoza</Link></li>
+              <li><Link href="#stella" className="hover:text-cyan-400 transition-all">Stella IA 24/7</Link></li>
+              <li><Link href="#reparto" className="hover:text-cyan-400 transition-all">Seguimiento Reparto GPS</Link></li>
+              <li><Link href="#cita" className="hover:text-cyan-400 transition-all">Pedir Cita Gratuita</Link></li>
               <li><Link href="#demo" className="hover:text-cyan-400 transition-all">Ver Demo</Link></li>
             </ul>
           </div>

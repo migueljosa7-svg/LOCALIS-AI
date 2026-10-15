@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -165,14 +165,14 @@ export default function ThreeStepLeadSection({ onSuccess, triggerLabel = 'Solici
   };
 
   return (
-    <section id="cita" className="w-full bg-surface-elevated py-20 lg:py-28 relative overflow-hidden">
+    <section id="cita" className="w-full bg-surface-elevated py-20 lg:py-28 relative overflow-hidden scroll-mt-20">
       <div className="orb orb-cyan w-[400px] h-[400px] -right-32 top-20" aria-hidden />
       <div className="orb orb-purple w-[320px] h-[320px] -left-24 bottom-16" aria-hidden />
       <div className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold mb-4"><CheckCircle2 size={14} /> 3 pasos para tu demo</div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display"><span className="gradient-text">Reserva tu Auditoría Gratuita</span></h2>
-          <p className="text-muted mt-4 max-w-xl mx-auto text-lg">Sin compromiso. En menos de 2 horas te explicamos cómo LOCALIS AI puede crecer tu negocio en Zaragoza.</p>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold mb-4"><CheckCircle2 size={14} /> 3 pasos para tu cita en Zaragoza</div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display"><span className="gradient-text">Reserva tu Auditoría y Demo Gratuita</span></h2>
+          <p className="text-muted mt-4 max-w-xl mx-auto text-lg">Sin compromiso. En menos de 2 horas analizamos tu negocio en Zaragoza y te mostramos cómo LOCALIS AI impulsa tus ventas.</p>
         </div>
 
         <div className="max-w-lg mx-auto">
