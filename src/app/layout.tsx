@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import CursorGlow from '@/components/effects/CursorGlow';
@@ -73,6 +74,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className={inter.variable + ' ' + spaceGrotesk.variable + ' w-full min-h-screen bg-[#0B0F17] text-foreground overflow-x-hidden p-0 m-0 pb-16 md:pb-0 antialiased'}
       >
+        {/* Google tag (gtag.js) - Google Ads: AW-18505356053 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18505356053"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads-gtag-config" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'AW-18505356053');`}
+        </Script>
         <PwaSetup />
         <CursorGlow />
         <LegalBanner />
