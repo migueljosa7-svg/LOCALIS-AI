@@ -7,10 +7,10 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Política de Cookies — LOCALIS AI",
+  title: "Política de cookies",
   description:
     "Información detallada sobre el uso de cookies y tecnologías similares en LOCALIS AI.",
-  robots: "noindex, nofollow",
+  robots: { index: false, follow: true },
 };
 
 export default function CookiesPolicyPage() {
@@ -44,6 +44,7 @@ export default function CookiesPolicyPage() {
             <li><strong>Necesarias:</strong> Son imprescindibles para el funcionamiento de la web (sesiones, accesos, seguridad). No requieren consentimiento.</li>
             <li><strong>Analíticas:</strong> Nos permiten comprender cómo los usuarios interactúan con la web para mejorar la experiencia.</li>
             <li><strong>De preferencias:</strong> Recordamos tus opciones y configuraciones.</li>
+            <li><strong>Publicitarias y de conversión:</strong> Miden la eficacia de nuestras campañas de Google Ads. Solo se activan si las aceptas.</li>
             <li><strong>De consentimiento:</strong> Nos permiten recordar qué has aceptado o rechazado.</li>
           </ul>
         </section>
@@ -64,6 +65,41 @@ export default function CookiesPolicyPage() {
             aceptar o no estas cookies corresponde al usuario, gestionada desde su
             configuración del navegador o desde el banner de consentimiento.
           </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left text-muted border border-white/10 rounded-xl">
+              <thead className="text-foreground">
+                <tr className="border-b border-white/10">
+                  <th scope="col" className="p-3">Cookie / almacenamiento</th>
+                  <th scope="col" className="p-3">Titular</th>
+                  <th scope="col" className="p-3">Finalidad</th>
+                  <th scope="col" className="p-3">Duración</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-white/10">
+                  <td className="p-3">localis-cookie-consent (localStorage)</td>
+                  <td className="p-3">LOCALIS AI</td>
+                  <td className="p-3">Recordar tu elección sobre cookies</td>
+                  <td className="p-3">Hasta que la borres</td>
+                </tr>
+                <tr className="border-b border-white/10">
+                  <td className="p-3">_gcl_au, _gcl_aw</td>
+                  <td className="p-3">Google Ireland Ltd.</td>
+                  <td className="p-3">Medición de conversiones de Google Ads (solo con tu consentimiento)</td>
+                  <td className="p-3">90 días</td>
+                </tr>
+                <tr>
+                  <td className="p-3">IDE, test_cookie (doubleclick.net)</td>
+                  <td className="p-3">Google Ireland Ltd.</td>
+                  <td className="p-3">Publicidad y remarketing de Google (solo con tu consentimiento)</td>
+                  <td className="p-3">Hasta 13 meses</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-muted">
+            Usamos el Modo de Consentimiento de Google: mientras no aceptes, Google solo recibe señales anónimas sin cookies.
+          </p>
         </section>
 
         <section className="space-y-4 border-border border-l-2 pl-4">
@@ -79,9 +115,9 @@ export default function CookiesPolicyPage() {
         <section className="space-y-4 border-border border-l-2 pl-4">
           <h2 className="text-xl font-bold font-display">6. Control continuo de consentimiento</h2>
           <p className="text-muted">
-            El banner de consentimiento se mostrará en cada navegación (o en una ventana
-            periódica) para garantizar que cada usuario pueda cambiar su decisión en
-            cualquier momento.
+            Puedes cambiar o retirar tu consentimiento en cualquier momento desde el enlace
+            «Configurar cookies» del pie de página. Volveremos a pedirte tu elección si
+            cambiamos las cookies que utilizamos.
           </p>
         </section>
 

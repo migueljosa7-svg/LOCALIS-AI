@@ -1,6 +1,6 @@
 import { Plan } from "@/types";
 
-export const PLANTS: Plan[] = [
+export const PLANS: Plan[] = [
   {
     id: "starter",
     name: "Iniciar",
@@ -17,7 +17,7 @@ export const PLANTS: Plan[] = [
       "Emails de bienvenida y reportes",
     ],
     highlighted: false,
-    cta: "Empezar Gratis",
+    cta: "Empezar con Iniciar",
   },
   {
     id: "pro",
@@ -28,7 +28,7 @@ export const PLANTS: Plan[] = [
     features: [
       "Todo lo del plan Iniciar",
       "Módulo GPS de reparto en tiempo real",
-      "Enlace de seguimiento nativo (WebSockets)",
+      "Enlace de seguimiento en tiempo real",
       "Sin comisiones de terceros",
       "Control de flota y vehículos",
       "Sincronización automática con WhatsApp",
@@ -36,7 +36,7 @@ export const PLANTS: Plan[] = [
       "Dashboard de reparto y métricas",
     ],
     highlighted: true,
-    cta: "Probar Demo",
+    cta: "Elegir Pro",
   },
   {
     id: "enterprise",
@@ -52,8 +52,8 @@ export const PLANTS: Plan[] = [
       "Dashboard customizable",
       "Dashboard B2G / municipal",
       "Implementación dedicada",
-      "Seguridad ISO y SOC2",
-      "SLA de 99.9%",
+      "Seguridad avanzada y copias diarias",
+      "SLA de disponibilidad 99,9 %",
     ],
     highlighted: false,
     cta: "Contactar Ventas",

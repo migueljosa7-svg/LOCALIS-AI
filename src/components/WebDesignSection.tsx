@@ -1,196 +1,140 @@
-"use client";
-
-import Link from "next/link";
-import { 
-  Globe, 
-  Smartphone, 
-  Search, 
-  Bot, 
-  CheckCircle2, 
-  ArrowRight, 
-  Sparkles, 
-  Zap, 
-  ShieldCheck, 
-  MapPin,
-  Clock
-} from "lucide-react";
-import { useLead } from "@/components/lead/LeadProvider";
+import { Globe, Smartphone, Search, Bot, CheckCircle2, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
+import WhatsAppIcon from "./WhatsAppIcon";
+import { waLink } from "@/lib/site";
 
 const WEB_FEATURES = [
   {
     icon: Search,
-    title: "Posicionamiento SEO Local en Zaragoza",
-    desc: "Optimizamos tu arquitectura web y Google Maps para que los clientes de Zaragoza te encuentren primero al buscar tus servicios.",
-    badge: "Google & Maps",
+    title: "SEO local en Zaragoza",
+    desc: "Arquitectura web y ficha de Google optimizadas para que te encuentren primero cuando buscan tu servicio cerca.",
+    badge: "Google y Maps",
   },
   {
     icon: Bot,
-    title: "Integración con Asistente Stella IA 24/7",
-    desc: "Tus visitantes no se quedan con dudas: Stella responde consultas, cualifica leads y agenda citas en piloto automático día y noche.",
-    badge: "IA Conversacional",
+    title: "Stella IA integrada",
+    desc: "Tus visitas no se quedan con dudas: Stella responde, cualifica y agenda citas día y noche.",
+    badge: "IA 24/7",
   },
   {
     icon: Smartphone,
-    title: "Diseño Mobile-First y Web App (PWA)",
-    desc: "Tu web carga en menos de 1 segundo en móviles, se puede instalar como aplicación en el teléfono del cliente y funciona sin fricción.",
-    badge: "Ultrarrápida",
+    title: "Móvil primero y ultrarrápida",
+    desc: "Carga instantánea en cualquier móvil y se instala como app (PWA) en el teléfono de tus clientes.",
+    badge: "PWA",
   },
   {
     icon: ShieldCheck,
-    title: "100% Tuya · Sin Comisiones a Terceros",
-    desc: "Olvídate de comisiones del 20% al 30% en plataformas externas. Vende tus productos, menús o servicios con cobro directo a tu cuenta.",
-    badge: "0% Comisiones",
+    title: "100 % tuya, sin comisiones",
+    desc: "Vende tus productos, menús o servicios y cobra directo en tu cuenta. Sin intermediarios.",
+    badge: "0 % comisiones",
+    live: true,
   },
 ];
 
 const LOCAL_SECTORS = [
-  "Restaurantes y Bares en Zaragoza",
-  "Clínicas dentales, fisioterapia y salud",
-  "Peluquerías, estética y barberías",
-  "Fruterías, panaderías y comercio local",
-  "Talleres mecánicos y servicios del automóvil",
-  "Reformas, cerrajería y servicios a domicilio",
+  "Restaurantes y bares",
+  "Clínicas dentales y fisioterapia",
+  "Peluquerías y estética",
+  "Fruterías y comercio de barrio",
+  "Talleres mecánicos",
+  "Reformas y servicios a domicilio",
+];
+
+const FACTS = [
+  { k: "Entrega", v: "5–10 días laborables" },
+  { k: "Velocidad móvil", v: "Objetivo 95+ en PageSpeed" },
+  { k: "Legal y RGPD", v: "Adaptado a España" },
+  { k: "Dominio y hosting", v: "Configuración incluida" },
 ];
 
 export default function WebDesignSection() {
-  const { openLead } = useLead();
-
   return (
-    <section
-      id="web"
-      className="w-full py-20 lg:py-28 relative overflow-hidden bg-background border-t border-border/40 scroll-mt-20"
-    >
-      {/* Orbes decorativos */}
-      <div className="orb orb-cyan w-[420px] h-[420px] top-12 -left-36 opacity-30" aria-hidden />
-      <div className="orb orb-purple w-[380px] h-[380px] bottom-10 -right-24 opacity-30" aria-hidden />
-
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Cabecera de la sección */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider mb-4">
-            <Globe size={14} className="text-cyan-400" />
-            <span>Diseño Web Local en Zaragoza</span>
-          </div>
-
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display leading-tight">
-            Páginas web creadas para <span className="gradient-text">vender y captar clientes</span> en Zaragoza
+    <section id="web" aria-labelledby="web-title" className="cv-auto section-band relative w-full py-20 lg:py-28">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <span className="eyebrow mb-5">
+            <Globe size={13} aria-hidden="true" /> Diseño web en Zaragoza
+          </span>
+          <h2 id="web-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
+            Webs creadas para <span className="gradient-text">vender y captar clientes</span>
           </h2>
-
-          <p className="mt-4 text-base sm:text-lg text-muted leading-relaxed">
-            Desarrollo web moderno adaptado a las necesidades de PYMEs y comercios locales aragoneses. 
-            Sin plantillas genéricas: webs rápidas, optimizadas para Google y conectadas con Inteligencia Artificial.
+          <p className="mt-5 text-muted text-base sm:text-lg leading-relaxed">
+            Sin plantillas genéricas: webs rápidas, optimizadas para Google y conectadas con inteligencia artificial, pensadas
+            para PYMEs y comercios de Zaragoza y Aragón.
           </p>
         </div>
 
-        {/* Grid de características destacadas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
           {WEB_FEATURES.map((item) => (
-            <div
-              key={item.title}
-              className="glass border-glow rounded-2xl p-6 flex flex-col justify-between hover:-translate-y-1 hover:shadow-neonglow transition-all duration-300"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-                    <item.icon size={22} />
-                  </div>
-                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-muted">
-                    {item.badge}
-                  </span>
-                </div>
-                <h3 className="text-lg font-bold font-display mb-2 text-foreground">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-muted leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-border/50 flex items-center gap-2 text-xs font-medium text-cyan-400">
-                <CheckCircle2 size={14} className="text-emerald-400" />
-                <span>Incluido en desarrollo</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Bloque comparativo / propuesta de valor local */}
-        <div className="glass-strong border border-cyan-500/30 rounded-3xl p-6 sm:p-10 lg:p-12 mb-12 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-cyan-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7">
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mb-4">
-                <Zap size={13} /> Ventaja competitiva para negocios de Zaragoza
-              </span>
-
-              <h3 className="text-2xl sm:text-3xl font-bold font-display leading-snug">
-                Tu escaparate digital 24/7 con soporte técnico local y de cercanía
-              </h3>
-
-              <p className="mt-4 text-muted text-sm sm:text-base leading-relaxed">
-                En LOCALIS AI no solo diseñamos una web bonita; creamos un sistema comercial completo. 
-                Cada página incluye integración con <strong>Google Maps</strong>, botones directos de <strong>WhatsApp</strong>, 
-                asistente virtual <strong>Stella IA</strong> para responder dudas a medianoche y pasarela de reservas directas.
-              </p>
-
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                {LOCAL_SECTORS.map((sector) => (
-                  <div key={sector} className="flex items-center gap-2 text-foreground/90">
-                    <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
-                    <span className="text-xs sm:text-sm">{sector}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="lg:col-span-5 bg-background/80 rounded-2xl p-6 border border-border flex flex-col gap-5">
-              <div className="flex items-center justify-between pb-4 border-b border-border">
-                <div className="flex items-center gap-2">
-                  <MapPin size={18} className="text-cyan-400" />
-                  <span className="font-semibold text-sm">Desarrollo Web en Zaragoza</span>
-                </div>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-400/10 text-emerald-400 font-medium">
-                  Auditoría Gratis
+            <li key={item.title} className="glow-card lift glass rounded-3xl p-6 flex flex-col">
+              <div className="flex items-center justify-between mb-5">
+                <span className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-300">
+                  <item.icon size={22} aria-hidden="true" />
+                </span>
+                <span
+                  className={
+                    "text-[11px] font-semibold px-2.5 py-1 rounded-full border " +
+                    (item.live ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300" : "bg-white/[0.04] border-white/10 text-muted")
+                  }
+                >
+                  {item.badge}
                 </span>
               </div>
+              <h3 className="font-display font-semibold text-lg mb-2">{item.title}</h3>
+              <p className="text-sm text-muted leading-relaxed">{item.desc}</p>
+            </li>
+          ))}
+        </ul>
 
-              <div className="space-y-3 text-xs sm:text-sm text-muted">
-                <div className="flex justify-between items-center">
-                  <span>Tiempo medio de entrega:</span>
-                  <span className="font-semibold text-foreground">5 a 10 días laborables</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Velocidad de carga móvil:</span>
-                  <span className="font-semibold text-emerald-400">Grado A (&gt;95 Google PSI)</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Cumplimiento legal y RGPD:</span>
-                  <span className="font-semibold text-foreground">100% Adaptado en España</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Dominio y hosting de alta velocidad:</span>
-                  <span className="font-semibold text-foreground">Configuración incluida</span>
-                </div>
+        <div className="border-glow rounded-[2rem] p-6 sm:p-10 lg:p-12 shadow-glass">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div className="lg:col-span-7">
+              <h3 className="font-display font-bold text-2xl sm:text-3xl leading-snug">
+                Tu escaparate digital 24/7, con soporte técnico local y cercano
+              </h3>
+              <p className="mt-4 text-muted text-sm sm:text-base leading-relaxed">
+                No solo diseñamos una web bonita: creamos un sistema comercial completo. Cada proyecto incluye{" "}
+                <strong className="text-foreground">Google Maps</strong>, botones directos de{" "}
+                <strong className="text-foreground">WhatsApp</strong>, la asistente <strong className="text-foreground">Stella IA</strong> y
+                reservas online directas.
+              </p>
+              <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
+                {LOCAL_SECTORS.map((sector) => (
+                  <li key={sector} className="flex items-center gap-2.5 text-sm text-foreground/90">
+                    <CheckCircle2 size={17} className="text-cyan-400 shrink-0" aria-hidden="true" />
+                    {sector}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="lg:col-span-5 rounded-3xl bg-[#0B0F17]/80 border border-white/[0.08] p-6 flex flex-col gap-5">
+              <div className="flex items-center justify-between pb-4 border-b border-white/[0.07]">
+                <span className="flex items-center gap-2 font-semibold text-sm">
+                  <MapPin size={17} className="text-cyan-400" aria-hidden="true" /> Desarrollo web en Zaragoza
+                </span>
+                <span className="text-[11px] px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/25 text-cyan-300 font-semibold">
+                  Auditoría gratis
+                </span>
               </div>
-
-              <div className="pt-2 flex flex-col gap-3">
-                <Link
-                  href="#cita"
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer"
-                >
-                  <Sparkles size={16} /> Pedir Auditoría Web Gratuita
-                  <ArrowRight size={16} />
-                </Link>
-
+              <dl className="space-y-3 text-sm">
+                {FACTS.map((f) => (
+                  <div key={f.k} className="flex justify-between gap-4">
+                    <dt className="text-muted">{f.k}</dt>
+                    <dd className="font-semibold text-right">{f.v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="flex flex-col gap-2.5 pt-1">
+                <a href="#cita" className="btn btn-primary w-full">
+                  Pedir auditoría web gratuita <ArrowRight size={17} aria-hidden="true" />
+                </a>
                 <a
-                  href="https://wa.me/34640809238?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20dise%C3%B1o%20web%20para%20mi%20negocio%20en%20Zaragoza"
+                  href={waLink("Hola LOCALIS AI, quiero información sobre diseño web para mi negocio en Zaragoza")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl glass border border-glass-border hover:border-emerald-500/40 text-foreground text-xs sm:text-sm font-medium transition-all"
+                  className="btn btn-ghost w-full text-sm"
                 >
-                  <Clock size={15} className="text-emerald-400" />
-                  <span>Consultar por WhatsApp (+34 640 80 92 38)</span>
+                  <WhatsAppIcon size={17} className="text-[#25D366]" /> Consultar por WhatsApp
                 </a>
               </div>
             </div>

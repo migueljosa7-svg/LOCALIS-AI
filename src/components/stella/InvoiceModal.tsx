@@ -18,20 +18,20 @@ const INVOICE_ITEMS = [
 ];
 
 export function InvoiceCard({ onOpen, client }: { onOpen: () => void; client?: string }) {
-  const who = client ?? "Fruteria Pepe";
+  const who = client ?? "Frutería Pepe";
   const total = totalFor(who);
   return (
-    <div className="border-glow rounded-xl p-4 bg-background/60 max-w-xs">
+    <div className="border-glow rounded-xl p-4 max-w-xs">
       <div className="flex items-center gap-2 mb-2">
-        <FileText size={14} className="text-emerald-400" />
+        <FileText size={14} className="text-cobalt-400" aria-hidden="true" />
         <p className="text-xs font-semibold">Factura INV-2026-104 · lista</p>
       </div>
       <p className="text-sm font-bold">{who} · {total} EUR</p>
-      <p className="text-xs text-muted mt-1">IVA 21% incluido · vence el 16 sept</p>
+      <p className="text-xs text-muted mt-1">IVA 21% incluido · vence en 7 días</p>
       <button
         type="button"
         onClick={onOpen}
-        className="mt-3 text-xs text-emerald-400 hover:text-emerald-300 font-semibold cursor-pointer transition-all hover:scale-[1.02]"
+        className="mt-3 text-xs text-cyan-400 hover:text-cyan-300 font-semibold"
       >
         Abrir factura →
       </button>
@@ -41,7 +41,7 @@ export function InvoiceCard({ onOpen, client }: { onOpen: () => void; client?: s
 
 export function InvoiceModal({ open, onClose, client }: { open: boolean; onClose: () => void; client?: string }) {
   const [sent, setSent] = useState(false);
-  const who = client ?? "Fruteria Pepe";
+  const who = client ?? "Frutería Pepe";
   const subtotal = 35.9;
   const iva = 6.46;
   const total = 42.36;
@@ -98,20 +98,20 @@ export function InvoiceModal({ open, onClose, client }: { open: boolean; onClose
         </div>
         <div className="flex justify-between font-bold text-base pt-1 border-t border-border">
           <span>TOTAL</span>
-          <span className="text-emerald-400">{total} EUR</span>
+          <span className="text-cyan-300">{total} EUR</span>
         </div>
         <div className="flex gap-2 pt-2">
           <button
             type="button"
             onClick={download}
-            className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl glass border border-border text-sm font-semibold hover:border-cyan-500/40 transition-all cursor-pointer"
+            className="btn btn-ghost flex-1 text-sm"
           >
             <Download size={14} /> Descargar
           </button>
           <button
             type="button"
             onClick={() => setSent(true)}
-            className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-sm font-semibold btn-glow transition-all cursor-pointer"
+            className="btn btn-primary flex-1 text-sm"
           >
             {sent ? <CheckCircle2 size={14} /> : <Send size={14} />}
             {sent ? "Enviada" : "Enviar"}

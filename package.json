@@ -5,13 +5,15 @@
   "engines": {
     "node": ">=20.9.0"
   },
-  "description": "LOCALIS AI - Plataforma SaaS con IA Stella y GPS en tiempo real",
+  "description": "LOCALIS AI - Webs con IA autónoma Stella y GPS integrado para PYMEs",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check": "tsc --noEmit && next build",
+    "assets:google": "node scripts/google-business-assets.mjs",
+    "assets:icons": "node scripts/generate-icons.mjs"
   },
   "repository": {
     "type": "git",
@@ -26,7 +28,6 @@
   },
   "homepage": "https://github.com/migueljosa7-svg/LOCALIS-AI#readme",
   "dependencies": {
-    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^14.0.0",
     "leaflet": "^1.9.4",
@@ -43,7 +44,9 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.6.1",
+    "playwright-core": "^1.49.1",
     "postcss": "^8.5.29",
+    "sharp": "^0.35.5",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.9.3"
   }

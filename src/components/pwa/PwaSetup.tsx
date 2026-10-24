@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m as motion, AnimatePresence } from "framer-motion";
 import { Download, Share, PlusSquare, X, Smartphone } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -66,7 +66,7 @@ export default function PwaSetup() {
       setDeferred(e as BeforeInstallPromptEvent);
       if (!dismissed()) {
         // Pequeño retardo para no interrumpir la primera impresión.
-        setTimeout(() => setVisible(true), 3500);
+        setTimeout(() => setVisible(true), 15000);
       }
     };
     window.addEventListener("beforeinstallprompt", onBIP);
@@ -81,7 +81,7 @@ export default function PwaSetup() {
     // iOS no emite beforeinstallprompt: mostramos el recordatorio manual.
     let iosTimer: number | undefined;
     if (ios && !dismissed()) {
-      iosTimer = window.setTimeout(() => setVisible(true), 6000);
+      iosTimer = window.setTimeout(() => setVisible(true), 25000);
     }
 
     return () => {
@@ -119,12 +119,12 @@ export default function PwaSetup() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 24, scale: 0.96 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed bottom-4 right-4 left-4 sm:left-auto z-[65] max-w-sm sm:w-[22rem] ml-auto"
+          className="fixed bottom-[calc(84px+env(safe-area-inset-bottom))] md:bottom-24 right-4 left-4 sm:left-auto z-[65] max-w-sm sm:w-[22rem] ml-auto"
           role="dialog"
           aria-label="Instalar aplicación"
         >
-          <div className="glass border-glow rounded-2xl p-4 shadow-neonglow relative overflow-hidden">
-            <div className="absolute -top-16 -right-10 w-40 h-40 rounded-full bg-cyan-500/20 blur-2xl pointer-events-none" />
+          <div className="border-glow rounded-2xl p-4 shadow-glass relative overflow-hidden">
+            
             <button
               type="button"
               onClick={dismiss}
@@ -135,7 +135,7 @@ export default function PwaSetup() {
             </button>
 
             <div className="flex items-start gap-3 pr-6">
-              <div className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-br from-cyan-500 to-cobalt-500 flex items-center justify-center text-white shadow-neonglow">
+              <div className="w-11 h-11 shrink-0 rounded-xl bg-brand flex items-center justify-center">
                 <Smartphone size={20} />
               </div>
               <div className="min-w-0">
@@ -162,7 +162,7 @@ export default function PwaSetup() {
                 type="button"
                 onClick={install}
                 disabled={!deferred}
-                className="mt-4 w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="btn btn-primary mt-4 w-full text-sm min-h-[44px] disabled:opacity-60"
               >
                 <Download size={15} /> Instalar App
               </button>

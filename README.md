@@ -1,54 +1,66 @@
-# LOCALIS AI — localis.ai
+# LOCALIS AI
 
-**La primera plataforma web con IA Autónoma y GPS Integrado para tu negocio.**
-
-Automatiza tu agenda, emite facturas, atiende a tus clientes 24/7 con la IA
-**Stella** y controla tus repartos en tiempo real sin comisiones.
-
-## Características
-
-1. **STELLA AI** — asistente conversacional autónomo / capa ERP:
-   agenda en Google Calendar, recordatorios por WhatsApp, facturación
-   básica en PDF y atención al cliente 24/7.
-2. **LOCALIS GPS** — módulo de reparto con seguimiento en tiempo real
-   (WebSockets + mapa interactivo), con enlaces de tracking nativos y
-   **0% de comisión** frente al ~30% de Glovo / Just Eat.
+Páginas web con IA autónoma (**Stella**) y **GPS de reparto integrado** para PYMEs de Zaragoza:
+atención por WhatsApp, citas automáticas, facturación 24/7 y entregas propias sin comisiones.
 
 ## Stack
 
-- Next.js 15 (App Router) + TypeScript + Tailwind CSS
-- Framer Motion + Lucide Icons + componentes estilo Shadcn UI (`cn` + cva)
-- Datos mock 100% locales: toda la interactividad funciona sin backend
+- Next.js 15 (App Router) · React 19 · TypeScript estricto
+- Tailwind CSS 3 · Framer Motion en modo ligero (`LazyMotion` + `m.*`)
+- Sin imágenes rasterizadas en la página: todo es SVG/CSS (0 KB de imágenes en la carga)
+- Despliegue: Vercel (build `next build`, Node ≥ 20.9)
+
+## Desarrollo
+
+```bash
+npm install
+npm run dev            # http://localhost:3000
+npm run typecheck      # TypeScript sin emitir
+npm run check          # typecheck + build de producción (lo mismo que hará Vercel)
+```
+
+## Recursos para Google Business
+
+```bash
+npm run build && npm start              # terminal 1
+npm run assets:google                   # terminal 2 → public/google-business-assets/
+BASE_URL=https://tu-dominio npm run assets:google   # o desde la web publicada
+```
+
+Genera logo (720×720 y 1080×1080), portada 16:9 (2048×1152), banners de servicios 4:3
+(1200×900) con capturas reales de la web, y `public/og-image.png` (1200×630).
+Usa Chrome/Edge instalados en el equipo (vía `playwright-core`, sin descargar navegadores).
 
 ## Estructura
 
 ```
 src/
   app/
-    layout.tsx          # layout raíz + metadata SEO
-    page.tsx            # landing page (composición de secciones)
-    globals.css         # design system (dark #0B0F17, cyan, emerald, cobalt)
-    dashboard/page.tsx  # ruta /dashboard (reutiliza el mockup cliente)
-  components/           # Header, Hero, StellaAiSimulator, GpsModuleSection,
-                        # SectorsCarousel, PricingSection, DashboardClient+tabs,
-                        # Footer, ui/* (button, card, modal)
-  lib/                  # utils, mockData, demoSamples, deliveries, plans,
-                        # sectors, faqs, demo (barrel)
-  hooks/                # useScrollPosition
-  types/                # interfaces TypeScript
-```
-
-## Desarrollo
-
-```bash
-npm install
-npm run dev      # http://localhost:3000
-npm run typecheck
-npm run build
+    layout.tsx            Layout raíz: SEO, viewport, Consent Mode v2, fuentes
+    page.tsx              Landing (composición de secciones)
+    globals.css           Design system: tokens, glass, glow, botones, animaciones GPU
+    (legal)/              Aviso legal, privacidad y cookies (+ layout con cabecera/pie)
+    dashboard/page.tsx    Vista previa del panel (noindex)
+    api/lead/route.ts     Recepción de leads (validación + rate-limit + email Resend)
+    robots.ts · sitemap.ts · not-found.tsx
+  components/
+    HeroSection · HeroShowcaseCard        Hero (componentes de servidor, 0 JS)
+    stella/                               Simulador de Stella con autopiloto + modales
+    gps/                                  Mapa de telemetría, panel y calculadora de ahorro
+    SectorsShowcase · PricingSection · ThreeStepLeadSection · FaqSection · …
+    brand/BrandMark.tsx                   Logotipo vectorial
+    effects/                              Orbes ambientales, brillo del cursor, contador, marcador de ruta
+    lead/                                 Contexto y modal de captura (carga bajo demanda)
+  lib/                                    site (contacto/URL), lead, analytics, plans, faqs, routes, env, email
+scripts/
+  google-business-assets.mjs              Generador de recursos para Google Business
+  generate-icons.mjs                      Iconos PWA
+public/
+  google-business-assets/                 Logo, portada y banners listos para subir
 ```
 
 ## Variables de entorno
 
-Copia `.env.example` a `.env.local` y completa los valores
-(Mapbox, Google, WhatsApp Cloud API, WebSocket GPS). La demo funciona
-sin claves: todos los datos son mock locales.
+Copia `.env.example` a `.env.local`. Todas son opcionales; las importantes en Vercel:
+`RESEND_API_KEY` (emails de leads), `NEXT_PUBLIC_SITE_URL` (si usas dominio propio) y
+`NEXT_PUBLIC_GADS_LEAD_SEND_TO` (conversión de Google Ads por lead).

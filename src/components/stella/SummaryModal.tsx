@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m as motion } from "framer-motion";
 import { TrendingUp, CalendarCheck, Euro, Users, ArrowUpRight } from "lucide-react";
 import { AppModal } from "./StellaActions";
 
@@ -46,11 +46,12 @@ export function SummaryModal({ open, onClose }: { open: boolean; onClose: () => 
           </div>
           <div className="flex items-end gap-2 h-32">
             {WEEK.map((b, i) => (
-              <div key={b.d} className="flex-1 flex flex-col items-center gap-1.5">
+              <div key={b.d} className="flex-1 h-full flex flex-col justify-end items-center gap-1.5">
                 <motion.div
-                  initial={{ height: 0 }}
-                  animate={{ height: `${(b.v / max) * 100}%` }}
+                  initial={{ scaleY: 0 }}
+                  animate={{ scaleY: 1 }}
                   transition={{ duration: 0.6, delay: 0.05 * i, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ height: `${(b.v / max) * 100}%`, transformOrigin: "bottom" }}
                   className={
                     "w-full rounded-t-md " +
                     (b.highlight
@@ -104,7 +105,7 @@ export function SummaryModal({ open, onClose }: { open: boolean; onClose: () => 
         <button
           type="button"
           onClick={onClose}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow transition-all cursor-pointer"
+          className="btn btn-primary w-full"
         >
           Entendido
         </button>

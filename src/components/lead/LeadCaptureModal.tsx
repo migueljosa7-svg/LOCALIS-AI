@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m as motion, AnimatePresence } from "framer-motion";
 import {
   X,
   Send,
@@ -24,6 +24,7 @@ import {
   type LeadData,
   type LeadErrors,
 } from "@/lib/lead";
+import { trackLead } from "@/lib/analytics";
 
 const EMPTY: LeadData = {
   businessName: "",
@@ -34,7 +35,7 @@ const EMPTY: LeadData = {
 };
 
 const FIELD_BASE =
-  "w-full rounded-xl bg-[#0B0F17]/70 border border-white/10 px-4 py-3 pl-11 text-sm text-foreground placeholder:text-muted/70 transition-all focus-ring";
+  "w-full min-h-[48px] rounded-xl bg-[#0B0F17]/80 border border-white/10 px-4 py-3 pl-11 text-[15px] text-foreground placeholder:text-muted/70 transition-colors focus-ring";
 
 export default function LeadCaptureModal() {
   const { isOpen, closeLead, source } = useLead();
@@ -89,6 +90,7 @@ export default function LeadCaptureModal() {
       const res = await submitLead({ ...form, source });
       if (!res.ok) throw new Error("submit-failed");
       setDegraded(Boolean(res.degraded));
+      trackLead("modal", source ?? undefined);
       setStatus("done");
     } catch {
       // Sin red / API caída: no perdemos la solicitud (ya persistida en local).
@@ -105,7 +107,7 @@ export default function LeadCaptureModal() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-[#0B0F17]/85 backdrop-blur-sm overflow-y-auto"
+          className="fixed inset-0 z-[78] flex items-center justify-center p-4 bg-[#05080d]/80 glass-bar overflow-y-auto"
           onClick={() => status !== "submitting" && closeLead()}
         >
           <motion.div
@@ -113,15 +115,18 @@ export default function LeadCaptureModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 12 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="glass border-glow rounded-2xl w-full max-w-lg relative overflow-hidden my-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="lead-modal-title"
+            className="border-glow rounded-3xl w-full max-w-lg relative overflow-hidden my-auto shadow-glass"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-cyan-500/20 blur-3xl pointer-events-none" />
+            <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(0,242,254,0.16), transparent 65%)" }} aria-hidden="true" />
             <button
               type="button"
               onClick={() => status !== "submitting" && closeLead()}
               aria-label="Cerrar"
-              className="absolute top-4 right-4 z-10 glass p-2 rounded-lg hover:border-cyan-500/40 transition-all cursor-pointer disabled:opacity-50"
+              className="absolute top-4 right-4 z-10 inline-flex w-10 h-10 items-center justify-center rounded-lg border border-white/10 hover:border-cyan-500/40 transition-colors disabled:opacity-50"
               disabled={status === "submitting"}
             >
               <X size={16} />
@@ -140,13 +145,13 @@ export default function LeadCaptureModal() {
                   className="relative p-6 sm:p-8"
                 >
                   <div className="mb-6">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold mb-3">
+                    <span className="eyebrow mb-3">
                       <Sparkles size={12} /> Demo gratuita · Sin compromiso
                     </span>
-                    <h3 className="text-2xl font-bold font-display">Solicitar Demo</h3>
+                    <h3 id="lead-modal-title" className="text-2xl font-bold font-display">Solicitar demo gratuita</h3>
                     <p className="text-sm text-muted mt-1.5">
                       Cuéntanos sobre tu negocio y te mostramos LOCALIS AI en acción.
-                      {source && <span className="ml-1 text-cyan-400/90">(Plan: {source})</span>}
+                      {source && <span className="ml-1 text-cyan-300">({source})</span>}
                     </p>
                   </div>
                   <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -224,7 +229,7 @@ export default function LeadCaptureModal() {
                     <button
                       type="submit"
                       disabled={status === "submitting"}
-                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+                      className="btn btn-primary w-full mt-2 disabled:opacity-70"
                     >
                       {status === "submitting" ? (
                         <>
@@ -239,7 +244,7 @@ export default function LeadCaptureModal() {
 
                     <p className="text-[11px] text-muted text-center leading-relaxed pt-1">
                       Al enviar aceptas que un especialista de LOCALIS AI te contacte. Sin spam.
-                      Protegemos tus datos según la RGPD.
+                      Tratamos tus datos según el RGPD (ver política de privacidad).
                     </p>
                   </form>
                 </motion.div>
@@ -292,7 +297,7 @@ function SuccessView({ onClose, degraded }: { onClose: () => void; degraded?: bo
         type="button"
         onClick={onClose}
         autoFocus
-        className="mt-7 w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer"
+        className="btn btn-primary mt-7 w-full"
       >
         Cerrar
       </button>

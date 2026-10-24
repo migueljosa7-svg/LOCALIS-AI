@@ -1,47 +1,42 @@
-import Header from '@/components/Header';
-import HeroSection from '@/components/HeroSection';
-import Footer from '@/components/Footer';
-import { LeadProvider } from '@/components/lead/LeadProvider';
-import LeadCaptureModal from '@/components/lead/LeadCaptureModal';
-import dynamic from 'next/dynamic';
-import ThreeStepLeadSection from '@/components/ThreeStepLeadSection';
+import dynamic from "next/dynamic";
+import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
+import WebDesignSection from "@/components/WebDesignSection";
+import DashboardPreview from "@/components/DashboardPreview";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import FaqSection from "@/components/FaqSection";
+import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
+import { LeadProvider } from "@/components/lead/LeadProvider";
+import LeadModalGate from "@/components/lead/LeadModalGate";
 
-// Módulos pesados con interactividad -> code-splitting (no bloquean LCP del hero).
-const StellaConsole = dynamic(() => import('@/components/stella/StellaConsole'), {
-  loading: () => <div className="w-full py-20 text-center text-sm text-muted animate-pulse">Cargando consola Stella...</div>,
-});
-const GpsModuleSection = dynamic(() => import('@/components/gps/GpsModuleSection'), {
-  loading: () => <div className="w-full py-20 text-center text-sm text-muted animate-pulse">Cargando módulo GPS...</div>,
-});
-const WebDesignSection = dynamic(() => import('@/components/WebDesignSection'));
-const SectorsShowcase = dynamic(() => import('@/components/SectorsShowcase'));
-const PricingSection = dynamic(() => import('@/components/PricingSection'));
-const DashboardClient = dynamic(() => import('@/components/DashboardClient'), {
-  loading: () => <div className="w-full py-20 text-center text-sm text-muted animate-pulse">Cargando demo interactiva...</div>,
-});
-const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'));
-const AiImpactBlock = dynamic(() => import('@/components/AiImpactBlock'));
+// Islas interactivas en chunks separados (se renderizan en el servidor para SEO,
+// pero su JS se descarga en paralelo y no bloquea el hero).
+const StellaConsole = dynamic(() => import("@/components/stella/StellaConsole"));
+const GpsModuleSection = dynamic(() => import("@/components/gps/GpsModuleSection"));
+const SectorsShowcase = dynamic(() => import("@/components/SectorsShowcase"));
+const PricingSection = dynamic(() => import("@/components/PricingSection"));
+const ThreeStepLeadSection = dynamic(() => import("@/components/ThreeStepLeadSection"));
 
 export default function LandingPage() {
   return (
     <LeadProvider>
-      <div className="w-full min-w-0 min-h-screen bg-background text-foreground antialiased overflow-x-hidden">
-        <Header />
-        <main className="w-full min-w-0">
-          <HeroSection />
-          <ThreeStepLeadSection />
-          <WebDesignSection />
-          <StellaConsole />
-          <GpsModuleSection />
-          <SectorsShowcase />
-          <PricingSection />
-          <DashboardClient />
-          <TestimonialsSection />
-          <AiImpactBlock />
-        </main>
-        <Footer />
-        <LeadCaptureModal />
-      </div>
+      <JsonLd />
+      <Header />
+      <main id="contenido" className="w-full min-w-0">
+        <HeroSection />
+        <StellaConsole />
+        <GpsModuleSection />
+        <SectorsShowcase />
+        <WebDesignSection />
+        <DashboardPreview />
+        <PricingSection />
+        <TestimonialsSection />
+        <ThreeStepLeadSection />
+        <FaqSection />
+      </main>
+      <Footer />
+      <LeadModalGate />
     </LeadProvider>
   );
 }

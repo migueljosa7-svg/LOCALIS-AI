@@ -1,119 +1,130 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useId, useState } from "react";
+import { Calculator, ArrowRight, TrendingDown } from "lucide-react";
 import AnimatedCounter from "@/components/effects/AnimatedCounter";
+import { PLANS } from "@/lib/plans";
 
-const PLAN_FLAT = 49; // Pro plan €/mes
-const TRADITIONAL = 0.3; // 30% Glovo/Uber Eats
+const PLAN_FLAT = PLANS.find((p) => p.id === "pro")?.priceMonth ?? 49;
 
 export default function RoiCalculator() {
   const [orders, setOrders] = useState(300);
-  const [ticket, setTicket] = useState(18);
+  const [ticket, setTicket] = useState(22);
+  const [fee, setFee] = useState(25);
+  const ids = { orders: useId(), ticket: useId(), fee: useId() };
 
   const monthlyVolume = orders * ticket;
-  const traditionalFee = monthlyVolume * TRADITIONAL;
-  const localisCost = PLAN_FLAT;
-  const monthlySave = Math.max(0, traditionalFee - localisCost);
+  const platformCost = monthlyVolume * (fee / 100);
+  const monthlySave = Math.max(0, platformCost - PLAN_FLAT);
   const yearlySave = monthlySave * 12;
-  const maxBar = 60000;
-  const pct = Math.min(100, (yearlySave / maxBar) * 100);
+  const keepPct = platformCost > 0 ? Math.min(100, (monthlySave / platformCost) * 100) : 0;
 
   return (
-    <div className="glass border-glow rounded-2xl p-6 lg:p-10 w-full">
-      <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold font-display">
-          Calculadora de <span className="gradient-text">ahorro y ROI</span>
-        </h3>
-        <p className="text-sm text-muted mt-2">
-          Mueve los sliders y mira el impacto financiero en directo.
-        </p>
-      </div>
+    <div className="border-glow rounded-3xl p-5 sm:p-8 lg:p-10 shadow-glass">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div>
+          <span className="eyebrow eyebrow-live">
+            <Calculator size={13} aria-hidden="true" /> Calculadora sin comisiones
+          </span>
+          <h3 className="mt-4 font-display font-bold text-2xl sm:text-3xl leading-tight">
+            ¿Cuánto te están costando <span className="gradient-text">las plataformas de reparto</span>?
+          </h3>
+          <p className="mt-3 text-sm sm:text-base text-muted">
+            Mueve los controles con tus números reales. El cálculo compara la comisión de la plataforma con la tarifa plana del plan Pro ({PLAN_FLAT} €/mes).
+          </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-6">
-          <div>
-            <label className="block text-xs font-semibold text-muted mb-2">
-              Pedidos mensuales: <span className="text-cyan-400 font-bold">{orders.toLocaleString("es-ES")}</span>
-            </label>
-            <input
-              type="range"
-              min={10}
-              max={2000}
-              step={10}
-              value={orders}
-              onChange={(e) => setOrders(Number(e.target.value))}
-              className="w-full accent-cyan-400 cursor-pointer"
-            />
-            <div className="flex justify-between text-[10px] text-muted mt-1">
-              <span>10</span>
-              <span>2.000 pedidos/mes</span>
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-muted mb-2">
-              Ticket medio: <span className="text-emerald-400 font-bold">{ticket} EUR</span>
-            </label>
-            <input
-              type="range"
-              min={5}
-              max={100}
-              step={1}
-              value={ticket}
-              onChange={(e) => setTicket(Number(e.target.value))}
-              className="w-full accent-emerald-400 cursor-pointer"
-            />
-            <div className="flex justify-between text-[10px] text-muted mt-1">
-              <span>5 EUR</span>
-              <span>100 EUR</span>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3 text-center">
-            <div className="rounded-xl bg-background/60 border border-border p-4">
-              <p className="text-lg font-bold text-red-400">
-                <AnimatedCounter value={traditionalFee} prefix="-" suffix=" EUR" />
-              </p>
-              <p className="text-[11px] text-muted mt-1">Comisiones Glovo/Uber (30%)</p>
-            </div>
-            <div className="rounded-xl bg-background/60 border border-border p-4">
-              <p className="text-lg font-bold text-cyan-400">
-                <AnimatedCounter value={localisCost} prefix="-" suffix=" EUR" />
-              </p>
-              <p className="text-[11px] text-muted mt-1">LOCALIS AI (tarifa plana)</p>
-            </div>
+          <div className="mt-7 space-y-6">
+            <Slider id={ids.orders} label="Pedidos a domicilio al mes" value={orders} min={20} max={2000} step={10} onChange={setOrders} display={`${orders.toLocaleString("es-ES")}`} />
+            <Slider id={ids.ticket} label="Ticket medio" value={ticket} min={8} max={80} step={1} onChange={setTicket} display={`${ticket} €`} />
+            <Slider id={ids.fee} label="Comisión de la plataforma" value={fee} min={20} max={30} step={1} onChange={setFee} display={`${fee} %`} />
           </div>
         </div>
 
-        <div className="flex flex-col justify-center">
-          <div className="rounded-2xl bg-gradient-to-br from-cyan-500/10 to-emerald-500/10 border border-cyan-500/20 p-6 text-center">
-            <p className="text-xs uppercase tracking-widest text-muted mb-1">Ahorro neto anual</p>
-            <p className="text-4xl lg:text-5xl font-black font-display gradient-text">
-              <AnimatedCounter value={yearlySave} prefix="" suffix=" EUR" />
-            </p>
-            <p className="text-xs text-muted mt-2">
-              {orders.toLocaleString("es-ES")} pedidos · {ticket} EUR de ticket medio
-            </p>
-          </div>
-          <div className="mt-6">
-            <div className="flex justify-between text-xs text-muted mb-2">
-              <span>Progreso del ahorro</span>
-              <span className="text-emerald-400 font-semibold">{pct.toFixed(0)}%</span>
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-white/[0.03] border border-white/[0.07] p-4">
+              <p className="text-[11px] text-muted">Pagas a la plataforma</p>
+              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-red-300 tabular-nums">
+                <AnimatedCounter value={platformCost} suffix=" €/mes" />
+              </p>
             </div>
-            <div className="h-3 rounded-full bg-background/70 border border-border overflow-hidden">
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-emerald-400 to-emerald-500"
-                initial={{ width: 0 }}
-                animate={{ width: `${pct}%` }}
-                transition={{ type: "spring", stiffness: 60, damping: 18 }}
+            <div className="rounded-2xl bg-white/[0.03] border border-white/[0.07] p-4">
+              <p className="text-[11px] text-muted">Con LOCALIS (tarifa plana)</p>
+              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-cyan-300 tabular-nums">{PLAN_FLAT} €/mes</p>
+            </div>
+          </div>
+
+          <div className="rounded-3xl p-6 sm:p-7 border border-emerald-500/30 bg-gradient-to-br from-emerald-500/[0.12] via-emerald-500/[0.04] to-transparent text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-emerald-300/90">Ahorro neto al año</p>
+            <p className="mt-2 font-display text-5xl sm:text-6xl font-bold text-emerald-400 tabular-nums">
+              <AnimatedCounter value={yearlySave} suffix=" €" />
+            </p>
+            <p className="mt-2 text-sm text-muted">
+              <AnimatedCounter value={monthlySave} suffix=" € al mes" className="text-emerald-300 font-semibold" /> que se quedan en tu caja
+            </p>
+            <div className="mt-5 h-2.5 rounded-full bg-white/[0.06] overflow-hidden" aria-hidden="true">
+              <div
+                className="h-full w-full origin-left rounded-full bg-gradient-to-r from-emerald-500 to-emerald-300 transition-transform duration-500 ease-out"
+                style={{ transform: `scaleX(${keepPct / 100})` }}
               />
             </div>
-            <p className="text-[11px] text-muted mt-2">
-              Volumen mensual: <span className="text-foreground font-semibold">{monthlyVolume.toLocaleString("es-ES")} EUR</span>
-              {" "}· Ahorro mensual: <span className="text-emerald-400 font-semibold">{monthlySave.toFixed(0)} EUR</span>
+            <p className="mt-2 text-[11px] text-muted flex items-center justify-center gap-1">
+              <TrendingDown size={12} className="text-emerald-400" aria-hidden="true" />
+              Recuperas el {Math.round(keepPct)}% de lo que hoy pagas en comisiones
             </p>
           </div>
+
+          <a href="#cita" className="btn btn-primary w-full">
+            Quiero dejar de pagar comisiones <ArrowRight size={17} aria-hidden="true" />
+          </a>
+          <p className="text-[11px] text-muted text-center">Estimación orientativa. Volumen mensual: {monthlyVolume.toLocaleString("es-ES")} €.</p>
         </div>
       </div>
+    </div>
+  );
+}
+
+function Slider({
+  id,
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+  display,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (n: number) => void;
+  display: string;
+}) {
+  const pct = ((value - min) / (max - min)) * 100;
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-2.5">
+        <label htmlFor={id} className="text-sm font-medium text-foreground/90">
+          {label}
+        </label>
+        <output htmlFor={id} className="font-display text-lg font-bold text-cyan-300 tabular-nums">
+          {display}
+        </output>
+      </div>
+      <input
+        id={id}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="range w-full"
+        style={{ ["--pct" as string]: `${pct}%` }}
+      />
     </div>
   );
 }

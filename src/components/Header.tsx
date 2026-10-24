@@ -1,143 +1,136 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { useLead } from '@/components/lead/LeadProvider';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Menu, X, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import BrandMark from "@/components/brand/BrandMark";
 
-const navLinks = [
-  { label: 'Diseño Web', href: '#web' },
-  { label: 'Stella IA', href: '#stella' },
-  { label: 'Reparto GPS', href: '#reparto' },
-  { label: 'Precios', href: '#precios' },
-  { label: 'Demo', href: '#demo' },
-  { label: 'Pedir Cita', href: '#cita' },
+const NAV_LINKS = [
+  { label: "Stella IA", href: "/#stella" },
+  { label: "GPS en vivo", href: "/#reparto" },
+  { label: "Sectores", href: "/#sectores" },
+  { label: "Diseño web", href: "/#web" },
+  { label: "Precios", href: "/#precios" },
+  { label: "FAQ", href: "/#faq" },
 ];
 
 export default function Header() {
-  const { openLead } = useLead();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  // Un solo listener pasivo, como mucho 1 setState por frame (y solo si cambia).
   useEffect(() => {
     let raf = 0;
     const onScroll = () => {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
-        setScrolled(window.scrollY > 40);
+        const next = window.scrollY > 24;
+        setScrolled((prev) => (prev === next ? prev : next));
       });
     };
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener("scroll", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const close = () => setOpen(false);
+
   return (
     <header
       className={cn(
-        'w-full sticky top-0 z-50 backdrop-blur-md transition-all duration-300',
-        scrolled
-          ? 'bg-[#0B0F17]/90 border-b border-white/10 shadow-lg'
-          : 'bg-[#0B0F17]/80 border-b border-white/10'
+        "no-print sticky top-0 z-50 w-full border-b transition-[background-color,border-color,box-shadow] duration-300",
+        scrolled || open
+          ? "glass-bar border-white/10 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.7)]"
+          : "bg-transparent border-transparent"
       )}
     >
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-cobalt-500 flex items-center justify-center text-white shadow-neonglow group-hover:shadow-neonglow transition-shadow">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M9 3C6.23858 3 4 5.23858 4 8C4 9.65685 5.656885 11 7.5 11C8.33795 11 9 10.3379 9 9.5C9 9.22386 8.77614 9 8.5 9C8.223386 9 8 9.22386 8 9.5C8 10.3379 8.66205 11 9.5 11C11.3431 11 13 9.656855 13 8C13 5.23858 10.7614 3 9 3Z" fill="currentColor" className="text-cyan-400" fillOpacity="0.3" />
-                <path d="M9 5.5C8.44772 5.5 8 5.94772 8 6.5C8 7.05228 8.44772 7.5 9 7.5C9.55228 7.5 10 7.05228 10 6.5C10 5.94772 9.55228 5.5 9 5.5Z" fill="currentColor" className="text-cyan-400" />
-              </svg>
-            </div>
-            <span className="text-lg font-bold font-display gradient-text tracking-tight">LOCALIS AI</span>
-          </Link>
+      <div className="mx-auto flex h-16 lg:h-[76px] w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link href="/" onClick={close} className="flex items-center gap-2.5 rounded-xl" aria-label="LOCALIS AI · inicio">
+          <BrandMark size={36} id="hdr" />
+          <span className="font-display text-[1.15rem] font-bold tracking-tight">
+            LOCALIS <span className="gradient-text">AI</span>
+          </span>
+        </Link>
 
-          <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-3 py-2 rounded-xl text-sm font-medium text-muted hover:text-cyan-400 hover:bg-cyan-500/10 transition-all"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="hidden lg:flex items-center gap-3">
-            <Link
-              href="#cita"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer"
+        <nav aria-label="Principal" className="hidden lg:flex items-center gap-1">
+          {NAV_LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-foreground hover:bg-white/[0.04]"
             >
-              Pedir Cita Gratuita
-            </Link>
-            <button
-              type="button"
-              onClick={() => openLead('Acceso Negocios')}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass text-foreground font-semibold text-sm border border-glass-border hover:border-cyan-500/30 transition-all cursor-pointer"
-            >
-              Acceso Negocios
-            </button>
-          </div>
+              {l.label}
+            </a>
+          ))}
+        </nav>
 
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden glass p-2 rounded-xl border border-glass-border cursor-pointer hover:scale-[1.02] transition-all"
-            aria-label="Abrir menu"
-          >
-            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
+        <div className="hidden lg:flex items-center gap-2.5">
+          <a href="/#stella" className="btn btn-ghost min-h-[42px] px-4 text-sm">
+            Probar demo
+          </a>
+          <a href="/#cita" className="btn btn-primary min-h-[42px] px-4 text-sm">
+            Auditoría gratis <ArrowRight size={15} aria-hidden="true" />
+          </a>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-foreground active:scale-95 transition-transform"
+        >
+          {open ? <X size={20} /> : <Menu size={20} />}
+        </button>
       </div>
 
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="lg:hidden overflow-hidden"
-          >
-            <div className="px-4 pb-6 pt-2 space-y-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2.5 rounded-xl text-sm font-medium text-muted hover:text-cyan-400 hover:bg-cyan-500/10 transition-all"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <div className="flex flex-col gap-3 pt-3 border-t border-glass-border">
-                <Link
-                  href="#cita"
-                  className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cobalt-500 text-white font-semibold text-sm btn-glow hover:shadow-neonglow transition-all cursor-pointer"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Pedir Cita Gratuita
-                </Link>
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl glass text-foreground font-semibold text-sm border border-glass-border hover:border-cyan-500/30 transition-all cursor-pointer"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    openLead('Acceso Negocios');
-                  }}
-                >
-                  Acceso Negocios
-                </button>
-              </div>
-            </div>
-          </motion.div>
+      {/* Menú móvil: grid-rows 0fr→1fr anima la altura sin JS ni layout thrash. */}
+      <div
+        id="mobile-menu"
+        className={cn(
+          "lg:hidden grid transition-[grid-template-rows,opacity] duration-300 ease-out",
+          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0 pointer-events-none"
         )}
-      </AnimatePresence>
+        aria-hidden={!open}
+      >
+        <div className="overflow-hidden">
+          <nav aria-label="Móvil" className="px-4 pb-5 pt-1 space-y-1">
+            {NAV_LINKS.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={close}
+                tabIndex={open ? 0 : -1}
+                className="flex items-center justify-between rounded-xl px-3 py-3 text-[15px] font-medium text-foreground/90 active:bg-white/[0.06]"
+              >
+                {l.label}
+                <ArrowRight size={15} className="text-muted" aria-hidden="true" />
+              </a>
+            ))}
+            <div className="grid grid-cols-2 gap-2 pt-3">
+              <a href="/#stella" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-ghost text-sm">
+                Probar demo
+              </a>
+              <a href="/#cita" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-primary text-sm">
+                Auditoría gratis
+              </a>
+            </div>
+          </nav>
+        </div>
+      </div>
     </header>
   );
 }

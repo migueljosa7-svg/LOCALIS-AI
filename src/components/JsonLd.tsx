@@ -1,67 +1,56 @@
 /**
- * Datos estructurados JSON-LD (Schema.org) inyectados en el <head>.
+ * Datos estructurados JSON-LD (Schema.org) en el <head>:
+ *  - ProfessionalService (negocio local en Zaragoza) → ficha enriquecida / Maps
+ *  - WebSite
+ *  - FAQPage (las mismas preguntas visibles en la sección #faq)
  *
- * Schemas incluidos:
- *  - SoftwareApplication (LOCALIS AI como aplicación SaaS)
- *  - LocalBusiness (LOCALIS AI como negocio B2B)
- *  - FAQPage (preguntas frecuentes de la landing)
+ * No se publica AggregateRating: Google exige que las valoraciones sean reales y
+ * verificables. Añádelo solo cuando tengas reseñas reales (p. ej. de Google Business).
  */
-
 import { FAQS } from "@/lib/faqs";
+import { PLANS } from "@/lib/plans";
+import { CONTACT, SITE_URL } from "@/lib/site";
 
-const LOCALIS_APPLICATION = {
+const BUSINESS = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  "@type": "ProfessionalService",
+  "@id": `${SITE_URL}/#negocio`,
   name: "LOCALIS AI",
-  applicationCategory: "BusinessApplication",
-  operatingSystem: "Web",
   description:
-    "Plataforma SaaS con IA Stella y GPS en tiempo real para negocios: automatización de citas, facturación, facturación de reparto sin comisiones y venta 24/7.",
-  url: "https://localis.ai",
-  author: {
-    "@type": "Organization",
-    name: "LOCALIS AI",
-    url: "https://localis.ai",
-  },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    ratingCount: "127",
-  },
-  offers: {
-    "@type": "Offer",
-    price: "49.00",
-    priceCurrency: "EUR",
-    availability: "https://schema.org/InStock",
-  },
-};
-
-const LOCALIS_BUSINESS = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  name: "LOCALIS AI - Diseño Web e IA en Zaragoza",
-  image: "https://localis.ai/icons/icon-512.png",
-  description:
-    "Agencia de diseño web e inteligencia artificial en Zaragoza. Páginas web modernas, asistentes virtuales de IA (Stella 24/7) y software de reparto GPS para PYMEs y comercios locales.",
+    "Diseño web e inteligencia artificial en Zaragoza: páginas web con asistente IA Stella 24/7 (WhatsApp, citas y facturación) y software de reparto GPS sin comisiones para PYMEs.",
+  url: SITE_URL,
+  logo: `${SITE_URL}/google-business-assets/logo-720x720.png`,
+  image: `${SITE_URL}/og-image.png`,
+  telephone: CONTACT.phoneE164,
+  email: CONTACT.email,
   address: {
     "@type": "PostalAddress",
     addressLocality: "Zaragoza",
+    addressRegion: "Aragón",
     addressCountry: "ES",
-    postalCode: "50001",
-    streetAddress: "Av. de la Independencia",
   },
-  phone: "+34640809238",
-  email: "migueljosa7@gmail.com",
-  priceRange: "€€€",
-  sameAs: [
-    "https://linkedin.com/company/localis-ai",
-    "https://x.com/localis_ai",
+  areaServed: [
+    { "@type": "City", name: "Zaragoza" },
+    { "@type": "AdministrativeArea", name: "Aragón" },
   ],
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    ratingCount: "127",
-  },
+  priceRange: "€€",
+  makesOffer: PLANS.map((p) => ({
+    "@type": "Offer",
+    name: `Plan ${p.name}`,
+    description: p.description,
+    price: p.priceMonth.toFixed(2),
+    priceCurrency: "EUR",
+  })),
+};
+
+const WEBSITE = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE_URL}/#web`,
+  url: SITE_URL,
+  name: "LOCALIS AI",
+  inLanguage: "es-ES",
+  publisher: { "@id": `${SITE_URL}/#negocio` },
 };
 
 const FAQ_PAGE = {
@@ -70,31 +59,19 @@ const FAQ_PAGE = {
   mainEntity: FAQS.map((faq) => ({
     "@type": "Question",
     name: faq.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: faq.answer,
-    },
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
   })),
 };
+
+// Escapa "<" para que ningún texto pueda cerrar la etiqueta <script>.
+const json = (data: unknown) => ({ __html: JSON.stringify(data).replace(/</g, "\\u003c") });
 
 export default function JsonLd() {
   return (
     <>
-      <script
-        key="softwareapplication"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(LOCALIS_APPLICATION) }}
-      />
-      <script
-        key="localbusiness"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(LOCALIS_BUSINESS) }}
-      />
-      <script
-        key="faqpage"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_PAGE) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={json(BUSINESS)} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={json(WEBSITE)} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={json(FAQ_PAGE)} />
     </>
   );
 }

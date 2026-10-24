@@ -1,167 +1,76 @@
+import { UtensilsCrossed, Wrench, Stethoscope, Store, Quote } from "lucide-react";
+
 /**
- * Sección: Testimonios y Reseñas (prueba social B2B)
- *
- * Casos de éxito simulados de negocios reales, con estrellas de confianza,
- * métricas de satisfacción y insignias de impacto.
+ * Escenarios de uso por tipo de negocio.
+ * IMPORTANTE: son ejemplos ilustrativos, no reseñas de clientes reales.
+ * Cuando tengas opiniones verificables (p. ej. reseñas de Google), sustitúyelas
+ * aquí con el nombre real del negocio y su permiso. Presentar reseñas inventadas
+ * como reales está prohibido (Directiva UE 2019/2161 y directrices de Google).
  */
-
-import { cn } from "@/lib/utils";
-
-interface Testimonial {
-  id: string;
-  business: string;
-  location: string;
-  rating: number;
-  quote: string;
-  metric: string;
-  metricLabel: string;
-  badge: string;
-}
-
-const TESTIMONIALS: Testimonial[] = [
+const SCENARIOS = [
   {
-    id: "t1",
-    business: "Frutería El Trébol",
-    location: "Zaragoza",
-    rating: 5,
-    quote:
-      "Con LOCALIS AI la caja de pedidos y la facturación se resolvieron sola. Ahorro de tiempo real y más cliente contento.",
-    metric: "7 h",
-    metricLabel: "Horas ahorradas/semana",
-    badge: "+62% de ahorro en gasto administrativo",
+    icon: UtensilsCrossed,
+    business: "Restaurante con reparto propio",
+    quote: "Los pedidos a domicilio entran por la web y los llevan nuestros repartidores. Lo que antes se iba en comisiones ahora se queda en caja.",
+    metric: "0 %",
+    metricLabel: "comisión por pedido",
   },
   {
-    id: "t2",
-    business: "Taller Mecánico Josa",
-    location: "Tortosa",
-    rating: 5,
-    quote:
-      "La agenda inteligente de Stella gestiona las citas de los talleres y el reparto de cotizaciones. Menos estrés, más vueltas.",
-    metric: "+38%",
-    metricLabel: "Más citas confirmadas",
-    badge: "Citas duplicadas -100%",
+    icon: Wrench,
+    business: "Taller mecánico",
+    quote: "Stella coge las citas mientras estamos con las manos en el motor y avisa al cliente cuando el coche está listo.",
+    metric: "24/7",
+    metricLabel: "citas sin coger el teléfono",
   },
   {
-    id: "t3",
-    business: "Restaurante La Lonja",
-    location: "Zaragoza",
-    rating: 5,
-    quote:
-      "El servidor de reservas y facturación redujo los tiempos de espera. Mesas más ocupadas y mejor experiencia de cliente.",
-    metric: "+41%",
-    metricLabel: "Tasa de ocupación",
-    badge: "Reseñas y valoración 5 estrellas",
+    icon: Stethoscope,
+    business: "Clínica de fisioterapia",
+    quote: "Los recordatorios por WhatsApp y el cambio de cita en un mensaje reducen los huecos vacíos de la agenda.",
+    metric: "Menos",
+    metricLabel: "ausencias y llamadas",
   },
   {
-    id: "t4",
-    business: "Panadería & Café Buen Día",
-    location: "Teruel",
-    rating: 5,
-    quote:
-      "El módulo GPS permitió llevar la ruta de reparto del día a día sin intermediarios. Ahorro de 30% que era de comisión.",
-    metric: "30%",
-    metricLabel: "Ahorro frente a delivery",
-    badge: "Comisión eliminada del coste",
-  },
-  {
-    id: "t5",
-    business: "Taller de Bolsones Sánchez",
-    location: "Migjorn",
-    rating: 5,
-    quote:
-      "Todo lo que vendemos se factura solo. Stella genera la factura en PDF, lo envía al cliente y nos avisa de la recepción.",
-    metric: "98%",
-    metricLabel: "Facturación en menos de 1 minuto",
-    badge: "Tiempo de visita al mostrador -50%",
+    icon: Store,
+    business: "Frutería de barrio",
+    quote: "Los pedidos de WhatsApp quedan ordenados, la factura sale sola y el cliente ve en el mapa cuándo llega su cesta.",
+    metric: "1 panel",
+    metricLabel: "pedidos, facturas y repartos",
   },
 ];
 
 export default function TestimonialsSection() {
   return (
-    <section id="testimonios" className="w-full py-20 lg:py-28 bg-surface-elevated relative overflow-hidden scroll-mt-20">
-      <div className="orb orb-cyan w-[380px] h-[380px] top-10 -left-32 animate-float" aria-hidden />
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-14">
-          <span className="inline-block px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-4">
-            Prueba social
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display">
-            ¿Qué dicen nuestros <span className="gradient-text">clientes</span>?
+    <section id="casos" aria-labelledby="casos-title" className="cv-auto section-band relative w-full py-20 lg:py-28">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <span className="eyebrow mb-5">Casos de uso</span>
+          <h2 id="casos-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
+            Así cambia el día a día de <span className="gradient-text">un negocio local</span>
           </h2>
-          <p className="mt-4 text-muted max-w-2xl mx-auto text-lg">
-            Resultados reales de negocios que ya cambiaron su operativa con LOCALIS AI.
-          </p>
+          <p className="mt-5 text-muted text-base sm:text-lg">Escenarios típicos de negocios de Zaragoza que trabajan con webs con IA y reparto propio.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t) => (
-            <article
-              key={t.id}
-              className={cn(
-                "glass border-glow rounded-2xl p-6 transition-all hover:-translate-y-1 hover:shadow-neonglow",
-                "border border-border/60",
-              )}
-            >
-              {/* Estrellas de confianza */}
-              <div className="flex items-center gap-1 text-amber-400 mb-4">
-                {Array.from({ length: 5 }, (_, i) => (
-                  <span
-                    key={i}
-                    className={cn(
-                      "text-sm leading-none",
-                      i < t.rating ? "opacity-100" : "opacity-30",
-                    )}
-                  >
-                    ★
-                  </span>
-                ))}
-              </div>
-
-              {/* Negocio y ubicación */}
-              <div className="flex items-center gap-2 text-xs text-muted uppercase tracking-wider mb-3">
-                <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                {t.business}
-                <span className="text-border">·</span>
-                <span>{t.location}</span>
-              </div>
-
-              {/* Citación */}
-              <blockquote className="text-sm text-muted leading-relaxed mb-4">
-                “{t.quote}”
-              </blockquote>
-
-              {/* Métricas */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-2xl font-bold font-display gradient-text">
-                    {t.metric}
-                  </p>
-                  <p className="text-xs text-muted mt-0.5">{t.metricLabel}</p>
-                </div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-                  {t.badge}
+        <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          {SCENARIOS.map((s) => (
+            <li key={s.business} className="glow-card lift glass rounded-3xl p-6 flex flex-col">
+              <div className="flex items-center gap-3">
+                <span className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-cyan-300 flex items-center justify-center">
+                  <s.icon size={19} aria-hidden="true" />
                 </span>
+                <p className="font-display font-semibold text-[15px] leading-tight">{s.business}</p>
               </div>
-            </article>
+              <blockquote className="mt-5 text-[15px] text-foreground/85 leading-relaxed flex-1">
+                <Quote size={16} className="text-cyan-500/60 mb-2" aria-hidden="true" />
+                {s.quote}
+              </blockquote>
+              <div className="mt-6 pt-4 border-t border-white/[0.07]">
+                <p className="font-display text-2xl font-bold text-emerald-400">{s.metric}</p>
+                <p className="text-xs text-muted">{s.metricLabel}</p>
+              </div>
+            </li>
           ))}
-        </div>
-
-        {/* Insignias de confianza */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-muted">
-          {[
-            "Más del 90% realizó su prueba en menos de 10 minutos",
-            "Más del 95% recomienda LOCALIS AI a otro negocio",
-            "Mención de especialistas en el sector salud",
-            "127+ empresas ya activas",
-          ].map((badge) => (
-            <span
-              key={badge}
-              className="px-3 py-1.5 rounded-full bg-background/60 border border-border text-center"
-            >
-              {badge}
-            </span>
-          ))}
-        </div>
+        </ul>
+        <p className="mt-6 text-center text-xs text-muted">Escenarios ilustrativos. Pide en la auditoría ejemplos reales de tu sector.</p>
       </div>
     </section>
   );
