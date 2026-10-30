@@ -97,8 +97,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PQQNZPC7"></script>
         <script>
           window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
         </script>
         {/* gtag.js se descarga en la primera interacción (o a los 4 s): no compite con el LCP. */}
         <GtagLoader id={GOOGLE_ADS_ID} />
