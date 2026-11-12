@@ -9,6 +9,8 @@ export interface LeadData {
   source?: string | null;
   /** Resumen de la configuración elegida en el configurador (opcional). */
   details?: string | null;
+  /** Prompt técnico generado por el estudio visual (solo llega al email interno). */
+  prompt?: string | null;
 }
 
 export interface LeadErrors {
@@ -127,7 +129,8 @@ export async function submitLead(data: LeadData): Promise<{ ok: boolean; degrade
     phone: data.phone.trim(),
     email: data.email.trim().toLowerCase(),
     source: data.source ?? null,
-    details: data.details ? data.details.trim().slice(0, 600) : null,
+    details: data.details ? data.details.trim().slice(0, 1200) : null,
+    prompt: data.prompt ? data.prompt.trim().slice(0, 8000) : null,
   };
 
   try {

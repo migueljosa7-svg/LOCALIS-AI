@@ -5,9 +5,9 @@ import type { FaqItem } from "@/types";
 export const FAQS: FaqItem[] = [
   {
     id: "faq0",
-    question: "¿Cómo sé cuánto me costará la web y cuánto voy a ahorrar?",
+    question: "¿Cuánto cuesta mi web y cuánto ahorro frente a una agencia?",
     answer:
-      "Usa el configurador de esta página: eliges tu sector, el número de páginas y las funciones (citas con IA, WhatsApp y facturación, carta o catálogo, GPS de reparto) y ves al instante el plan recomendado y una estimación del dinero y las horas que ahorras cada mes. Con un clic nos envías esa configuración y te preparamos la demo.",
+      "El desarrollo es un pago único: la Web Esencial (hasta 5 páginas, botones y animaciones) cuesta 400 €, cada página extra 15 €, IA Stella 150 €, el mapa GPS de reparto 150 € y la carta o catálogo digital 100 €, con un tope cerrado de 800 € aunque lo incluyas todo. En el estudio «Diseña tu web» lo configuras en directo y ves la comparativa con los precios que publican las agencias españolas, con sus fuentes. Después eliges el mantenimiento mensual (Iniciar 19 €, Pro 39 € o Empresarial).",
     category: "Planes",
   },
   {

@@ -219,21 +219,3 @@ export function compute(input: Config): Result {
     yearlyNet: monthlyNet * 12,
   };
 }
-
-const fmt = (n: number) => Math.round(n).toLocaleString("es-ES");
-
-/** Resumen legible que viaja con el lead (y al WhatsApp). */
-export function summarize(input: Config, r: Result): string {
-  const c = sanitize(input);
-  const s = sectorById(c.sector);
-  const pages = PAGE_OPTIONS.find((p) => p.id === c.pages);
-  const feats = FEATURES.filter((f) => c.features.includes(f.id)).map((f) => f.title.split(" con ")[0].split(" de ")[0]);
-  return [
-    `${s.label}`,
-    `${pages?.label} (${pages?.detail.toLowerCase()})`,
-    `Funciones: ${feats.join(", ") || "ninguna"}`,
-    `${fmt(c.volume)} ${s.unit}/mes`,
-    `Ahorro estimado: ${fmt(r.monthlyNet)} €/mes y ${fmt(r.hours)} h/mes`,
-    `Plan sugerido: ${r.planName} (${r.planPrice} €/mes)`,
-  ].join(" · ");
-}

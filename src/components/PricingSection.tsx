@@ -5,6 +5,8 @@ import { Check, ArrowRight, BadgePercent } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PLANS } from "@/lib/plans";
 import { useLead } from "@/components/lead/LeadProvider";
+import { MODULES, PRICING } from "@/components/configurator/studioModel";
+import { MARKET } from "@/lib/marketPrices";
 
 export default function PricingSection() {
   const [yearly, setYearly] = useState(false);
@@ -23,6 +25,23 @@ export default function PricingSection() {
           <p className="mt-5 text-muted text-base sm:text-lg">Cambia de plan o cancela cuando quieras. Sin permanencia.</p>
         </div>
 
+        {/* Desarrollo de la web: pago único con tope cerrado */}
+        <div className="mx-auto mb-10 max-w-5xl rounded-3xl border border-cyan-500/25 bg-gradient-to-r from-cyan-500/[0.08] via-cobalt-500/[0.05] to-transparent p-5 sm:p-6 flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
+          <div className="flex-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300">Desarrollo de tu web · pago único</p>
+            <p className="mt-1 font-display text-2xl sm:text-3xl font-bold">
+              Desde {PRICING.base} € <span className="text-base font-medium text-muted">· tope cerrado de {PRICING.cap} € con todo incluido</span>
+            </p>
+            <p className="mt-1 text-sm text-muted">
+              Una web corporativa de agencia parte de unos {MARKET.web.value.toLocaleString("es-ES")} € ({MARKET.web.range.split(";")[0]}). Páginas extra +{PRICING.extraPage} €{MODULES.map((m) => ` · ${m.label} +${m.price} €`).join("")}.
+            </p>
+          </div>
+          <a href="#configurador" className="btn btn-primary shrink-0">
+            Diseñar y calcular mi precio
+          </a>
+        </div>
+
+        <p className="text-center text-sm font-semibold text-foreground/90 mb-3">Mantenimiento y funciones mensuales</p>
         <div className="flex justify-center mb-10">
           <div role="group" aria-label="Periodo de facturación" className="inline-flex p-1 rounded-2xl bg-white/[0.04] border border-white/10">
             {[

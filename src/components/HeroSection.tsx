@@ -13,7 +13,7 @@ export default function HeroSection() {
     <section
       id="inicio"
       aria-labelledby="hero-title"
-      className="relative w-full overflow-hidden lg:min-h-[calc(100svh-76px)] flex items-center"
+      className="relative w-full overflow-hidden lg:min-h-[calc(100svh-64px)] flex items-center"
     >
       <div className="tech-grid absolute inset-0 pointer-events-none" aria-hidden="true" />
       <div

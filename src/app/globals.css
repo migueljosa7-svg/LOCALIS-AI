@@ -19,9 +19,6 @@
   --header-h: 64px;
   color-scheme: dark;
 }
-@media (min-width: 1024px) {
-  :root { --header-h: 76px; }
-}
 
 @layer base {
   html {
@@ -543,6 +540,150 @@
   to { transform: translate3d(calc(100cqw - 2rem), 0, 0); }
 }
 .config-preview .cfg-rider-track { container-type: inline-size; }
+
+/* ── Estudio visual: lienzo con la paleta del cliente ───────────
+   Variables --c-* las fija el estudio en línea. Todas las animaciones
+   usan transform/opacity (GPU) y tienen equivalente en :focus-visible
+   (teclado), :active (táctil) y .is-demo (al elegir la animación). */
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+}
+.swatch:active { transform: scale(0.92); }
+.swatch.is-selected { transform: scale(1.12); box-shadow: 0 0 0 3px #0b0f17, 0 0 0 5px rgba(0, 242, 254, 0.8); }
+
+.studio-canvas {
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--c-font);
+  transition: background-color 0.35s ease, color 0.35s ease;
+  min-height: 420px;
+}
+.sc-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.sc-logo { font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
+.sc-tabs { display: flex; gap: 0.25rem; overflow-x: auto; margin-left: auto; }
+.sc-tab {
+  flex-shrink: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--c-muted);
+  padding: 0.4rem 0.65rem;
+  border-radius: 0.6rem;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.sc-tab:hover { color: var(--c-text); }
+/* Texto siempre en --c-text (contraste garantizado con cualquier color de marca);
+   el color de marca solo como acento visual. */
+.sc-tab.is-active { color: var(--c-text); background: color-mix(in srgb, var(--c-accent) 10%, transparent); box-shadow: inset 0 -2px 0 var(--c-accent); }
+.sc-hero { padding: 1.75rem 1.25rem 1.25rem; }
+.sc-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.sc-kicker::before { content: ""; width: 1.1rem; height: 3px; border-radius: 9px; background: var(--c-accent); }
+.sc-title { margin-top: 0.35rem; font-size: clamp(1.35rem, 2.6vw, 1.85rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; }
+.sc-sub { margin-top: 0.4rem; font-family: system-ui, sans-serif; font-size: 0.8rem; color: var(--c-muted); }
+.sc-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.1rem; min-height: 44px; }
+.sc-empty { font-family: system-ui, sans-serif; font-size: 0.75rem; color: var(--c-muted); align-self: center; }
+
+.sc-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 0 1.05rem;
+  border-radius: 0.8rem;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--c-on-accent);
+  background: var(--c-accent);
+  border: 2px solid var(--c-accent);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.sc-btn.is-outline { background: transparent; color: var(--c-text); }
+.sc-btn .sc-arrow { transition: transform 0.28s ease; }
+/* Capa de brillo (Deslizamiento suave) recortada al botón */
+.sc-sweep { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; z-index: -1; }
+.sc-sweep::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.5) 50%, transparent 80%);
+  transform: translate3d(-120%, 0, 0);
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Halo (Brillo neón) y sombra (Elevación 3D) en un pseudo-elemento: solo opacity */
+.sc-btn::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -2;
+}
+.anim-neon::after { box-shadow: 0 0 0 2px var(--c-accent), 0 0 24px 6px color-mix(in srgb, var(--c-accent) 70%, transparent); }
+.anim-lift::after { box-shadow: 0 18px 30px -10px rgba(0, 0, 0, 0.45); }
+
+.anim-neon:hover::after, .anim-neon:focus-visible::after, .anim-neon:active::after, .anim-neon.is-demo::after,
+.anim-lift:hover::after, .anim-lift:focus-visible::after, .anim-lift:active::after, .anim-lift.is-demo::after { opacity: 1; }
+.anim-lift:hover, .anim-lift:focus-visible, .anim-lift:active, .anim-lift.is-demo { transform: perspective(500px) translate3d(0, -4px, 0) rotateX(8deg); }
+.anim-pulse:hover, .anim-pulse:focus-visible, .anim-pulse:active, .anim-pulse.is-demo { animation: scPulse 0.9s ease-in-out infinite; }
+.anim-slide:hover .sc-sweep::before, .anim-slide:focus-visible .sc-sweep::before, .anim-slide:active .sc-sweep::before, .anim-slide.is-demo .sc-sweep::before { transform: translate3d(120%, 0, 0); }
+.anim-slide:hover .sc-arrow, .anim-slide:focus-visible .sc-arrow, .anim-slide.is-demo .sc-arrow { transform: translate3d(4px, 0, 0); }
+.sc-btn:hover .sc-arrow { transform: translate3d(3px, 0, 0); }
+@keyframes scPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.sc-modules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; padding: 0 1.25rem 1.25rem; }
+.sc-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 0.9rem;
+  padding: 0.75rem;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.sc-wide { grid-column: span 2 / span 2; }
+.sc-card-title { display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--c-text); }
+.sc-card-title svg { color: var(--c-accent); }
+.sc-item { border-radius: 0.6rem; border: 1px solid var(--c-border); padding: 0.4rem; }
+.sc-thumb { height: 2.2rem; border-radius: 0.4rem; background: color-mix(in srgb, var(--c-accent) 22%, var(--c-bg)); }
+.sc-line { margin-top: 0.35rem; height: 0.35rem; width: 75%; border-radius: 9px; background: color-mix(in srgb, var(--c-text) 18%, transparent); }
+.sc-price { margin-top: 0.25rem; height: 0.35rem; width: 35%; border-radius: 9px; background: var(--c-accent); opacity: 0.7; }
+.sc-bubble { font-size: 0.72rem; line-height: 1.35; padding: 0.45rem 0.6rem; border-radius: 0.7rem 0.7rem 0.7rem 0.2rem; background: color-mix(in srgb, var(--c-accent) 12%, var(--c-bg)); }
+.sc-track { position: relative; height: 1.8rem; border-radius: 0.5rem; background: color-mix(in srgb, var(--c-text) 7%, var(--c-bg)); overflow: hidden; container-type: inline-size; }
+.sc-road { position: absolute; left: 0.5rem; right: 0.5rem; top: 50%; height: 2px; transform: translateY(-50%); background: color-mix(in srgb, var(--c-accent) 45%, transparent); }
+.sc-rider { top: 50%; margin-top: -6px; width: 12px; height: 12px; border-radius: 9999px; background: var(--c-accent); box-shadow: 0 0 10px var(--c-accent); position: absolute; }
+.sc-dest { position: absolute; right: 0.5rem; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 9999px; background: #10b981; }
 
 /* Ocultar barra de scroll horizontal en carruseles táctiles */
 .no-scrollbar { scrollbar-width: none; }

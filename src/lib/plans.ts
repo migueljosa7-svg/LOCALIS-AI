@@ -22,8 +22,8 @@ export const PLANS: Plan[] = [
   {
     id: "pro",
     name: "Pro",
-    priceMonth: 49,
-    priceYear: 490,
+    priceMonth: 39,
+    priceYear: 390,
     description: "Para negocios que necesitan envíos en tiempo real y control total de su flota de repartidores.",
     features: [
       "Todo lo del plan Iniciar",

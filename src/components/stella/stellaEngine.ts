@@ -151,7 +151,7 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
   if (has(t, ["cuanto cuesta", "cuanto vale", "precio", "precios", "planes", "tarifa", "cuota", "suscripcion"])) {
     return {
       intent: "pricing",
-      reply: "Planes transparentes y sin comisiones para Zaragoza:\n• Iniciar (19 €/mes): web completa con Stella IA y agenda inteligente.\n• Pro (49 €/mes): citas, facturación y módulo GPS de reparto en tiempo real.\n• Empresarial: flota avanzada y soporte dedicado.\n\nSin comisiones de intermediarios (ahorra el 30% que cobran Glovo o Just Eat).",
+      reply: "Planes transparentes y sin comisiones para Zaragoza:\n• Iniciar (19 €/mes): web completa con Stella IA y agenda inteligente.\n• Pro (39 €/mes): citas, facturación y módulo GPS de reparto en tiempo real.\n• Empresarial: flota avanzada y soporte dedicado.\n\nLa web se desarrolla desde 400 € (pago único, con tope cerrado de 800 € todo incluido) y sin comisiones de intermediarios (ahorra el 20–30 % que cobran Glovo o Just Eat).",
       action: null,
       chips: ["📅 Pedir cita para mi negocio", "¿Qué puedes hacer?", "Resumen de hoy"]
     };

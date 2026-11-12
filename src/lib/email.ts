@@ -15,6 +15,7 @@ export interface LeadEmailData {
   email: string;
   source?: string | null;
   details?: string | null;
+  prompt?: string | null;
 }
 
 function esc(s: string): string {
@@ -93,6 +94,12 @@ function adminHtml(lead: LeadEmailData, receivedAt: string): string {
     lead.details ? row('Configuración elegida', lead.details) : '',
     row('Recibido', receivedAt),
     '</table>',
+    lead.prompt
+      ? '<h3 style="margin:24px 0 8px;font-size:15px;color:#0f172a">Prompt técnico para Claude (copiar y pegar)</h3>' +
+        '<pre style="white-space:pre-wrap;word-break:break-word;background:#0b0f17;color:#e2e8f0;padding:16px;border-radius:10px;font-size:12px;line-height:1.5">' +
+        esc(lead.prompt) +
+        '</pre>'
+      : '',
     '<p style="margin:18px 0 0;color:#64748b;font-size:12px">Responde a este correo o escribe por WhatsApp al <strong>+34 640 80 92 38</strong>.</p>',
     '</div></div></div>',
   ].join('');

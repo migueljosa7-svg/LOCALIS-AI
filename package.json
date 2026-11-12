@@ -11,10 +11,11 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "check": "npm run lint && tsc --noEmit && next build",
+    "check": "node scripts/check-market-data.mjs && npm run lint && tsc --noEmit && next build",
     "assets:google": "node scripts/google-business-assets.mjs",
     "assets:icons": "node scripts/generate-icons.mjs",
-    "lint": "eslint . --max-warnings=0"
+    "lint": "eslint . --max-warnings=0",
+    "market:check": "node scripts/check-market-data.mjs"
   },
   "repository": {
     "type": "git",

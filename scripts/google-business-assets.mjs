@@ -239,8 +239,8 @@ async function cover(shots) {
 const BANNERS = [
   { key: "stella", file: "servicio-stella-ia-1200x900.png", chip: "STELLA IA · 24/7", color: C.cyan, title: "Atiende WhatsApp, agenda y factura sola", sub: "Tu asistente con IA responde al instante, de día y de noche." },
   { key: "gps", file: "servicio-gps-reparto-1200x900.png", chip: "GPS EN TIEMPO REAL", color: C.emerald, title: "Tus repartos en directo, con tus repartidores", sub: "Seguimiento en el mapa y enlace por WhatsApp para tu cliente." },
-  { key: "configurador", file: "servicio-configurador-web-1200x900.png", chip: "CONFIGURADOR", color: C.cyan, title: "Diseña tu web y calcula tu ahorro", sub: "Elige sector y funciones: ves el resultado y el ahorro al instante." },
-  { key: "ahorro", file: "servicio-sin-comisiones-1200x900.png", chip: "0% COMISIONES", color: C.emerald, title: "Deja de pagar el 20–30 % a las plataformas", sub: "Calcula en segundos lo que ahorras con tu propio reparto." },
+  { key: "configurador", file: "servicio-configurador-web-1200x900.png", chip: "ESTUDIO VISUAL", color: C.cyan, title: "Diseña tu web en directo desde 400 €", sub: "Estilo, páginas, botones y animaciones, con precio cerrado al instante." },
+  { key: "ahorro", file: "servicio-sin-comisiones-1200x900.png", chip: "AHORRO REAL", color: C.emerald, title: "Tu web por menos que una agencia", sub: "Precio cerrado (tope 800 €) y sin comisiones del 20–30 % por pedido." },
   { key: "panel", file: "servicio-panel-control-1200x900.png", chip: "PANEL DE CONTROL", color: C.cyan, title: "Todo tu negocio en una sola pantalla", sub: "Citas, facturas, conversaciones y repartos en directo." },
   { key: "web", file: "servicio-diseno-web-1200x900.png", chip: "DISEÑO WEB · ZARAGOZA", color: C.cyan, title: "Webs rápidas que captan clientes", sub: "SEO local, WhatsApp y Stella IA integrados desde el primer día." },
 ];

@@ -14,7 +14,7 @@ import LeadModalGate from "@/components/lead/LeadModalGate";
 // Islas interactivas en chunks separados (se renderizan en el servidor para SEO,
 // pero su JS se descarga en paralelo y no bloquea el hero). Cada una va dentro
 // de un Error Boundary: si una falla, el resto de la página sigue funcionando.
-const ConfiguratorSection = dynamic(() => import("@/components/configurator/ConfiguratorSection"));
+const WebConfigurator = dynamic(() => import("@/components/configurator/WebConfigurator"));
 const StellaConsole = dynamic(() => import("@/components/stella/StellaConsole"));
 const GpsModuleSection = dynamic(() => import("@/components/gps/GpsModuleSection"));
 const SectorsShowcase = dynamic(() => import("@/components/SectorsShowcase"));
@@ -28,8 +28,8 @@ export default function LandingPage() {
       <Header />
       <main id="contenido" className="w-full min-w-0">
         <HeroSection />
-        <SafeBoundary name="Configurador y ahorro" minHeight={400}>
-          <ConfiguratorSection />
+        <SafeBoundary name="Estudio visual · Diseña tu web" minHeight={400}>
+          <WebConfigurator />
         </SafeBoundary>
         <SafeBoundary name="Simulador de Stella" minHeight={400}>
           <StellaConsole />
@@ -45,11 +45,11 @@ export default function LandingPage() {
         <SafeBoundary name="Precios">
           <PricingSection />
         </SafeBoundary>
+        <FaqSection />
         <TestimonialsSection />
         <SafeBoundary name="Formulario de auditoría">
           <ThreeStepLeadSection />
         </SafeBoundary>
-        <FaqSection />
       </main>
       <Footer />
       <SafeBoundary name="Formulario de demo">
