@@ -21,9 +21,10 @@ import GtagLoader from '@/components/GtagLoader';
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], display: 'swap', variable: '--font-display' });
 
 const GOOGLE_ADS_ID = 'AW-18505356053';
+const GTM_ID = 'GTM-PQQNZPC7';
 const TITLE = 'Diseño Web e IA en Zaragoza | LOCALIS AI';
 const DESCRIPTION =
-  'Páginas web con IA autónoma (Stella 24/7) y GPS de reparto integrado para PYMEs de Zaragoza. Citas automáticas, WhatsApp, facturación y entregas propias sin comisiones.';
+  'Diseña tu web con IA y calcula tu ahorro al instante: asistente Stella 24/7 por WhatsApp, citas automáticas, facturación y GPS de reparto sin comisiones para restaurantes, clínicas, talleres y comercios de Zaragoza.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -35,6 +36,8 @@ export const metadata: Metadata = {
     'software reparto GPS sin comisiones',
     'citas automáticas WhatsApp',
     'páginas web PYME Zaragoza',
+    'calculadora ahorro comisiones Glovo',
+    'configurador web restaurante clínica taller',
   ],
   authors: [{ name: 'LOCALIS AI' }],
   creator: 'LOCALIS AI',
@@ -77,29 +80,40 @@ export const viewport: Viewport = {
 };
 
 // Google Consent Mode v2: todo denegado por defecto (RGPD) y se restaura la
-// elección guardada por el banner. Las conversiones de Ads siguen midiéndose
-// de forma anónima hasta que el usuario acepta.
+// elección guardada por el banner. Se ejecuta ANTES de cargar gtag/GTM, así
+// ninguna etiqueta se dispara sin consentimiento. El evento 'gtm.start' es el
+// que activa los disparadores "Todas las páginas" del contenedor de GTM.
 const CONSENT_BOOTSTRAP = `
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;
 gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});
 try{var c=JSON.parse(localStorage.getItem('localis-cookie-consent')||'null');if(c){gtag('consent','update',{ad_storage:c.marketing?'granted':'denied',ad_user_data:c.marketing?'granted':'denied',ad_personalization:c.marketing?'granted':'denied',analytics_storage:c.analytics?'granted':'denied'});}}catch(e){}
 gtag('js',new Date());gtag('config','${GOOGLE_ADS_ID}');
+dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});
 `;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={spaceGrotesk.variable}>
       <body className="font-sans min-h-screen bg-background text-foreground antialiased pb-[calc(68px+env(safe-area-inset-bottom))] md:pb-0">
-        <Script id="consent-bootstrap" strategy="afterInteractive">
+        <Script id="consent-bootstrap" strategy="beforeInteractive">
           {CONSENT_BOOTSTRAP}
         </Script>
-        {/* Google Tag Manager container - justo después del <head> */}
-        <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PQQNZPC7"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-        </script>
-        {/* gtag.js se descarga en la primera interacción (o a los 4 s): no compite con el LCP. */}
-        <GtagLoader id={GOOGLE_ADS_ID} />
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+            title="Google Tag Manager"
+          />
+        </noscript>
+        {/* gtag.js y GTM se descargan en la primera interacción (o a los 4 s): no compiten con el LCP. */}
+        <GtagLoader
+          sources={[
+            `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`,
+            `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`,
+          ]}
+        />
 
         <a
           href="#contenido"

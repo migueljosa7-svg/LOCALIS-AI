@@ -51,6 +51,7 @@ export async function POST(req: Request) {
       phone: esc(data.phone, 40),
       email: esc(data.email, 160).toLowerCase(),
       source: data.source == null ? null : esc(data.source, 120),
+      details: data.details == null ? null : esc(data.details, 600),
     };
 
     const errors = validateLead(lead);

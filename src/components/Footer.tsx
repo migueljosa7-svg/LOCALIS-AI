@@ -11,7 +11,7 @@ const COLUMNS = [
     links: [
       { label: "Stella IA 24/7", href: "/#stella" },
       { label: "Reparto GPS sin comisiones", href: "/#reparto" },
-      { label: "Calculadora de ahorro", href: "/#ahorro" },
+      { label: "Configurador y ahorro", href: "/#configurador" },
       { label: "Diseño web en Zaragoza", href: "/#web" },
     ],
   },

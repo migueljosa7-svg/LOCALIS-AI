@@ -14,6 +14,7 @@ export interface LeadEmailData {
   phone: string;
   email: string;
   source?: string | null;
+  details?: string | null;
 }
 
 function esc(s: string): string {
@@ -89,6 +90,7 @@ function adminHtml(lead: LeadEmailData, receivedAt: string): string {
     row('WhatsApp / Telefono', lead.phone),
     row('Email del cliente', lead.email),
     row('Origen del lead', lead.source || 'Formulario #cita'),
+    lead.details ? row('Configuración elegida', lead.details) : '',
     row('Recibido', receivedAt),
     '</table>',
     '<p style="margin:18px 0 0;color:#64748b;font-size:12px">Responde a este correo o escribe por WhatsApp al <strong>+34 640 80 92 38</strong>.</p>',

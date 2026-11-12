@@ -7,11 +7,14 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import FaqSection from "@/components/FaqSection";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
+import SafeBoundary from "@/components/SafeBoundary";
 import { LeadProvider } from "@/components/lead/LeadProvider";
 import LeadModalGate from "@/components/lead/LeadModalGate";
 
 // Islas interactivas en chunks separados (se renderizan en el servidor para SEO,
-// pero su JS se descarga en paralelo y no bloquea el hero).
+// pero su JS se descarga en paralelo y no bloquea el hero). Cada una va dentro
+// de un Error Boundary: si una falla, el resto de la página sigue funcionando.
+const ConfiguratorSection = dynamic(() => import("@/components/configurator/ConfiguratorSection"));
 const StellaConsole = dynamic(() => import("@/components/stella/StellaConsole"));
 const GpsModuleSection = dynamic(() => import("@/components/gps/GpsModuleSection"));
 const SectorsShowcase = dynamic(() => import("@/components/SectorsShowcase"));
@@ -25,18 +28,33 @@ export default function LandingPage() {
       <Header />
       <main id="contenido" className="w-full min-w-0">
         <HeroSection />
-        <StellaConsole />
-        <GpsModuleSection />
-        <SectorsShowcase />
+        <SafeBoundary name="Configurador y ahorro" minHeight={400}>
+          <ConfiguratorSection />
+        </SafeBoundary>
+        <SafeBoundary name="Simulador de Stella" minHeight={400}>
+          <StellaConsole />
+        </SafeBoundary>
+        <SafeBoundary name="Mapa GPS en tiempo real" minHeight={400}>
+          <GpsModuleSection />
+        </SafeBoundary>
+        <SafeBoundary name="Sectores">
+          <SectorsShowcase />
+        </SafeBoundary>
         <WebDesignSection />
         <DashboardPreview />
-        <PricingSection />
+        <SafeBoundary name="Precios">
+          <PricingSection />
+        </SafeBoundary>
         <TestimonialsSection />
-        <ThreeStepLeadSection />
+        <SafeBoundary name="Formulario de auditoría">
+          <ThreeStepLeadSection />
+        </SafeBoundary>
         <FaqSection />
       </main>
       <Footer />
-      <LeadModalGate />
+      <SafeBoundary name="Formulario de demo">
+        <LeadModalGate />
+      </SafeBoundary>
     </LeadProvider>
   );
 }

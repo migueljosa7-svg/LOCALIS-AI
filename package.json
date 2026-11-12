@@ -11,9 +11,10 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "check": "tsc --noEmit && next build",
+    "check": "npm run lint && tsc --noEmit && next build",
     "assets:google": "node scripts/google-business-assets.mjs",
-    "assets:icons": "node scripts/generate-icons.mjs"
+    "assets:icons": "node scripts/generate-icons.mjs",
+    "lint": "eslint . --max-warnings=0"
   },
   "repository": {
     "type": "git",
@@ -39,11 +40,14 @@
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@types/leaflet": "^1.9.22",
     "@types/node": "^20.19.43",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.6.1",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^15.5.27",
     "playwright-core": "^1.49.1",
     "postcss": "^8.5.29",
     "sharp": "^0.35.5",

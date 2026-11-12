@@ -4,6 +4,13 @@ import type { FaqItem } from "@/types";
 // (Google exige que el contenido marcado sea visible en la página).
 export const FAQS: FaqItem[] = [
   {
+    id: "faq0",
+    question: "¿Cómo sé cuánto me costará la web y cuánto voy a ahorrar?",
+    answer:
+      "Usa el configurador de esta página: eliges tu sector, el número de páginas y las funciones (citas con IA, WhatsApp y facturación, carta o catálogo, GPS de reparto) y ves al instante el plan recomendado y una estimación del dinero y las horas que ahorras cada mes. Con un clic nos envías esa configuración y te preparamos la demo.",
+    category: "Planes",
+  },
+  {
     id: "faq1",
     question: "¿Necesito saber de tecnología para usar LOCALIS AI?",
     answer:

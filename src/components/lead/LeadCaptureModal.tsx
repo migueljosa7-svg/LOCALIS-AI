@@ -38,7 +38,7 @@ const FIELD_BASE =
   "w-full min-h-[48px] rounded-xl bg-[#0B0F17]/80 border border-white/10 px-4 py-3 pl-11 text-[15px] text-foreground placeholder:text-muted/70 transition-colors focus-ring";
 
 export default function LeadCaptureModal() {
-  const { isOpen, closeLead, source } = useLead();
+  const { isOpen, closeLead, source, prefill } = useLead();
   const [form, setForm] = useState<LeadData>(EMPTY);
   const [errors, setErrors] = useState<LeadErrors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "done">("idle");
@@ -48,7 +48,7 @@ export default function LeadCaptureModal() {
   // Reset al abrir + foco inicial + bloqueo de scroll + cierre con Escape.
   useEffect(() => {
     if (!isOpen) return;
-    setForm(EMPTY);
+    setForm({ ...EMPTY, sector: prefill?.sector ?? "" });
     setErrors({});
     setStatus("idle");
     setDegraded(false);
@@ -59,7 +59,7 @@ export default function LeadCaptureModal() {
       clearTimeout(t);
       document.body.style.overflow = prevOverflow;
     };
-  }, [isOpen]);
+  }, [isOpen, prefill]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -81,13 +81,12 @@ export default function LeadCaptureModal() {
     const found = validateLead(form);
     setErrors(found);
     if (Object.keys(found).length > 0) {
-      const firstErr = document.querySelector<HTMLElement>("[data-lead-error='true']");
-      firstErr?.focus();
+      requestAnimationFrame(() => document.querySelector<HTMLElement>("[data-lead-error='true']")?.focus());
       return;
     }
     setStatus("submitting");
     try {
-      const res = await submitLead({ ...form, source });
+      const res = await submitLead({ ...form, source, details: prefill?.details ?? null });
       if (!res.ok) throw new Error("submit-failed");
       setDegraded(Boolean(res.degraded));
       trackLead("modal", source ?? undefined);
@@ -154,6 +153,12 @@ export default function LeadCaptureModal() {
                       {source && <span className="ml-1 text-cyan-300">({source})</span>}
                     </p>
                   </div>
+                  {prefill?.details && (
+                    <div className="mb-5 rounded-2xl border border-cyan-500/25 bg-cyan-500/[0.06] p-4">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-cyan-300">Tu configuración</p>
+                      <p className="mt-1 text-sm text-foreground/90 leading-relaxed">{prefill.details}</p>
+                    </div>
+                  )}
                   <form onSubmit={handleSubmit} noValidate className="space-y-4">
                     <Field icon={<Building2 size={16} />} label="Nombre del negocio" error={errors.businessName}>
                       <input
@@ -164,6 +169,7 @@ export default function LeadCaptureModal() {
                         placeholder="Frutería Pepe"
                         className={FIELD_BASE}
                         data-lead-error={errors.businessName ? "true" : undefined}
+                          aria-invalid={Boolean(errors.businessName)}
                       />
                     </Field>
 
@@ -174,6 +180,7 @@ export default function LeadCaptureModal() {
                           onChange={(e) => update("sector")(e.target.value)}
                           className={cn(FIELD_BASE, "appearance-none pr-10 cursor-pointer")}
                           data-lead-error={errors.sector ? "true" : undefined}
+                          aria-invalid={Boolean(errors.sector)}
                         >
                           <option value="" disabled>
                             Selecciona tu sector…
@@ -199,6 +206,7 @@ export default function LeadCaptureModal() {
                         placeholder="María García"
                         className={FIELD_BASE}
                         data-lead-error={errors.contactName ? "true" : undefined}
+                          aria-invalid={Boolean(errors.contactName)}
                       />
                     </Field>
 
@@ -206,22 +214,28 @@ export default function LeadCaptureModal() {
                       <Field icon={<Phone size={16} />} label="Teléfono / WhatsApp" error={errors.phone}>
                         <input
                           type="tel"
+                          inputMode="tel"
+                          autoComplete="tel"
                           value={form.phone}
                           onChange={(e) => update("phone")(e.target.value)}
                           placeholder="+34 600 000 000"
                           className={FIELD_BASE}
                           data-lead-error={errors.phone ? "true" : undefined}
+                          aria-invalid={Boolean(errors.phone)}
                         />
                       </Field>
 
                       <Field icon={<Mail size={16} />} label="Email" error={errors.email}>
                         <input
                           type="email"
+                          inputMode="email"
+                          autoComplete="email"
                           value={form.email}
                           onChange={(e) => update("email")(e.target.value)}
                           placeholder="hola@minegocio.com"
                           className={FIELD_BASE}
                           data-lead-error={errors.email ? "true" : undefined}
+                          aria-invalid={Boolean(errors.email)}
                         />
                       </Field>
                     </div>

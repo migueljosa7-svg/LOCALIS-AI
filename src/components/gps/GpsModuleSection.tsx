@@ -4,7 +4,6 @@ import { useCallback, useState } from "react";
 import { Bike, Truck, Navigation, Share2, CheckCircle2, Gauge, Clock3, Route as RouteIcon, Store } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TelemetryMap, { DRIVERS, type Telemetry } from "./TelemetryMap";
-import RoiCalculator from "./RoiCalculator";
 import ErrorBoundary from "@/components/map/ErrorBoundary";
 
 // Ticket medio y comisión media de plataformas usados en la demo.
@@ -50,7 +49,7 @@ export default function GpsModuleSection() {
   };
 
   return (
-    <section id="reparto" aria-labelledby="gps-title" className="section-band relative w-full py-20 lg:py-28">
+    <section id="reparto" aria-labelledby="gps-title" className="cv-auto section-band relative w-full py-20 lg:py-28">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="eyebrow eyebrow-live mb-5">
@@ -175,8 +174,10 @@ export default function GpsModuleSection() {
           </div>
         </div>
 
-        <div id="ahorro" className="mt-14">
-          <RoiCalculator />
+        <div className="mt-10 text-center">
+          <a href="#configurador" className="btn btn-live">
+            Calcula cuánto ahorras con tu propio reparto
+          </a>
         </div>
       </div>
     </section>

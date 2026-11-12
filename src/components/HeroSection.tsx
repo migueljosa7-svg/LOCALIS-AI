@@ -52,7 +52,7 @@ export default function HeroSection() {
                 <PlayCircle size={20} aria-hidden="true" />
                 Probar demostración
               </a>
-              <a href="#ahorro" className="btn btn-live text-base px-6 min-h-[54px]">
+              <a href="#configurador" className="btn btn-live text-base px-6 min-h-[54px]">
                 <Calculator size={19} aria-hidden="true" />
                 Calcular ahorro sin comisiones
               </a>

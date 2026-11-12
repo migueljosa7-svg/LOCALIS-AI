@@ -174,6 +174,7 @@ async function captureShots() {
   await page.getByText("Demo completada").waitFor({ timeout: 25000 }).catch(() => {});
   await grab("stella", "#stella .border-glow", 600);
   await grab("gps", "#reparto .border-glow", 3500);
+  await grab("configurador", "#configurador .grid", 1200);
   await grab("ahorro", "#ahorro", 1800);
   await grab("panel", "#demo .border-glow", 1500);
   await grab("web", "#web ul", 800);
@@ -238,6 +239,7 @@ async function cover(shots) {
 const BANNERS = [
   { key: "stella", file: "servicio-stella-ia-1200x900.png", chip: "STELLA IA · 24/7", color: C.cyan, title: "Atiende WhatsApp, agenda y factura sola", sub: "Tu asistente con IA responde al instante, de día y de noche." },
   { key: "gps", file: "servicio-gps-reparto-1200x900.png", chip: "GPS EN TIEMPO REAL", color: C.emerald, title: "Tus repartos en directo, con tus repartidores", sub: "Seguimiento en el mapa y enlace por WhatsApp para tu cliente." },
+  { key: "configurador", file: "servicio-configurador-web-1200x900.png", chip: "CONFIGURADOR", color: C.cyan, title: "Diseña tu web y calcula tu ahorro", sub: "Elige sector y funciones: ves el resultado y el ahorro al instante." },
   { key: "ahorro", file: "servicio-sin-comisiones-1200x900.png", chip: "0% COMISIONES", color: C.emerald, title: "Deja de pagar el 20–30 % a las plataformas", sub: "Calcula en segundos lo que ahorras con tu propio reparto." },
   { key: "panel", file: "servicio-panel-control-1200x900.png", chip: "PANEL DE CONTROL", color: C.cyan, title: "Todo tu negocio en una sola pantalla", sub: "Citas, facturas, conversaciones y repartos en directo." },
   { key: "web", file: "servicio-diseno-web-1200x900.png", chip: "DISEÑO WEB · ZARAGOZA", color: C.cyan, title: "Webs rápidas que captan clientes", sub: "SEO local, WhatsApp y Stella IA integrados desde el primer día." },
@@ -264,7 +266,7 @@ async function banners(shots) {
     const layers = [];
     if (shots?.[b.key]) {
       const maxH = H - shotTop - 80;
-      const { framed, glow, w, h, pad } = await framedShot(shots[b.key], 1080, maxH, 26);
+      const { framed, glow, w, pad } = await framedShot(shots[b.key], 1080, maxH, 26);
       const left = Math.round((W - w) / 2);
       layers.push({ input: glow, left: left - pad, top: shotTop - pad }, { input: framed, left, top: shotTop });
     }
@@ -293,7 +295,7 @@ Generados con \`npm run assets:google\` (script: \`scripts/google-business-asset
 | logo-720x720.png | Logotipo (se muestra recortado en círculo) | 720×720 |
 | logo-wordmark-1080x1080.png | Logo con nombre (redes sociales, Google Posts) | 1080×1080 |
 | portada-2048x1152.png | Foto de portada | 2048×1152 (16:9) |
-| servicio-*-1200x900.png | Fotos de servicios y publicaciones | 1200×900 (4:3) |
+| servicio-*-1200x900.png | Fotos de servicios y publicaciones (incluye el configurador) | 1200×900 (4:3) |
 | ../og-image.png | Vista previa al compartir la web | 1200×630 |
 
 Requisitos de Google: JPG o PNG, entre 10 KB y 5 MB, sin marcos ni texto excesivo en fotos
