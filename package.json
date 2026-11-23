@@ -11,11 +11,14 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "check": "node scripts/check-market-data.mjs && npm run lint && tsc --noEmit && next build",
+    "check": "node scripts/check-market-data.mjs && npm test && npm run lint && tsc --noEmit && next build",
     "assets:google": "node scripts/google-business-assets.mjs",
     "assets:icons": "node scripts/generate-icons.mjs",
     "lint": "eslint . --max-warnings=0",
-    "market:check": "node scripts/check-market-data.mjs"
+    "market:check": "node scripts/check-market-data.mjs",
+    "test": "tsx --test tests/*.test.ts",
+    "stella:smoke": "node scripts/stella-smoke.mjs",
+    "test:e2e": "node scripts/e2e/stella-e2e.mjs"
   },
   "repository": {
     "type": "git",
@@ -30,17 +33,19 @@
   },
   "homepage": "https://github.com/migueljosa7-svg/LOCALIS-AI#readme",
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.12.0",
     "clsx": "^2.1.1",
     "framer-motion": "^14.0.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.54.0",
-    "next": "^15.5.27",
+    "next": "^15.5.29",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-leaflet": "^5.0.0",
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.6.0",
     "@eslint/eslintrc": "^3.3.1",
     "@types/leaflet": "^1.9.22",
     "@types/node": "^20.19.43",
@@ -48,11 +53,12 @@
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.6.1",
     "eslint": "^9.39.1",
-    "eslint-config-next": "^15.5.27",
+    "eslint-config-next": "^15.5.29",
     "playwright-core": "^1.49.1",
     "postcss": "^8.5.29",
     "sharp": "^0.35.5",
     "tailwindcss": "^3.4.19",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3"
   }
 }
