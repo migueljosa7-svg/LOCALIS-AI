@@ -37,7 +37,7 @@ function row(label: string, value: string): string {
 }
 
 /** Envio individual con timeout. Devuelve true/false, nunca rechaza. */
-async function sendOne(opts: {
+export async function sendOne(opts: {
   apiKey: string;
   from: string;
   to: string[];
@@ -175,5 +175,49 @@ export async function sendLeadNotifications(lead: LeadEmailData): Promise<LeadEm
   } catch (err) {
     console.warn('[email] error inesperado (ignorado):', err instanceof Error ? err.message : err);
     return { attempted: false, notified: false, confirmed: false };
+  }
+}
+
+/**
+ * Aviso de un contacto dejado en el chat de Stella. Va a LEAD_INBOX_EMAIL y, si es distinto,
+ * al email de avisos del negocio. NO se envía nada al visitante (sin comunicaciones comerciales).
+ * Nunca lanza. Devuelve true si el aviso al inbox se envió.
+ */
+export async function sendStellaContactEmail(
+  business: { name: string; notifyEmail?: string },
+  c: { name: string; phone: string; email: string; message: string }
+): Promise<boolean> {
+  try {
+    const apiKey = env.resendApiKey;
+    if (!apiKey) return false;
+    const receivedAt = new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' });
+    const html = [
+      '<div style="font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;padding:24px">',
+      '<div style="max-width:580px;margin:0 auto;background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden">',
+      '<div style="background:#0B0F17;padding:18px 24px"><span style="color:#22d3ee;font-size:18px;font-weight:bold">Stella</span><span style="color:#94a3b8;font-size:14px"> &middot; ' + esc(business.name) + '</span></div>',
+      '<div style="padding:24px"><h2 style="margin:0 0 14px;font-size:17px;color:#0f172a">Nuevo contacto desde el chat de la web</h2>',
+      '<table style="width:100%;border-collapse:collapse;font-size:14px;line-height:1.6">',
+      row('Negocio', business.name),
+      row('Nombre', c.name),
+      row('Teléfono', c.phone),
+      c.email ? row('Email', c.email) : '',
+      c.message ? row('Mensaje', c.message) : '',
+      row('Consentimiento', 'Aceptado por la persona en el formulario'),
+      row('Recibido', receivedAt),
+      '</table></div></div></div>',
+    ].join('');
+    const to = [env.leadInbox];
+    if (business.notifyEmail && business.notifyEmail !== env.leadInbox) to.push(business.notifyEmail);
+    const subject = 'Nuevo contacto en Stella: ' + business.name;
+    // Primero el inbox propio (siempre entrega con Resend sin dominio verificado); después el del negocio.
+    const [main, extra] = await Promise.all([
+      sendOne({ apiKey, from: env.emailFrom, to: [to[0]], subject, html }),
+      to[1] ? sendOne({ apiKey, from: env.emailFrom, to: [to[1]], subject, html }) : Promise.resolve(true),
+    ]);
+    if (!extra) console.warn('[email] el aviso al email del negocio no se pudo entregar (¿dominio sin verificar en Resend?)');
+    return main;
+  } catch (err) {
+    console.warn('[email] error en aviso de Stella (ignorado):', err instanceof Error ? err.message : err);
+    return false;
   }
 }

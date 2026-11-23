@@ -56,7 +56,7 @@ export interface OpportunityRow {
   notes: string | null;
 }
 
-type Result<T> = { ok: true; data: T } | { ok: false; reason: "not-configured" | "error"; message?: string };
+export type Result<T> = { ok: true; data: T } | { ok: false; reason: "not-configured" | "error"; message?: string };
 
 /**
  * Cabeceras de autenticación de Supabase.
@@ -81,7 +81,7 @@ export function dbConfigured(): boolean {
   return config() !== null;
 }
 
-async function rest<T>(path: string, init: RequestInit & { prefer?: string } = {}): Promise<Result<T>> {
+export async function rest<T>(path: string, init: RequestInit & { prefer?: string } = {}): Promise<Result<T>> {
   const cfg = config();
   if (!cfg) return { ok: false, reason: "not-configured" };
   const ctrl = new AbortController();
@@ -157,6 +157,11 @@ export async function markLeadNotified(id: string): Promise<void> {
 export async function listLeads(status?: LeadStatus): Promise<Result<LeadRow[]>> {
   const filter = status ? `&status=eq.${status}` : "";
   return rest<LeadRow[]>(`leads?select=*&order=created_at.desc&limit=500${filter}`);
+}
+
+/** Contactos de un origen concreto (p. ej. «stella:peluqueria-ana»). El valor se escapa para PostgREST. */
+export async function listLeadsBySource(source: string, limit = 200): Promise<Result<LeadRow[]>> {
+  return rest<LeadRow[]>(`leads?select=*&source=eq.${encodeURIComponent(source)}&order=created_at.desc&limit=${limit}`);
 }
 
 export async function updateLead(id: string, patch: { status?: LeadStatus; notes?: string }): Promise<Result<LeadRow[]>> {
