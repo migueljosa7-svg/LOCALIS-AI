@@ -69,8 +69,11 @@ export function authHeaders(key: string): Record<string, string> {
 }
 
 function config() {
-  const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  // Acepta la "Project URL" (https://<proyecto>.supabase.co) y también la "API URL"
+  // que muestra Supabase (…/rest/v1/). Sin quitarla, la ruta quedaría duplicada
+  // (/rest/v1/rest/v1/leads) y Supabase responde 404 PGRST125.
+  const url = process.env.SUPABASE_URL?.trim().replace(/\/+$/, "").replace(/\/rest\/v1$/i, "");
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
   return url && key ? { url, key } : null;
 }
 
