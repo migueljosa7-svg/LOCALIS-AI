@@ -43,7 +43,6 @@ export const metadata: Metadata = {
   creator: 'LOCALIS AI',
   applicationName: 'LOCALIS AI',
   manifest: '/manifest.json',
-  alternates: { canonical: '/' },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large' } },
   openGraph: {
     title: TITLE,

@@ -57,7 +57,8 @@ const ROUTE_SEGS = [
 ] as const;
 
 // Vista previa estática del panel del cliente (componente de servidor: 0 KB de JS).
-export default function DashboardPreview() {
+/** titleAs="h1" cuando la sección encabeza su propia página. */
+export default function DashboardPreview({ titleAs: Title = "h2" }: { titleAs?: "h1" | "h2" } = {}) {
   return (
     <section id="demo" aria-labelledby="demo-title" className="cv-auto relative w-full py-20 lg:py-28">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -65,9 +66,9 @@ export default function DashboardPreview() {
           <span className="eyebrow mb-5">
             <LayoutDashboard size={13} aria-hidden="true" /> Vista previa · en desarrollo
           </span>
-          <h2 id="demo-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
+          <Title id="demo-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
             Todo tu negocio, <span className="gradient-text">en una sola pantalla</span>
-          </h2>
+          </Title>
           <p className="mt-5 text-muted text-base sm:text-lg">
             Así será el panel para gestionar citas, conversaciones, facturas y repartos. Los datos son de ejemplo: el panel está en
             desarrollo.

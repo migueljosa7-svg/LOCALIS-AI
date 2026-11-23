@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { memo, useCallback, useEffect, useRef, useState, type ComponentType } from "react";
 import { m as motion, AnimatePresence } from "framer-motion";
 import {
@@ -158,7 +159,8 @@ function logsForAction(action: StellaAction, slots?: StellaSlots): { kind: LogKi
 let uid = 0;
 const nextId = (p: string) => `${p}${++uid}`;
 
-export default function StellaConsole() {
+/** titleAs="h1" cuando la sección encabeza su propia página. */
+export default function StellaConsole({ titleAs: Title = "h2" }: { titleAs?: "h1" | "h2" } = {}) {
   const [mode, setMode] = useState<StellaMode>("general");
   const [msgs, setMsgs] = useState<Msg[]>([{ id: "g0", role: "ai", text: GREETINGS.general }]);
   const [log, setLog] = useState<LogItem[]>([]);
@@ -324,9 +326,9 @@ export default function StellaConsole() {
           <span className="eyebrow mb-5">
             <Bot size={13} aria-hidden="true" /> Demostración · Stella IA en desarrollo
           </span>
-          <h2 id="stella-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
+          <Title id="stella-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
             Así funcionará Stella: <span className="gradient-text">WhatsApp, citas y facturas</span>
-          </h2>
+          </Title>
           <p className="mt-5 text-muted text-base sm:text-lg leading-relaxed">
             Demostración interactiva con datos de ejemplo: Stella todavía no está conectada a WhatsApp ni a calendarios reales.
             La estamos desarrollando por fases. Si te interesa para tu negocio, pide la auditoría y te avisamos cuando esté lista.
@@ -530,9 +532,9 @@ export default function StellaConsole() {
               )}
             </ol>
 
-            <a href="#cita" className="btn btn-primary mt-4 w-full text-sm">
+            <Link href="/disena-tu-web#cita" className="btn btn-primary mt-4 w-full text-sm">
               Quiero a Stella en mi negocio
-            </a>
+            </Link>
           </aside>
         </div>
       </div>
@@ -648,9 +650,9 @@ const MessageList = memo(function MessageList({
               <div className="border-glow rounded-xl p-4 max-w-sm">
                 <p className="text-xs font-bold text-foreground mb-1.5">Auditoría gratuita para tu negocio</p>
                 <p className="text-xs text-muted mb-3">Analizamos tu negocio y te preparamos una demo de Stella sin compromiso.</p>
-                <a href="#cita" className="btn btn-primary w-full min-h-[40px] text-xs">
+                <Link href="/disena-tu-web#cita" className="btn btn-primary w-full min-h-[40px] text-xs">
                   Reservar auditoría →
-                </a>
+                </Link>
               </div>
             )}
             {m.action === "invoice" && <InvoiceCard onOpen={onOpenInvoice} client={m.slots?.client} />}

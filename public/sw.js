@@ -7,7 +7,7 @@
  *  - Estáticos del mismo origen: stale-while-revalidate.
  *  - Terceros (Google Ads, teselas de mapa): no se interceptan.
  */
-const CACHE_VERSION = "localis-ai-v2";
+const CACHE_VERSION = "localis-ai-v3";
 const APP_SHELL = ["/", "/manifest.json", "/favicon.svg", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {

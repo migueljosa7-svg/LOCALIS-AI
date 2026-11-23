@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useState } from "react";
 import { Bike, Truck, Navigation, Share2, CheckCircle2, Gauge, Clock3, Route as RouteIcon, Store } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,7 +17,8 @@ function vehicleIcon(vehicle: string) {
   return Navigation;
 }
 
-export default function GpsModuleSection() {
+/** titleAs="h1" cuando la sección encabeza su propia página. */
+export default function GpsModuleSection({ titleAs: Title = "h2" }: { titleAs?: "h1" | "h2" } = {}) {
   const [activeId, setActiveId] = useState(DRIVERS[0].id);
   const [tele, setTele] = useState<Telemetry | null>(null);
   const [delivered, setDelivered] = useState(23);
@@ -53,9 +55,9 @@ export default function GpsModuleSection() {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="eyebrow mb-5">Demostración · Módulo GPS en desarrollo</span>
-          <h2 id="gps-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
+          <Title id="gps-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
             Así funcionará el reparto propio, <span className="gradient-text">con tus repartidores</span> y sin comisiones
-          </h2>
+          </Title>
           <p className="mt-5 text-muted text-base sm:text-lg leading-relaxed">
             Demostración con repartidores y rutas ficticios: el seguimiento real está en desarrollo. Las plataformas se quedan
             entre un <strong className="text-foreground">20 % y un 30 %</strong> de cada pedido; este módulo busca que dejes de pagarlo.
@@ -173,9 +175,9 @@ export default function GpsModuleSection() {
         </div>
 
         <div className="mt-10 text-center">
-          <a href="#configurador" className="btn btn-live">
+          <Link href="/disena-tu-web" className="btn btn-live">
             Calcula cuánto ahorras con tu propio reparto
-          </a>
+          </Link>
         </div>
       </div>
     </section>

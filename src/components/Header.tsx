@@ -2,28 +2,22 @@
 
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Menu, X, ArrowRight, ChevronDown, Bot, MapPin, LayoutGrid, Sparkles, PlayCircle, type LucideIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Menu, X, ArrowRight, ChevronDown, Sparkles, PlayCircle } from "lucide-react";
+import { PLATFORM } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import BrandMark from "@/components/brand/BrandMark";
 
 type TabId = "inicio" | "plataforma" | "disena" | "tarifas";
 
-const PLATFORM: { href: string; title: string; detail: string; icon: LucideIcon }[] = [
-  { href: "/#stella", title: "IA Stella (demo)", detail: "En desarrollo · citas, WhatsApp y facturas", icon: Bot },
-  { href: "/#reparto", title: "Mapa GPS (demo)", detail: "En desarrollo · repartos propios, sin comisiones", icon: MapPin },
-  { href: "/#sectores", title: "Soluciones por sector", detail: "Restaurantes, clínicas, talleres y comercios", icon: LayoutGrid },
-];
-
-// Qué pestaña se ilumina según la sección visible.
-const SECTION_TO_TAB: [string, TabId][] = [
-  ["inicio", "inicio"],
-  ["configurador", "disena"],
-  ["stella", "plataforma"],
-  ["reparto", "plataforma"],
-  ["sectores", "plataforma"],
-  ["precios", "tarifas"],
-  ["faq", "tarifas"],
-];
+// Pestaña activa según la ruta actual.
+function tabFor(path: string): TabId | "" {
+  if (path === "/") return "inicio";
+  if (path.startsWith("/plataforma")) return "plataforma";
+  if (path.startsWith("/disena-tu-web")) return "disena";
+  if (path.startsWith("/tarifas")) return "tarifas";
+  return "";
+}
 
 const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
@@ -32,43 +26,38 @@ export default function Header() {
   const [platformOpen, setPlatformOpen] = useState(false); // submenú escritorio
   const [mobilePlatform, setMobilePlatform] = useState(false); // acordeón móvil
   const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState<TabId | "">("inicio");
+  const pathname = usePathname() || "/";
+  const active = tabFor(pathname);
   const navRef = useRef<HTMLElement>(null);
   const barRef = useRef<HTMLSpanElement>(null);
   const ddRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<number | null>(null);
   const menuId = useId();
 
-  // Fondo de cristal + scrollspy en un único listener pasivo (máx. 1 cálculo por frame).
+  // Fondo de cristal al hacer scroll (listener pasivo, máx. 1 cálculo por frame).
   useEffect(() => {
     let raf = 0;
     const update = () => {
       raf = 0;
       const next = window.scrollY > 24;
       setScrolled((prev) => (prev === next ? prev : next));
-      const mid = window.innerHeight * 0.5;
-      let current: TabId | "" = "";
-      for (const [id, tab] of SECTION_TO_TAB) {
-        const r = document.getElementById(id)?.getBoundingClientRect();
-        if (r && r.top <= mid && r.bottom > mid) {
-          current = tab;
-          break;
-        }
-      }
-      setActive((prev) => (prev === current ? prev : current));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
+
+  // Al cambiar de página se cierran los menús.
+  useEffect(() => {
+    setOpen(false);
+    setPlatformOpen(false);
+  }, [pathname]);
 
   // Indicador deslizante bajo la pestaña activa (solo transform → GPU).
   useIsoLayoutEffect(() => {
@@ -127,13 +116,29 @@ export default function Header() {
   }, []);
 
   // Hover con pequeño retardo de cierre para que el submenú no "parpadee".
+  const openedByHover = useRef(false);
   const hoverOpen = () => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    if (!platformOpen) openedByHover.current = true;
     setPlatformOpen(true);
+  };
+  // Si el ratón ya lo abrió al pasar por encima, el clic lo deja abierto (antes lo
+  // cerraba). Con teclado (detail === 0) el botón sigue funcionando como interruptor.
+  const togglePlatform = (e: React.MouseEvent) => {
+    if (e.detail > 0 && openedByHover.current) {
+      openedByHover.current = false;
+      setPlatformOpen(true);
+      return;
+    }
+    openedByHover.current = false;
+    setPlatformOpen((v) => !v);
   };
   const hoverClose = () => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(() => setPlatformOpen(false), 140);
+    closeTimer.current = window.setTimeout(() => {
+      openedByHover.current = false;
+      setPlatformOpen(false);
+    }, 140);
   };
 
   const close = () => {
@@ -164,7 +169,7 @@ export default function Header() {
           </Link>
 
           <nav ref={navRef} aria-label="Principal" className="relative hidden lg:flex items-center gap-0.5">
-            <Link href="/#inicio" data-tab="inicio" onClick={close} className={tabCls("inicio")} aria-current={active === "inicio" ? "location" : undefined}>
+            <Link href="/" data-tab="inicio" onClick={close} className={tabCls("inicio")} aria-current={active === "inicio" ? "page" : undefined}>
               Inicio
             </Link>
 
@@ -175,8 +180,8 @@ export default function Header() {
                 aria-expanded={platformOpen}
                 aria-controls={menuId}
                 aria-haspopup="true"
-                aria-current={active === "plataforma" ? "location" : undefined}
-                onClick={() => setPlatformOpen((v) => !v)}
+                aria-current={active === "plataforma" ? "page" : undefined}
+                onClick={togglePlatform}
               >
                 Plataforma
                 <ChevronDown size={15} aria-hidden="true" className={cn("transition-transform duration-200", platformOpen && "rotate-180")} />
@@ -195,7 +200,11 @@ export default function Header() {
                         href={p.href}
                         onClick={close}
                         tabIndex={platformOpen ? 0 : -1}
-                        className="group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-white/[0.05] focus-visible:bg-white/[0.05]"
+                        aria-current={pathname === p.href ? "page" : undefined}
+                        className={cn(
+                          "group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-white/[0.05] focus-visible:bg-white/[0.05]",
+                          pathname === p.href && "bg-white/[0.05]"
+                        )}
                       >
                         <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-cyan-500/25 bg-cyan-500/10 text-cyan-300 transition-transform duration-200 group-hover:scale-105">
                           <p.icon size={17} aria-hidden="true" />
@@ -212,16 +221,16 @@ export default function Header() {
             </div>
 
             <Link
-              href="/#configurador"
+              href="/disena-tu-web"
               data-tab="disena"
               onClick={close}
               className={cn(tabCls("disena"), "text-cyan-300 hover:text-cyan-200")}
-              aria-current={active === "disena" ? "location" : undefined}
+              aria-current={active === "disena" ? "page" : undefined}
             >
               <Sparkles size={14} aria-hidden="true" />
               Diseña tu Web
             </Link>
-            <Link href="/#precios" data-tab="tarifas" onClick={close} className={tabCls("tarifas")} aria-current={active === "tarifas" ? "location" : undefined}>
+            <Link href="/tarifas" data-tab="tarifas" onClick={close} className={tabCls("tarifas")} aria-current={active === "tarifas" ? "page" : undefined}>
               Tarifas y FAQ
             </Link>
 
@@ -233,8 +242,8 @@ export default function Header() {
             />
           </nav>
 
-          <Link href="/#configurador" onClick={close} className="btn btn-primary hidden lg:inline-flex min-h-[40px] px-4 text-sm shrink-0">
-            Calcular Ahorro <ArrowRight size={15} aria-hidden="true" />
+          <Link href="/disena-tu-web" onClick={close} className="btn btn-primary hidden lg:inline-flex min-h-[40px] px-4 text-sm shrink-0">
+            Pedir presupuesto <ArrowRight size={15} aria-hidden="true" />
           </Link>
 
           <button
@@ -267,7 +276,7 @@ export default function Header() {
           )}
         >
           <nav aria-label="Principal (móvil)" className="grid gap-1.5">
-            <MobileLink href="/#inicio" active={active === "inicio"} onClick={close} tabbable={open}>
+            <MobileLink href="/" active={active === "inicio"} onClick={close} tabbable={open}>
               Inicio
             </MobileLink>
 
@@ -292,7 +301,8 @@ export default function Header() {
                         href={p.href}
                         onClick={close}
                         tabIndex={open && mobilePlatform ? 0 : -1}
-                        className="flex min-h-[56px] items-center gap-3 rounded-xl px-3 active:bg-white/[0.06]"
+                        aria-current={pathname === p.href ? "page" : undefined}
+                        className={cn("flex min-h-[56px] items-center gap-3 rounded-xl px-3 active:bg-white/[0.06]", pathname === p.href && "bg-white/[0.06]")}
                       >
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-cyan-500/25 bg-cyan-500/10 text-cyan-300">
                           <p.icon size={17} aria-hidden="true" />
@@ -308,19 +318,19 @@ export default function Header() {
               </div>
             </div>
 
-            <MobileLink href="/#configurador" active={active === "disena"} onClick={close} tabbable={open} highlight>
+            <MobileLink href="/disena-tu-web" active={active === "disena"} onClick={close} tabbable={open} highlight>
               <Sparkles size={17} aria-hidden="true" className="text-cyan-300" /> Diseña tu Web
             </MobileLink>
-            <MobileLink href="/#precios" active={active === "tarifas"} onClick={close} tabbable={open}>
+            <MobileLink href="/tarifas" active={active === "tarifas"} onClick={close} tabbable={open}>
               Tarifas y FAQ
             </MobileLink>
           </nav>
           <div className="grid grid-cols-2 gap-2 pt-4">
-            <Link href="/#stella" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-ghost min-h-[54px] text-[15px]">
+            <Link href="/plataforma/stella" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-ghost min-h-[54px] text-[15px]">
               <PlayCircle size={18} aria-hidden="true" /> Probar demo
             </Link>
-            <Link href="/#configurador" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-primary min-h-[54px] text-[15px]">
-              Calcular Ahorro
+            <Link href="/disena-tu-web" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-primary min-h-[54px] text-[15px]">
+              Pedir presupuesto
             </Link>
           </div>
         </div>
@@ -349,7 +359,7 @@ function MobileLink({
       href={href}
       onClick={onClick}
       tabIndex={tabbable ? 0 : -1}
-      aria-current={active ? "location" : undefined}
+      aria-current={active ? "page" : undefined}
       className={cn(
         "flex min-h-[56px] items-center gap-2.5 rounded-2xl border px-4 text-[16px] font-semibold transition-colors active:scale-[0.99]",
         active ? "border-cyan-500/35 bg-cyan-500/10" : highlight ? "border-cyan-500/20 bg-cyan-500/[0.04]" : "border-white/[0.06] bg-white/[0.02]"

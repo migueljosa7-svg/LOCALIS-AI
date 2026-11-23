@@ -9,19 +9,19 @@ const COLUMNS = [
   {
     title: "Soluciones",
     links: [
-      { label: "Stella IA (en desarrollo)", href: "/#stella" },
-      { label: "Reparto GPS (en desarrollo)", href: "/#reparto" },
-      { label: "Configurador y ahorro", href: "/#configurador" },
-      { label: "Diseño web en Zaragoza", href: "/#web" },
+      { label: "Stella IA (en desarrollo)", href: "/plataforma/stella" },
+      { label: "Reparto GPS (en desarrollo)", href: "/plataforma/reparto" },
+      { label: "Diseña tu web y precio", href: "/disena-tu-web" },
+      { label: "Qué incluye tu web", href: "/tarifas#web" },
     ],
   },
   {
     title: "Empresa",
     links: [
-      { label: "Sectores", href: "/#sectores" },
-      { label: "Precios", href: "/#precios" },
-      { label: "Preguntas frecuentes", href: "/#faq" },
-      { label: "Auditoría gratuita", href: "/#cita" },
+      { label: "Sectores", href: "/plataforma/sectores" },
+      { label: "Tarifas", href: "/tarifas" },
+      { label: "Preguntas frecuentes", href: "/tarifas#faq" },
+      { label: "Auditoría gratuita", href: "/disena-tu-web#cita" },
     ],
   },
 ];
@@ -39,7 +39,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="mt-4 text-sm text-muted leading-relaxed max-w-xs">
-              Páginas web con IA autónoma y GPS integrado para negocios de Zaragoza y Aragón.
+              Diseño web a precio cerrado para negocios de Zaragoza y Aragón. Webs que convierten visitas en clientes.
             </p>
           </div>
 
@@ -49,9 +49,9 @@ export default function Footer() {
               <ul className="space-y-2.5 text-sm">
                 {col.links.map((l) => (
                   <li key={l.href}>
-                    <a href={l.href} className="text-muted hover:text-cyan-300 transition-colors">
+                    <Link href={l.href} className="text-muted hover:text-cyan-300 transition-colors">
                       {l.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

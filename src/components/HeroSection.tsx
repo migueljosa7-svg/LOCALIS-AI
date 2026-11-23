@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { PlayCircle, Calculator, ArrowRight, ShieldCheck, Clock3, MapPin } from "lucide-react";
 import HeroShowcaseCard from "./HeroShowcaseCard";
 
@@ -47,22 +48,22 @@ export default function HeroSection() {
             </p>
 
             <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <a href="#stella" className="btn btn-primary text-base px-6 min-h-[54px]">
-                <PlayCircle size={20} aria-hidden="true" />
-                Probar demostración
-              </a>
-              <a href="#configurador" className="btn btn-live text-base px-6 min-h-[54px]">
+              <Link href="/disena-tu-web" className="btn btn-primary text-base px-6 min-h-[54px]">
                 <Calculator size={19} aria-hidden="true" />
                 Diseñar mi web y ver el precio
-              </a>
+              </Link>
+              <Link href="/plataforma/stella" className="btn btn-live text-base px-6 min-h-[54px]">
+                <PlayCircle size={20} aria-hidden="true" />
+                Probar la demo de Stella
+              </Link>
             </div>
 
-            <a
-              href="#cita"
+            <Link
+              href="/disena-tu-web#cita"
               className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
             >
               o reserva tu auditoría gratuita en 1 minuto <ArrowRight size={15} aria-hidden="true" />
-            </a>
+            </Link>
 
             <ul className="mt-9 flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-3 text-sm text-muted">
               {TRUST.map(({ icon: Icon, text }) => (

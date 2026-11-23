@@ -2,7 +2,8 @@
  * Datos estructurados JSON-LD (Schema.org) en el <head>:
  *  - ProfessionalService (negocio local en Zaragoza) → ficha enriquecida / Maps
  *  - WebSite
- *  - FAQPage (las mismas preguntas visibles en la sección #faq)
+ *  - FAQPage (las mismas preguntas visibles en /tarifas#faq): <FaqJsonLd /> solo en esa página,
+ *    porque Google exige que el contenido marcado sea visible en la propia página.
  *
  * No se publica AggregateRating: Google exige que las valoraciones sean reales y
  * verificables. Añádelo solo cuando tengas reseñas reales (p. ej. de Google Business).
@@ -71,7 +72,10 @@ export default function JsonLd() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={json(BUSINESS)} />
       <script type="application/ld+json" dangerouslySetInnerHTML={json(WEBSITE)} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={json(FAQ_PAGE)} />
     </>
   );
+}
+
+export function FaqJsonLd() {
+  return <script type="application/ld+json" dangerouslySetInnerHTML={json(FAQ_PAGE)} />;
 }

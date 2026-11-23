@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Check, ArrowRight, BadgePercent, Clock3 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -8,7 +9,8 @@ import { useLead } from "@/components/lead/LeadProvider";
 import { MODULES, PRICING } from "@/components/configurator/studioModel";
 import { MARKET } from "@/lib/marketPrices";
 
-export default function PricingSection() {
+/** titleAs="h1" cuando la sección encabeza su propia página. */
+export default function PricingSection({ titleAs: Title = "h2" }: { titleAs?: "h1" | "h2" } = {}) {
   const [yearly, setYearly] = useState(false);
   const { openLead } = useLead();
 
@@ -19,9 +21,9 @@ export default function PricingSection() {
           <span className="eyebrow eyebrow-live mb-5">
             <BadgePercent size={13} aria-hidden="true" /> Tarifa plana · sin comisiones por pedido
           </span>
-          <h2 id="precios-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
+          <Title id="precios-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
             Precios claros, <span className="gradient-text">sin sorpresas</span>
-          </h2>
+          </Title>
           <p className="mt-5 text-muted text-base sm:text-lg">Cambia de plan o cancela cuando quieras. Sin permanencia.</p>
         </div>
 
@@ -33,12 +35,12 @@ export default function PricingSection() {
               Desde {PRICING.base} € <span className="text-base font-medium text-muted">· tope cerrado de {PRICING.cap} € con todo incluido</span>
             </p>
             <p className="mt-1 text-sm text-muted">
-              Una web corporativa de agencia parte de unos {MARKET.web.value.toLocaleString("es-ES")} € ({MARKET.web.range.split(";")[0]}). Páginas extra +{PRICING.extraPage} €{MODULES.map((m) => ` · ${m.label} +${m.price} €`).join("")}.
+              Una web corporativa de agencia parte de unos {MARKET.web.value.toLocaleString("es-ES")} € ({MARKET.web.range.split(";")[0]}). Páginas extra +{PRICING.extraPage} €. Módulos en desarrollo (no se cobran hasta que estén terminados y probados):{MODULES.map((m, i) => `${i ? " ·" : ""} ${m.label} +${m.price} €`).join("")}.
             </p>
           </div>
-          <a href="#configurador" className="btn btn-primary shrink-0">
+          <Link href="/disena-tu-web" className="btn btn-primary shrink-0">
             Diseñar y calcular mi precio
-          </a>
+          </Link>
         </div>
 
         <p className="text-center text-sm font-semibold text-foreground/90 mb-3">Mantenimiento y funciones mensuales</p>
@@ -124,9 +126,9 @@ export default function PricingSection() {
 
         <p className="mt-10 text-center text-sm text-muted">
           ¿Dudas sobre qué plan encaja contigo?{" "}
-          <a href="#cita" className="text-cyan-400 font-semibold hover:text-cyan-300">
+          <Link href="/disena-tu-web#cita" className="text-cyan-400 font-semibold hover:text-cyan-300">
             Te lo decimos gratis en la auditoría →
-          </a>
+          </Link>
         </p>
       </div>
     </section>

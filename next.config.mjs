@@ -17,6 +17,10 @@ const nextConfig = {
     // Importa solo los iconos usados de lucide-react (tree-shaking agresivo).
     optimizePackageImports: ["lucide-react", "framer-motion"],
   },
+  // La antigua demo /dashboard vive ahora en Plataforma.
+  async redirects() {
+    return [{ source: "/dashboard", destination: "/plataforma/panel", permanent: true }];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

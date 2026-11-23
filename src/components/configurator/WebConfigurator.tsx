@@ -51,7 +51,8 @@ const MAX_BUTTONS = 4;
 const BUTTON_LABEL_MAX = 24;
 const eur = (n: number) => `${Math.round(n).toLocaleString("es-ES")} €`;
 
-export default function WebConfigurator() {
+/** titleAs="h1" cuando la sección encabeza su propia página. */
+export default function WebConfigurator({ titleAs: Title = "h2" }: { titleAs?: "h1" | "h2" } = {}) {
   const [studio, setStudio] = useState<Studio>(() => defaultStudio("restaurante"));
   const [activePage, setActivePage] = useState(0);
   const [demo, setDemo] = useState<string | null>(null); // botón que reproduce su animación
@@ -135,9 +136,9 @@ export default function WebConfigurator() {
           <span className="eyebrow eyebrow-live mb-5">
             <Sparkles size={13} aria-hidden="true" /> Estudio visual · en directo
           </span>
-          <h2 id="configurador-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
+          <Title id="configurador-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
             Diseña tu web <span className="gradient-text">en directo</span> y descubre cuánto ahorras
-          </h2>
+          </Title>
           <p className="mt-5 text-muted text-base sm:text-lg leading-relaxed">
             Elige estilo, colores, páginas, botones y animaciones. Lo ves al instante, con precio cerrado y comparado con lo que
             cobra hoy una agencia.

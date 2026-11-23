@@ -14,7 +14,7 @@ export default function NotFound() {
           <Link href="/" className="btn btn-primary">
             Volver al inicio
           </Link>
-          <Link href="/#cita" className="btn btn-ghost">
+          <Link href="/disena-tu-web#cita" className="btn btn-ghost">
             Auditoría gratis
           </Link>
         </div>

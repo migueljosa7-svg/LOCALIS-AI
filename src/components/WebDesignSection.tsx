@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Globe, Smartphone, Search, Bot, CheckCircle2, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
 import WhatsAppIcon from "./WhatsAppIcon";
 import { waLink } from "@/lib/site";
@@ -92,10 +93,10 @@ export default function WebDesignSection() {
                 Tu escaparate digital 24/7, con soporte técnico local y cercano
               </h3>
               <p className="mt-4 text-muted text-sm sm:text-base leading-relaxed">
-                No solo diseñamos una web bonita: creamos un sistema comercial completo. Cada proyecto incluye{" "}
+                No solo diseñamos una web bonita: la preparamos para que te contacten. Cada proyecto incluye{" "}
                 <strong className="text-foreground">Google Maps</strong>, botones directos de{" "}
-                <strong className="text-foreground">WhatsApp</strong>, la asistente <strong className="text-foreground">Stella IA</strong> y
-                reservas online directas.
+                <strong className="text-foreground">WhatsApp</strong> y <strong className="text-foreground">formulario de presupuesto</strong>.
+                La asistente Stella IA y las reservas online están en desarrollo.
               </p>
               <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
                 {LOCAL_SECTORS.map((sector) => (
@@ -125,9 +126,9 @@ export default function WebDesignSection() {
                 ))}
               </dl>
               <div className="flex flex-col gap-2.5 pt-1">
-                <a href="#cita" className="btn btn-primary w-full">
+                <Link href="/disena-tu-web#cita" className="btn btn-primary w-full">
                   Pedir auditoría web gratuita <ArrowRight size={17} aria-hidden="true" />
-                </a>
+                </Link>
                 <a
                   href={waLink("Hola LOCALIS AI, quiero información sobre diseño web para mi negocio en Zaragoza")}
                   target="_blank"

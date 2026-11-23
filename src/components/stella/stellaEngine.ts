@@ -127,7 +127,7 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
   if (/^(hola|buenas|buenos dias|buenas tardes|hey|saludos|que tal)\b/.test(t) && original.length < 40) {
     return {
       intent: "greeting",
-      reply: "¡Hola! Soy Stella, tu asistente virtual con IA 24/7 para negocios en Zaragoza.\n\nPuedo ayudarte con:\n• Resolver dudas de clientes y gestionar citas automáticamente\n• Sincronizar reservas con Google Calendar y WhatsApp\n• Derivar solicitudes directas al formulario de auditoría (#cita)\n• Emitir facturas con IVA y rastrear repartos GPS en vivo\n\n¿Quieres probar una reserva o pedir una cita para tu negocio?",
+      reply: "¡Hola! Soy Stella, tu asistente virtual con IA 24/7 para negocios en Zaragoza.\n\nPuedo ayudarte con:\n• Resolver dudas de clientes y gestionar citas automáticamente\n• Sincronizar reservas con Google Calendar y WhatsApp\n• Derivar solicitudes directas al formulario de auditoría\n• Emitir facturas con IVA y rastrear repartos GPS en vivo\n\n¿Quieres probar una reserva o pedir una cita para tu negocio?",
       action: null,
       chips: ["📅 Pedir cita para mi negocio", "¿Qué puedes hacer?", "Tienes hueco mañana?", "Genera la factura de Pepe"]
     };
@@ -143,7 +143,7 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
   if (has(t, ["que puedes hacer", "que sabes hacer", "ayuda", "como funciona", "que haces", "capacidades", "para que sirves"])) {
     return {
       intent: "capabilities",
-      reply: "Como asistente IA para comercios y PYMEs en Zaragoza, opero tu negocio 24/7:\n\n1. GESTIÓN DE CITAS — Verifico huecos libres y sincronizo Calendar + WhatsApp.\n2. ATENCIÓN AL CLIENTE — Respondo dudas sobre servicios, precios y horarios sin esperas.\n3. DERIVACIÓN DIRECTA — Cualifico al cliente y lo dirijo a tu formulario de reserva (#cita).\n4. FACTURACIÓN Y GPS — Emito facturas y muestro el mapa de reparto en tiempo real.\n\nPrueba a escribir: 'Pedir cita para mi negocio' o 'Tienes hueco mañana'.",
+      reply: "Como asistente IA para comercios y PYMEs en Zaragoza, opero tu negocio 24/7:\n\n1. GESTIÓN DE CITAS — Verifico huecos libres y sincronizo Calendar + WhatsApp.\n2. ATENCIÓN AL CLIENTE — Respondo dudas sobre servicios, precios y horarios sin esperas.\n3. DERIVACIÓN DIRECTA — Cualifico al cliente y lo dirijo a tu formulario de reserva.\n4. FACTURACIÓN Y GPS — Emito facturas y muestro el mapa de reparto en tiempo real.\n\nPrueba a escribir: 'Pedir cita para mi negocio' o 'Tienes hueco mañana'.",
       action: null,
       chips: ["📅 Pedir cita para mi negocio", "Tienes hueco mañana?", "Resumen de hoy", "¿Dónde está el pedido #104?"]
     };

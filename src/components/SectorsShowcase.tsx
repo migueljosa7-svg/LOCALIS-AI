@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState, type KeyboardEvent } from "react";
 import { m as motion, AnimatePresence } from "framer-motion";
 import { UtensilsCrossed, Wrench, Stethoscope, Store, CheckCircle2, ArrowRight, Bot, type LucideIcon } from "lucide-react";
@@ -106,7 +107,8 @@ const VERTICALS: Vertical[] = [
   },
 ];
 
-export default function SectorsShowcase() {
+/** titleAs="h1" cuando la sección encabeza su propia página. */
+export default function SectorsShowcase({ titleAs: Title = "h2" }: { titleAs?: "h1" | "h2" } = {}) {
   const [activeId, setActiveId] = useState(VERTICALS[0].id);
   const active = VERTICALS.find((v) => v.id === activeId) ?? VERTICALS[0];
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -126,9 +128,9 @@ export default function SectorsShowcase() {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="eyebrow mb-5">Soluciones por sector</span>
-          <h2 id="sectores-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
+          <Title id="sectores-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
             Hecho a medida para <span className="gradient-text">tu tipo de negocio</span>
-          </h2>
+          </Title>
           <p className="mt-5 text-muted text-base sm:text-lg">Elige tu sector y mira cómo cambia tu día a día con LOCALIS AI.</p>
         </div>
 
@@ -215,9 +217,9 @@ export default function SectorsShowcase() {
                 </ul>
                 <p className="mt-3 text-[11.5px] text-muted">Las funciones de IA, citas, pedidos y reparto están en desarrollo. Hoy entregamos la web con formulario, WhatsApp y Google Maps.</p>
 
-                <a href="#cita" className="btn btn-primary mt-7 w-full sm:w-auto">
+                <Link href="/disena-tu-web#cita" className="btn btn-primary mt-7 w-full sm:w-auto">
                   Ver cómo quedaría en mi {active.noun} <ArrowRight size={17} aria-hidden="true" />
-                </a>
+                </Link>
               </div>
 
               <div className="border-glow rounded-3xl p-6 sm:p-8 shadow-glass flex flex-col">
