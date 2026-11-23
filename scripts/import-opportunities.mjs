@@ -124,7 +124,8 @@ if (flag !== "--apply") {
 }
 
 loadEnv();
-const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
+// Acepta https://<proyecto>.supabase.co y también la "API URL" terminada en /rest/v1/.
+const url = process.env.SUPABASE_URL?.trim().replace(/\/+$/, "").replace(/\/rest\/v1$/i, "");
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!url || !key) {
   console.error("✖ Faltan SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY (en el entorno o en .env.local).");
