@@ -35,7 +35,12 @@ export default async function AdminPage() {
         <p className="mt-1 text-sm text-muted">Datos reales de la base de datos · actualizado al cargar la página.</p>
         {(!leads.ok || !opps.ok) && (
           <p role="alert" className="mt-4 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-            Error al leer la base de datos ({!leads.ok ? "leads" : "oportunidades"}). Revisa las variables de Supabase y que el esquema esté creado.
+            Error al leer la base de datos ({!leads.ok ? "leads" : "oportunidades"}). Revisa las variables de Supabase, que el esquema esté creado
+            y que se haya ejecutado <code>supabase/fix-permisos.sql</code>.
+            <span className="mt-1 block font-mono text-xs opacity-80">
+              {!leads.ok && <>leads: {leads.message ?? leads.reason}. </>}
+              {!opps.ok && <>oportunidades: {opps.message ?? opps.reason}.</>}
+            </span>
           </p>
         )}
       </header>

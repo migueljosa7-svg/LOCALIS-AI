@@ -5,7 +5,8 @@ import "server-only";
 //
 //  Variables de entorno (Vercel → Settings → Environment Variables):
 //    SUPABASE_URL               https://<proyecto>.supabase.co
-//    SUPABASE_SERVICE_ROLE_KEY  clave "service_role" (secreta; nunca NEXT_PUBLIC_)
+//    SUPABASE_SERVICE_ROLE_KEY  clave secreta: "Secret key" (sb_secret_…) o la antigua
+//                               "service_role" (eyJ…). Nunca NEXT_PUBLIC_.
 //
 //  Las tablas tienen RLS activado y ninguna política pública: solo este
 //  servidor (con la clave service_role) puede leer o escribir.
@@ -57,6 +58,16 @@ export interface OpportunityRow {
 
 type Result<T> = { ok: true; data: T } | { ok: false; reason: "not-configured" | "error"; message?: string };
 
+/**
+ * Cabeceras de autenticación de Supabase.
+ * - Clave antigua "service_role" (JWT, empieza por "eyJ"): apikey + Authorization: Bearer.
+ * - Clave nueva "secret" (sb_secret_…): SOLO apikey. No es un JWT y Supabase la rechaza
+ *   ("Invalid JWT") si se envía en Authorization.
+ */
+export function authHeaders(key: string): Record<string, string> {
+  return key.startsWith("eyJ") ? { apikey: key, Authorization: `Bearer ${key}` } : { apikey: key };
+}
+
 function config() {
   const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -78,8 +89,7 @@ async function rest<T>(path: string, init: RequestInit & { prefer?: string } = {
       cache: "no-store",
       signal: ctrl.signal,
       headers: {
-        apikey: cfg.key,
-        Authorization: `Bearer ${cfg.key}`,
+        ...authHeaders(cfg.key),
         "Content-Type": "application/json",
         ...(init.prefer ? { Prefer: init.prefer } : {}),
       },
@@ -87,13 +97,19 @@ async function rest<T>(path: string, init: RequestInit & { prefer?: string } = {
     if (!res.ok) {
       const detail = (await res.text().catch(() => "")).slice(0, 300);
       console.error(`[db] ${init.method ?? "GET"} ${path.split("?")[0]} → ${res.status} ${detail}`);
-      return { ok: false, reason: "error", message: `HTTP ${res.status}` };
+      // Código y mensaje de PostgREST (p. ej. 42501 permission denied). No contienen claves.
+      let info = "";
+      try {
+        const j = JSON.parse(detail) as { code?: string; message?: string };
+        info = [j.code, j.message].filter(Boolean).join(" ").slice(0, 160);
+      } catch {}
+      return { ok: false, reason: "error", message: `HTTP ${res.status}${info ? " · " + info : ""}` };
     }
     const text = await res.text();
     return { ok: true, data: (text ? JSON.parse(text) : null) as T };
   } catch (err) {
     console.error(`[db] ${path.split("?")[0]} falló:`, err instanceof Error ? err.message : err);
-    return { ok: false, reason: "error", message: "network" };
+    return { ok: false, reason: "error", message: err instanceof Error && err.name === "AbortError" ? "tiempo agotado" : "sin conexión (revisa SUPABASE_URL)" };
   } finally {
     clearTimeout(timer);
   }

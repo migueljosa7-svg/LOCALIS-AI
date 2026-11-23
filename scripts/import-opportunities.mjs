@@ -134,7 +134,8 @@ const res = await fetch(`${url}/rest/v1/opportunities?on_conflict=company,locali
   method: "POST",
   headers: {
     apikey: key,
-    Authorization: `Bearer ${key}`,
+    // Las claves nuevas (sb_secret_…) no son JWT: solo van en "apikey".
+    ...(key.startsWith("eyJ") ? { Authorization: `Bearer ${key}` } : {}),
     "Content-Type": "application/json",
     Prefer: "resolution=merge-duplicates,return=minimal",
   },
