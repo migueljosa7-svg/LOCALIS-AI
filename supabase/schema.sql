@@ -60,3 +60,11 @@ create table if not exists public.opportunities (
 
 create index if not exists opportunities_score_idx on public.opportunities (score desc);
 alter table public.opportunities enable row level security;
+
+-- ── Permisos de la API (obligatorio desde oct-2026) ──
+-- Supabase ya no da acceso automático a las tablas nuevas: sin este GRANT la API
+-- responde 42501 "permission denied", incluso con la clave secreta.
+-- Solo el servidor (service_role) tiene acceso; anon y authenticated, ninguno.
+grant select, insert, update, delete on public.leads, public.opportunities to service_role;
+revoke all on public.leads, public.opportunities from anon, authenticated;
+notify pgrst, 'reload schema';
