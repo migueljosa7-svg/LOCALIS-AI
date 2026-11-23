@@ -11,11 +11,13 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "check": "node scripts/check-market-data.mjs && npm run lint && tsc --noEmit && next build",
+    "check": "node scripts/check-market-data.mjs && npm test && npm run lint && tsc --noEmit && next build",
     "assets:google": "node scripts/google-business-assets.mjs",
     "assets:icons": "node scripts/generate-icons.mjs",
     "lint": "eslint . --max-warnings=0",
-    "market:check": "node scripts/check-market-data.mjs"
+    "market:check": "node scripts/check-market-data.mjs",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "node scripts/e2e/builder-e2e.mjs"
   },
   "repository": {
     "type": "git",
@@ -41,6 +43,7 @@
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.6.0",
     "@eslint/eslintrc": "^3.3.1",
     "@types/leaflet": "^1.9.22",
     "@types/node": "^20.19.43",
@@ -53,6 +56,7 @@
     "postcss": "^8.5.29",
     "sharp": "^0.35.5",
     "tailwindcss": "^3.4.19",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3"
   }
 }

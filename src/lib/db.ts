@@ -56,7 +56,7 @@ export interface OpportunityRow {
   notes: string | null;
 }
 
-type Result<T> = { ok: true; data: T } | { ok: false; reason: "not-configured" | "error"; message?: string };
+export type Result<T> = { ok: true; data: T } | { ok: false; reason: "not-configured" | "error"; message?: string };
 
 /**
  * Cabeceras de autenticación de Supabase.
@@ -81,7 +81,7 @@ export function dbConfigured(): boolean {
   return config() !== null;
 }
 
-async function rest<T>(path: string, init: RequestInit & { prefer?: string } = {}): Promise<Result<T>> {
+export async function rest<T>(path: string, init: RequestInit & { prefer?: string } = {}): Promise<Result<T>> {
   const cfg = config();
   if (!cfg) return { ok: false, reason: "not-configured" };
   const ctrl = new AbortController();

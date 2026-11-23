@@ -9,6 +9,7 @@ import LegalBanner from '@/components/LegalBanner';
 import PwaSetup from '@/components/pwa/PwaSetup';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
 import MobileStickyBar from '@/components/MobileStickyBar';
+import HideOnBuilder from '@/components/HideOnBuilder';
 import { SITE_URL } from '@/lib/site';
 import GtagLoader from '@/components/GtagLoader';
 
@@ -121,15 +122,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Saltar al contenido
         </a>
-        <AmbientOrbs />
-        <GlowPointer />
+        <HideOnBuilder>
+          <AmbientOrbs />
+          <GlowPointer />
+        </HideOnBuilder>
         <MotionProvider>
           {children}
           <PwaSetup />
           <LegalBanner />
         </MotionProvider>
-        <WhatsAppFloat />
-        <MobileStickyBar />
+        <HideOnBuilder>
+          <WhatsAppFloat />
+          <MobileStickyBar />
+        </HideOnBuilder>
       </body>
     </html>
   );
