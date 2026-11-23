@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LEAD_STATUSES, OPP_STATUSES, dbConfigured, listLeads, listOpportunities } from "@/lib/db";
+import Link from "next/link";
 import RowEditor from "./RowEditor";
 
 // Panel interno. Protegido por src/middleware.ts (usuario y contraseña).
@@ -33,6 +34,11 @@ export default async function AdminPage() {
       <header>
         <h1 className="font-display text-3xl font-bold">Panel interno</h1>
         <p className="mt-1 text-sm text-muted">Datos reales de la base de datos · actualizado al cargar la página.</p>
+        <p className="mt-3">
+          <Link href="/admin/stella" className="inline-flex min-h-[44px] items-center rounded-xl border border-cyan-500/40 px-4 text-sm font-semibold text-cyan-300">
+            Stella · negocios y contactos →
+          </Link>
+        </p>
         {(!leads.ok || !opps.ok) && (
           <p role="alert" className="mt-4 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
             Error al leer la base de datos ({!leads.ok ? "leads" : "oportunidades"}). Revisa las variables de Supabase, que el esquema esté creado
@@ -106,6 +112,9 @@ export default async function AdminPage() {
                     </td>
                     <td className="p-3">
                       <RowEditor kind="leads" id={l.id} status={l.status} notes={l.notes} options={LEAD_STATUSES} />
+                      <Link href={`/admin/stella/nuevo?lead=${l.id}`} className="mt-2 inline-block text-xs text-cyan-300 underline">
+                        Crear negocio Stella con estos datos
+                      </Link>
                     </td>
                   </tr>
                 ))}
