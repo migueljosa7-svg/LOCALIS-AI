@@ -27,6 +27,7 @@ export default function StudioSendModal({ open, onClose, studio, quote }: { open
   const [errors, setErrors] = useState<LeadErrors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [copied, setCopied] = useState<"ok" | "error" | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const titleId = useId();
   const uid = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -39,6 +40,7 @@ export default function StudioSendModal({ open, onClose, studio, quote }: { open
     setStatus("idle");
     setErrors({});
     setCopied(null);
+    setSubmitError(null);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && status !== "sending" && onClose();
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -100,12 +102,16 @@ export default function StudioSendModal({ open, onClose, studio, quote }: { open
       return;
     }
     setStatus("sending");
-    try {
-      await submitLead({ ...lead, source: "Estudio visual", details: text, prompt: prompt() });
+    setSubmitError(null);
+    const res = await submitLead({ ...lead, source: "Estudio visual", details: text, prompt: prompt() });
+    if (res.ok) {
       trackLead("estudio_visual", sector.short);
-    } finally {
       setStatus("done");
+      return;
     }
+    if (res.errors) setErrors(res.errors);
+    setSubmitError(res.error);
+    setStatus("idle");
   };
 
   const field = (k: keyof Form, label: string, props: React.InputHTMLAttributes<HTMLInputElement>) => (
@@ -191,6 +197,11 @@ export default function StudioSendModal({ open, onClose, studio, quote }: { open
                 {field("phone", "Teléfono / WhatsApp", { type: "tel", inputMode: "tel", autoComplete: "tel", placeholder: "612 345 678" })}
                 {field("email", "Email", { type: "email", inputMode: "email", autoComplete: "email", placeholder: "tu@negocio.com" })}
               </div>
+              {submitError && (
+                <p role="alert" className="rounded-xl border border-red-400/40 bg-red-500/10 px-3.5 py-2.5 text-sm text-red-200">
+                  {submitError} Puedes usar el botón verde de WhatsApp de arriba.
+                </p>
+              )}
               <button type="submit" disabled={status === "sending"} className="btn btn-primary w-full disabled:opacity-70">
                 {status === "sending" ? <Loader2 size={17} className="animate-spin" aria-hidden="true" /> : <Send size={17} aria-hidden="true" />}
                 {status === "sending" ? "Enviando…" : "Enviar mi diseño"}

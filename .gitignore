@@ -34,3 +34,6 @@ ehthumbs.db
 *.swp
 *.swo
 *~
+
+# ── Lead Engine: investigaciones con datos de empresas (no se suben) ──
+lead-engine/investigacion-*.csv

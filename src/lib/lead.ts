@@ -100,28 +100,19 @@ export function validateEmail(raw: string): string | null {
   return null;
 }
 
-const STORAGE_KEY = "localis-leads";
+export type SubmitResult =
+  | { ok: true }
+  | { ok: false; error: string; errors?: LeadErrors };
 
-function persistLocal(data: LeadData): void {
-  try {
-    if (typeof window === "undefined") return;
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    const existing = raw ? (JSON.parse(raw) as unknown) : [];
-    const list = Array.isArray(existing) ? existing : [];
-    list.push({ ...data, at: new Date().toISOString() });
-    // Evita que el localStorage crezca sin límite (máx. 50 leads).
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(-50)));
-  } catch {
-    // localStorage no disponible (modo privado, etc.): ignoramos de forma segura.
-  }
-}
+const NETWORK_ERROR = "No hay conexión o el servidor no responde. Inténtalo de nuevo o escríbenos por WhatsApp.";
 
 /**
- * Envía el lead al endpoint propio `/api/lead` (validación servidor + rate-limit).
- * Nunca rompe la UX: si la red o el servidor fallan, persiste en local y devuelve ok
- * para mostrar el estado de éxito sin recargar la página.
+ * Envía el lead a `/api/lead` (validación en servidor + guardado + aviso por email).
+ * Devuelve el resultado REAL: el formulario solo muestra "recibido" si el servidor
+ * confirma que el lead quedó registrado; si no, muestra el error y la alternativa
+ * de WhatsApp. Ya no se guardan datos personales en el navegador del visitante.
  */
-export async function submitLead(data: LeadData): Promise<{ ok: boolean; degraded?: boolean }> {
+export async function submitLead(data: LeadData): Promise<SubmitResult> {
   const payload = {
     businessName: data.businessName.trim(),
     sector: data.sector.trim(),
@@ -133,31 +124,22 @@ export async function submitLead(data: LeadData): Promise<{ ok: boolean; degrade
     prompt: data.prompt ? data.prompt.trim().slice(0, 8000) : null,
   };
 
+  const ctrl = new AbortController();
+  const timeout = window.setTimeout(() => ctrl.abort(), 12000);
   try {
-    const ctrl = new AbortController();
-    const timeout = window.setTimeout(() => ctrl.abort(), 9000);
-    let res: Response;
-    try {
-      res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-        signal: ctrl.signal,
-      });
-    } finally {
-      window.clearTimeout(timeout);
-    }
-    if (!res.ok) {
-      // El servidor valida; si es 4xx mostramos éxito degradado en lugar de pantalla de error.
-      persistLocal(payload);
-      return { ok: true, degraded: true };
-    }
-    persistLocal(payload);
-    return { ok: true };
+    const res = await fetch("/api/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: ctrl.signal,
+    });
+    const body = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; errors?: LeadErrors };
+    if (res.ok && body.ok) return { ok: true };
+    if (res.status === 422 && body.errors) return { ok: false, error: "Revisa los campos marcados.", errors: body.errors };
+    return { ok: false, error: body.error || NETWORK_ERROR };
   } catch {
-    // Sin red / timeout / API caída: no perdemos la solicitud.
-    persistLocal(payload);
-    return { ok: true, degraded: true };
+    return { ok: false, error: NETWORK_ERROR };
+  } finally {
+    window.clearTimeout(timeout);
   }
 }
-

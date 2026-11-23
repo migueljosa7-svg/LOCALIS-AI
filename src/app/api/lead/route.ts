@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { validateLead } from "@/lib/lead";
-import { env } from "@/lib/env";
 import { sendLeadNotifications } from "@/lib/email";
+import { insertLead, markLeadNotified } from "@/lib/db";
 
-// Rate-limit en memoria (suficiente para una landing; en producción usar KV/Upstash).
+// Límite básico por IP (en memoria de cada instancia; orientativo en Vercel).
 const hits = new Map<string, { count: number; reset: number }>();
 const WINDOW_MS = 60_000;
 const MAX_HITS = 10;
@@ -19,40 +19,46 @@ function rateLimited(ip: string): boolean {
   return entry.count > MAX_HITS;
 }
 
-function esc(s: unknown, max = 200): string {
+function clean(s: unknown, max = 200): string {
   return String(s ?? "").trim().slice(0, max);
 }
 
+const FALLBACK_ERROR =
+  "No hemos podido registrar tu solicitud. Escríbenos por WhatsApp al +34 640 80 92 38 y te atendemos al momento.";
+
+/**
+ * Recepción de leads:
+ *   1. valida en servidor (mismas reglas que el navegador);
+ *   2. guarda el lead en la base de datos (si está configurada);
+ *   3. envía el aviso por email (si Resend está configurado).
+ * Responde ok solo si el lead quedó guardado o avisado por email. Si no se pudo
+ * ninguna de las dos cosas, devuelve 503 y el formulario muestra el error real
+ * (con WhatsApp como alternativa): nunca un "recibido" falso.
+ */
 export async function POST(req: Request) {
   try {
-    const ip =
-      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      req.headers.get("x-real-ip") ||
-      "unknown";
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "unknown";
     if (rateLimited(ip)) {
-      return NextResponse.json(
-        { ok: false, error: "Demasiadas solicitudes. Inténtalo de nuevo en un minuto." },
-        { status: 429 },
-      );
+      return NextResponse.json({ ok: false, error: "Demasiadas solicitudes. Inténtalo de nuevo en un minuto." }, { status: 429 });
     }
 
     let body: unknown;
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ ok: false, error: "Cuerpo JSON inválido." }, { status: 400 });
+      return NextResponse.json({ ok: false, error: "Solicitud no válida." }, { status: 400 });
     }
 
-    const data = body as Record<string, unknown>;
+    const data = (body ?? {}) as Record<string, unknown>;
     const lead = {
-      businessName: esc(data.businessName, 120),
-      sector: esc(data.sector, 80),
-      contactName: esc(data.contactName, 120),
-      phone: esc(data.phone, 40),
-      email: esc(data.email, 160).toLowerCase(),
-      source: data.source == null ? null : esc(data.source, 120),
-      details: data.details == null ? null : esc(data.details, 1200),
-      prompt: data.prompt == null ? null : esc(data.prompt, 8000),
+      businessName: clean(data.businessName, 120),
+      sector: clean(data.sector, 80),
+      contactName: clean(data.contactName, 120),
+      phone: clean(data.phone, 40),
+      email: clean(data.email, 160).toLowerCase(),
+      source: data.source == null ? null : clean(data.source, 120),
+      details: data.details == null ? null : clean(data.details, 1200),
+      prompt: data.prompt == null ? null : clean(data.prompt, 8000),
     };
 
     const errors = validateLead(lead);
@@ -60,25 +66,34 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, errors }, { status: 422 });
     }
 
-    // EMAIL EN TIEMPO REAL (Resend): aviso al dueno + confirmacion al cliente.
-    // Blindado con try/catch: si el proveedor falla o no hay API key, el usuario
-    // NUNCA ve un error y el lead sigue respondiéndose ok (persistencia local incluida).
-    try {
-      const emailResult = await sendLeadNotifications(lead);
-      if (process.env.NODE_ENV !== "production") {
-        console.log("[lead] email:", emailResult, "inbox=" + env.leadInbox, lead);
-      }
-    } catch (emailErr) {
-      console.warn("[lead] envio de email ignorado:", emailErr);
+    // 1) Guardar (fuente de verdad del CRM).
+    const stored = await insertLead({
+      businessName: lead.businessName,
+      contactName: lead.contactName,
+      email: lead.email,
+      phone: lead.phone,
+      service: lead.sector,
+      source: lead.source,
+      details: lead.details,
+      prompt: lead.prompt,
+    });
+
+    // 2) Avisar por email (nunca lanza excepciones).
+    const mail = await sendLeadNotifications(lead);
+    if (stored.ok && mail.notified) await markLeadNotified(stored.data.id);
+
+    const saved = stored.ok;
+    const notified = mail.notified;
+    if (!saved && !notified) {
+      console.error(`[api/lead] lead NO registrado: db=${stored.ok ? "ok" : stored.reason} email=${mail.attempted ? "falló" : "sin configurar"}`);
+      return NextResponse.json({ ok: false, error: FALLBACK_ERROR }, { status: 503 });
     }
+    if (!saved) console.warn(`[api/lead] lead solo avisado por email (db: ${stored.ok ? "ok" : stored.reason})`);
+    if (!notified) console.warn(`[api/lead] lead guardado sin aviso por email (${mail.attempted ? "envío fallido" : "Resend sin configurar"})`);
 
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (err) {
-    console.error("[api/lead] error inesperado:", err);
-    // Jamás pantalla en blanco / 500 crudo: respuesta JSON controlada.
-    return NextResponse.json(
-      { ok: false, error: "Error interno. Tu solicitud se guardó localmente, te contactaremos igualmente." },
-      { status: 500 },
-    );
+    console.error("[api/lead] error inesperado:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ ok: false, error: FALLBACK_ERROR }, { status: 500 });
   }
 }
