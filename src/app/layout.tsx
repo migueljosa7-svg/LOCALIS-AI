@@ -7,7 +7,8 @@ import GlowPointer from '@/components/effects/GlowPointer';
 import MotionProvider from '@/components/motion/MotionProvider';
 import LegalBanner from '@/components/LegalBanner';
 import PwaSetup from '@/components/pwa/PwaSetup';
-import WhatsAppFloat from '@/components/WhatsAppFloat';
+import SiteChrome from '@/components/SiteChrome';
+import StellaGate from '@/components/stella/StellaGate';
 import MobileStickyBar from '@/components/MobileStickyBar';
 import { SITE_URL } from '@/lib/site';
 import GtagLoader from '@/components/GtagLoader';
@@ -108,28 +109,38 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         </noscript>
         {/* gtag.js y GTM se descargan en la primera interacción (o a los 4 s): no compiten con el LCP. */}
-        <GtagLoader
-          sources={[
-            `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`,
-            `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`,
-          ]}
-        />
+        <SiteChrome>
+          <GtagLoader
+            sources={[
+              `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`,
+              `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`,
+            ]}
+          />
+        </SiteChrome>
 
-        <a
-          href="#contenido"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-cyan-500 focus:text-background focus:font-semibold"
-        >
-          Saltar al contenido
-        </a>
-        <AmbientOrbs />
-        <GlowPointer />
+        <SiteChrome>
+          <a
+            href="#contenido"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-cyan-500 focus:text-background focus:font-semibold"
+          >
+            Saltar al contenido
+          </a>
+        </SiteChrome>
+        <SiteChrome>
+          <AmbientOrbs />
+          <GlowPointer />
+        </SiteChrome>
         <MotionProvider>
           {children}
-          <PwaSetup />
-          <LegalBanner />
+          <SiteChrome>
+            <PwaSetup />
+            <LegalBanner />
+          </SiteChrome>
         </MotionProvider>
-        <WhatsAppFloat />
-        <MobileStickyBar />
+        <SiteChrome>
+          <StellaGate />
+          <MobileStickyBar />
+        </SiteChrome>
       </body>
     </html>
   );

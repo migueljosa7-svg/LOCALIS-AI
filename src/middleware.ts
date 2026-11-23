@@ -1,9 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { embedCsp } from "@/lib/stella/edge";
 
-// Protege el panel interno (/admin) y su API con usuario y contraseña.
+// 1) Protege el panel interno (/admin) y su API con usuario y contraseña.
+// 2) Para el chat de Stella incrustado (/stella/embed) fija en el servidor qué webs pueden mostrarlo
+//    (CSP frame-ancestors: lo hace cumplir el navegador, no depende de que el cliente sea honesto).
 // Variables de entorno en Vercel: ADMIN_USER y ADMIN_PASSWORD (16+ caracteres).
 // Si no están configuradas, el panel no existe (404): nunca queda abierto por error.
-export const config = { matcher: ["/admin/:path*", "/api/admin/:path*"] };
+export const config = { matcher: ["/admin/:path*", "/api/admin/:path*", "/stella/embed"] };
 
 const MIN_PASSWORD = 16;
 
@@ -15,7 +18,14 @@ function safeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
+  if (req.nextUrl.pathname === "/stella/embed") {
+    const res = NextResponse.next();
+    res.headers.set("Content-Security-Policy", await embedCsp(req.nextUrl.searchParams.get("negocio")));
+    res.headers.set("Cache-Control", "no-store");
+    return res;
+  }
+
   const user = process.env.ADMIN_USER;
   const pass = process.env.ADMIN_PASSWORD;
   if (!user || !pass || pass.length < MIN_PASSWORD) {
