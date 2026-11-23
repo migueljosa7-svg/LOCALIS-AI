@@ -17,7 +17,7 @@ const BUSINESS = {
   "@id": `${SITE_URL}/#negocio`,
   name: "LOCALIS AI",
   description:
-    "Diseño web e inteligencia artificial en Zaragoza: páginas web con asistente IA Stella 24/7 (WhatsApp, citas y facturación) y software de reparto GPS sin comisiones para PYMEs.",
+    "Diseño web para negocios de Zaragoza y Aragón: webs profesionales a precio cerrado con formulario de presupuesto, WhatsApp, Google Maps y SEO local.",
   url: SITE_URL,
   logo: `${SITE_URL}/google-business-assets/logo-720x720.png`,
   image: `${SITE_URL}/og-image.png`,

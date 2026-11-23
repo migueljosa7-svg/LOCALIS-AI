@@ -63,13 +63,14 @@ export default function DashboardPreview() {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="eyebrow mb-5">
-            <LayoutDashboard size={13} aria-hidden="true" /> Tu panel de control
+            <LayoutDashboard size={13} aria-hidden="true" /> Vista previa · en desarrollo
           </span>
           <h2 id="demo-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
             Todo tu negocio, <span className="gradient-text">en una sola pantalla</span>
           </h2>
           <p className="mt-5 text-muted text-base sm:text-lg">
-            Citas, conversaciones de Stella, facturas y repartos en directo. Desde el móvil o el ordenador, sin instalar nada.
+            Así será el panel para gestionar citas, conversaciones, facturas y repartos. Los datos son de ejemplo: el panel está en
+            desarrollo.
           </p>
         </div>
 

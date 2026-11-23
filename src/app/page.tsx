@@ -3,7 +3,6 @@ import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import WebDesignSection from "@/components/WebDesignSection";
 import DashboardPreview from "@/components/DashboardPreview";
-import TestimonialsSection from "@/components/TestimonialsSection";
 import FaqSection from "@/components/FaqSection";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -46,7 +45,6 @@ export default function LandingPage() {
           <PricingSection />
         </SafeBoundary>
         <FaqSection />
-        <TestimonialsSection />
         <SafeBoundary name="Formulario de auditoría">
           <ThreeStepLeadSection />
         </SafeBoundary>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ArrowRight, BadgePercent } from "lucide-react";
+import { Check, ArrowRight, BadgePercent, Clock3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PLANS } from "@/lib/plans";
 import { useLead } from "@/components/lead/LeadProvider";
@@ -92,16 +92,22 @@ export default function PricingSection() {
                 </p>
 
                 <ul className="mt-6 space-y-3 flex-1">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2.5 text-sm text-foreground/90">
-                      <Check
-                        size={16}
-                        className={cn("shrink-0 mt-0.5", /comisi/i.test(feature) ? "text-emerald-400" : "text-cyan-400")}
-                        aria-hidden="true"
-                      />
-                      {feature}
-                    </li>
-                  ))}
+                  {plan.features.map((feature) => {
+                    const soon = feature.endsWith("(en desarrollo)");
+                    return (
+                      <li key={feature} className={cn("flex items-start gap-2.5 text-sm", soon ? "text-muted" : "text-foreground/90")}>
+                        {soon ? (
+                          <Clock3 size={16} className="shrink-0 mt-0.5 text-muted" aria-hidden="true" />
+                        ) : (
+                          <Check size={16} className={cn("shrink-0 mt-0.5", /comisi/i.test(feature) ? "text-emerald-400" : "text-cyan-400")} aria-hidden="true" />
+                        )}
+                        <span>
+                          {soon ? feature.replace(" (en desarrollo)", "") : feature}
+                          {soon && <span className="ml-1.5 text-[11px] font-semibold uppercase tracking-wide text-amber-200/90">En desarrollo</span>}
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
 
                 <button

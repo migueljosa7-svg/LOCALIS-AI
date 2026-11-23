@@ -24,7 +24,7 @@ const GOOGLE_ADS_ID = 'AW-18505356053';
 const GTM_ID = 'GTM-PQQNZPC7';
 const TITLE = 'Diseño Web e IA en Zaragoza | LOCALIS AI';
 const DESCRIPTION =
-  'Diseña tu web en directo desde 400 € (tope cerrado 800 €): asistente IA Stella 24/7 por WhatsApp, citas, facturas y GPS de reparto sin comisiones para restaurantes, clínicas, talleres y comercios de Zaragoza.';
+  'Diseño web para negocios de Zaragoza y Aragón a precio cerrado: formulario de presupuesto, WhatsApp, Google Maps y SEO local. Diseña tu web en directo y prueba la demostración de Stella, nuestra asistente con IA en desarrollo.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
