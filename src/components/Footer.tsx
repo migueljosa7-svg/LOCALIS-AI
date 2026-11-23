@@ -9,8 +9,8 @@ const COLUMNS = [
   {
     title: "Soluciones",
     links: [
-      { label: "Stella IA 24/7", href: "/#stella" },
-      { label: "Reparto GPS sin comisiones", href: "/#reparto" },
+      { label: "Stella IA (en desarrollo)", href: "/#stella" },
+      { label: "Reparto GPS (en desarrollo)", href: "/#reparto" },
       { label: "Configurador y ahorro", href: "/#configurador" },
       { label: "Diseño web en Zaragoza", href: "/#web" },
     ],

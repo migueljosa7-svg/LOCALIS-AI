@@ -70,7 +70,7 @@ export const BRAND_SWATCHES: { hex: string; name: string }[] = [
   { hex: "#00F2FE", name: "Cian" },
 ];
 
-export const BUTTON_PRESETS = ["Pedir a Domicilio", "Reservar Cita 24/7", "Hablar por WhatsApp", "Ver Ubicación GPS"] as const;
+export const BUTTON_PRESETS = ["Pedir a Domicilio", "Reservar Cita", "Hablar por WhatsApp", "Ver Ubicación GPS"] as const;
 
 export const HOVER_ANIMS: { id: HoverAnim; label: string; css: string }[] = [
   { id: "neon", label: "Brillo neón", css: "halo luminoso del color de marca (box-shadow en un pseudo-elemento, transición de opacity)" },
@@ -80,7 +80,7 @@ export const HOVER_ANIMS: { id: HoverAnim; label: string; css: string }[] = [
 ];
 
 export const MODULES: { id: ModuleId; label: string; detail: string; price: number }[] = [
-  { id: "stella", label: "IA Stella 24/7", detail: "En desarrollo · citas, WhatsApp y facturas", price: 150 },
+  { id: "stella", label: "IA Stella", detail: "En desarrollo · citas, WhatsApp y facturas", price: 150 },
   { id: "gps", label: "Mapa GPS de reparto", detail: "En desarrollo · tus repartidores, sin comisiones", price: 150 },
   { id: "catalogo", label: "Catálogo / carta digital", detail: "En desarrollo · pedidos directos desde tu web", price: 100 },
 ];
@@ -136,8 +136,8 @@ const DEFAULT_STYLE: Record<SectorId, StyleId> = {
 
 const DEFAULT_BUTTONS: Record<SectorId, [string, HoverAnim][]> = {
   restaurante: [["Pedir a Domicilio", "pulse"], ["Hablar por WhatsApp", "lift"]],
-  clinica: [["Reservar Cita 24/7", "neon"], ["Hablar por WhatsApp", "slide"]],
-  taller: [["Reservar Cita 24/7", "neon"], ["Ver Ubicación GPS", "slide"]],
+  clinica: [["Reservar Cita", "neon"], ["Hablar por WhatsApp", "slide"]],
+  taller: [["Reservar Cita", "neon"], ["Ver Ubicación GPS", "slide"]],
   comercio: [["Pedir a Domicilio", "lift"], ["Hablar por WhatsApp", "slide"]],
 };
 

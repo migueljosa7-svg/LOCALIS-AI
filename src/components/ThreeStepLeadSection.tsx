@@ -13,7 +13,7 @@ type Service = "web" | "ia" | "gps";
 
 const SERVICES: { value: Service; title: string; description: string; icon: typeof Globe; sector: string }[] = [
   { value: "web", title: "Página web", description: "Web rápida, con tu marca y lista para captar clientes en Google.", icon: Globe, sector: "Servicio: Página web" },
-  { value: "ia", title: "Asistente Stella IA", description: "Atención por WhatsApp, citas y facturas en automático 24/7.", icon: Bot, sector: "Servicio: Asistente IA para citas" },
+  { value: "ia", title: "Asistente Stella IA", description: "En desarrollo: atención por WhatsApp, citas y facturas. Te avisamos cuando esté lista.", icon: Bot, sector: "Servicio: Asistente IA para citas" },
   { value: "gps", title: "Reparto con GPS", description: "Tus repartidores en el mapa y seguimiento para el cliente, sin comisiones.", icon: Navigation, sector: "Servicio: Sistema GPS de reparto" },
 ];
 

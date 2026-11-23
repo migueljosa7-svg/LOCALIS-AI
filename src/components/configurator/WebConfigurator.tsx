@@ -454,7 +454,7 @@ export default function WebConfigurator() {
                   <p className="sc-title" style={{ fontFamily: style.font }}>
                     {heroTitle(studio.sector)}
                   </p>
-                  <p className="sc-sub">Zaragoza · Abierto hoy · Atención 24/7</p>
+                  <p className="sc-sub">Zaragoza · Abierto hoy</p>
                   <div className="sc-actions">
                     {studio.buttons.length === 0 && <span className="sc-empty">Añade botones desde el paso 4</span>}
                     {studio.buttons.map((b, i) => (
@@ -495,7 +495,7 @@ export default function WebConfigurator() {
                     {studio.modules.includes("stella") && (
                       <div className="sc-card cfg-pop">
                         <p className="sc-card-title">
-                          <Bot size={13} aria-hidden="true" /> Stella · 24/7
+                          <Bot size={13} aria-hidden="true" /> Stella · demo
                         </p>
                         <p className="sc-bubble">¡Hola! Tengo hueco hoy a las 17:30. ¿Te lo reservo? 📅</p>
                       </div>

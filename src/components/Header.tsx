@@ -9,8 +9,8 @@ import BrandMark from "@/components/brand/BrandMark";
 type TabId = "inicio" | "plataforma" | "disena" | "tarifas";
 
 const PLATFORM: { href: string; title: string; detail: string; icon: LucideIcon }[] = [
-  { href: "/#stella", title: "IA Stella 24/7", detail: "Citas, WhatsApp y facturas", icon: Bot },
-  { href: "/#reparto", title: "Mapa GPS en vivo", detail: "Repartos propios, sin comisiones", icon: MapPin },
+  { href: "/#stella", title: "IA Stella (demo)", detail: "En desarrollo · citas, WhatsApp y facturas", icon: Bot },
+  { href: "/#reparto", title: "Mapa GPS (demo)", detail: "En desarrollo · repartos propios, sin comisiones", icon: MapPin },
   { href: "/#sectores", title: "Soluciones por sector", detail: "Restaurantes, clínicas, talleres y comercios", icon: LayoutGrid },
 ];
 
