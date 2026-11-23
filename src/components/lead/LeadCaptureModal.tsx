@@ -144,12 +144,13 @@ export default function LeadCaptureModal() {
                 >
                   <div className="mb-6">
                     <span className="eyebrow mb-3">
-                      <Sparkles size={12} /> Demo gratuita · Sin compromiso
+                      <Sparkles size={12} /> {source === "stella-pedido" ? "Pedido de Stella · Sin compromiso" : "Demo gratuita · Sin compromiso"}
                     </span>
-                    <h3 id="lead-modal-title" className="text-2xl font-bold font-display">Solicitar demo gratuita</h3>
+                    <h3 id="lead-modal-title" className="text-2xl font-bold font-display">{source === "stella-pedido" ? "Pedir Stella para mi web" : "Solicitar demo gratuita"}</h3>
                     <p className="text-sm text-muted mt-1.5">
-                      Cuéntanos sobre tu negocio y te mostramos LOCALIS AI en acción.
-                      {source && <span className="ml-1 text-cyan-300">({source})</span>}
+                      {source === "stella-pedido"
+                        ? "Cuéntanos quién eres y te contactamos para preparar la ficha de tu negocio. No se activa ni se cobra nada sin tu confirmación."
+                        : "Cuéntanos sobre tu negocio y te mostramos LOCALIS AI en acción."}
                     </p>
                   </div>
                   {prefill?.details && (
@@ -258,7 +259,7 @@ export default function LeadCaptureModal() {
                         </>
                       ) : (
                         <>
-                          <Send size={16} /> Solicitar Demo
+                          <Send size={16} /> {source === "stella-pedido" ? "Pedir Stella" : "Solicitar Demo"}
                         </>
                       )}
                     </button>

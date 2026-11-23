@@ -46,13 +46,13 @@ test("frameAncestors solo lista los dominios del negocio y nuestra web", () => {
 const NOW = 1_800_000_000;
 const payload = { b: "peluqueria-ana", s: "sesion1", h: "peluqueriaana.es", i: NOW, e: NOW + TOKEN_TTL_SECONDS };
 
-test("token: válido tras la edad mínima y con la firma correcta", async () => {
+test("token: válido al instante (sin esperas) y con la firma correcta", async () => {
   const t = await signToken(SECRET, payload);
-  const ok = await verifyToken(SECRET, t, NOW + 5);
+  const ok = await verifyToken(SECRET, t, NOW);
   assert.ok(ok.ok && ok.payload.b === "peluqueria-ana");
 });
 
-test("token: rechaza firma ajena, manipulación, caducado, demasiado nuevo y malformado", async () => {
+test("token: rechaza firma ajena, manipulación, caducado, futuro lejano y malformado", async () => {
   const t = await signToken(SECRET, payload);
   assert.deepEqual(await verifyToken("otro-secreto", t, NOW + 5), { ok: false, reason: "signature" });
   const [body, sig] = t.split(".");
@@ -60,7 +60,8 @@ test("token: rechaza firma ajena, manipulación, caducado, demasiado nuevo y mal
   assert.equal((await verifyToken(SECRET, `${forged}.${sig}`, NOW + 5)).ok, false);
   assert.equal((await verifyToken(SECRET, `${body}.${sig}x`, NOW + 5)).ok, false);
   assert.deepEqual(await verifyToken(SECRET, t, NOW + TOKEN_TTL_SECONDS + 1), { ok: false, reason: "expired" });
-  assert.deepEqual(await verifyToken(SECRET, t, NOW), { ok: false, reason: "too-new" });
+  assert.deepEqual(await verifyToken(SECRET, t, NOW - 3600), { ok: false, reason: "too-new" }, "un token del futuro lejano se rechaza");
+  assert.ok((await verifyToken(SECRET, t, NOW - 30)).ok, "pero se tolera un desfase de reloj pequeño");
   for (const bad of [undefined, null, 5, "", "abc", "a.b.c", "x".repeat(2000)]) assert.equal((await verifyToken(SECRET, bad, NOW + 5)).ok, false);
 });
 

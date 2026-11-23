@@ -64,6 +64,22 @@ export default function PrivacyPolicyPage() {
         </section>
 
         <section className="space-y-4 border-border border-l-2 pl-4">
+          <h2 className="text-xl font-bold font-display">3 bis. Asistente virtual Stella (chat con IA)</h2>
+          <p className="text-muted">
+            Stella es una inteligencia artificial, no una persona. Los mensajes que escribes en el chat se envían a nuestro
+            proveedor de IA, Anthropic, únicamente para generar la respuesta. Por eso te pedimos que <strong>no escribas datos
+            personales en el chat</strong> (DNI, datos bancarios o de salud). No guardamos el contenido de las conversaciones;
+            solo registramos datos técnicos de uso (número de mensajes y consumo) para controlar los límites del servicio.
+          </p>
+          <p className="text-muted">
+            Si quieres que te contactemos, el chat muestra un formulario con una casilla de consentimiento: solo con esa
+            casilla marcada guardamos tu nombre, teléfono y, si lo indicas, tu email, y los usamos únicamente para atender tu
+            consulta. Cuando Stella está instalada en la web de otro negocio, ese negocio es el responsable de los datos que
+            le dejas y LOCALIS AI actúa como encargado del tratamiento.
+          </p>
+        </section>
+
+        <section className="space-y-4 border-border border-l-2 pl-4">
           <h2 className="text-xl font-bold font-display">4. Base legal del tratamiento</h2>
           <p className="text-muted">
             El tratamiento de tus datos se basa en: tu consentimiento, el cumplimiento de

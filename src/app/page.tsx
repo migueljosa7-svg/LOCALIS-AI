@@ -9,6 +9,7 @@ import JsonLd from "@/components/JsonLd";
 import SafeBoundary from "@/components/SafeBoundary";
 import { LeadProvider } from "@/components/lead/LeadProvider";
 import LeadModalGate from "@/components/lead/LeadModalGate";
+import StellaLiveSection from "@/components/stella/StellaLiveSection";
 
 // Islas interactivas en chunks separados (se renderizan en el servidor para SEO,
 // pero su JS se descarga en paralelo y no bloquea el hero). Cada una va dentro
@@ -30,6 +31,7 @@ export default function LandingPage() {
         <SafeBoundary name="Estudio visual · Diseña tu web" minHeight={400}>
           <WebConfigurator />
         </SafeBoundary>
+        <StellaLiveSection />
         <SafeBoundary name="Simulador de Stella" minHeight={400}>
           <StellaConsole />
         </SafeBoundary>

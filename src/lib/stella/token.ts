@@ -22,8 +22,8 @@ export interface StellaTokenPayload {
 }
 
 export const TOKEN_TTL_SECONDS = 4 * 60 * 60;
-/** Un token recién emitido no vale hasta pasado este tiempo: frena scripts que lo piden y lo usan al instante. */
-export const TOKEN_MIN_AGE_SECONDS = 1;
+/** Margen por desfase de reloj entre servidores: un token «del futuro» más allá de este margen se rechaza. */
+export const TOKEN_CLOCK_SKEW_SECONDS = 60;
 
 const enc = new TextEncoder();
 
@@ -75,7 +75,7 @@ export async function verifyToken(secret: string, token: unknown, nowSec = Math.
   }
   if (typeof p?.b !== "string" || typeof p.s !== "string" || typeof p.i !== "number" || typeof p.e !== "number") return { ok: false, reason: "malformed" };
   if (nowSec >= p.e) return { ok: false, reason: "expired" };
-  if (nowSec < p.i + TOKEN_MIN_AGE_SECONDS) return { ok: false, reason: "too-new" };
+  if (nowSec < p.i - TOKEN_CLOCK_SKEW_SECONDS) return { ok: false, reason: "too-new" };
   return { ok: true, payload: p };
 }
 

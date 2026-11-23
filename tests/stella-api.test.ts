@@ -40,12 +40,10 @@ test("chat: rechaza peticiones sin Origin propio, sin token o con token manipula
   assert.equal(model.calls.length, 0, "ninguna petición rechazada debe gastar IA");
 });
 
-test("chat: token caducado o recién emitido (<1 s) se rechaza", async () => {
+test("chat: token caducado se rechaza", async () => {
   const { store, model } = setup();
   const old = await signToken(SECRET, { b: "peluqueria-ana", s: "s", h: "x", i: NOW - 7200, e: NOW - 3600 });
   assert.equal((await handleChat({ store, config: config(), model: () => model, now: clock }, req({ token: old, messages: msgs }))).status, 401);
-  const fresh = await tokenFor();
-  assert.equal((await handleChat({ store, config: config(), model: () => model, now: () => NOW_MS }, req({ token: fresh, messages: msgs }))).status, 401);
 });
 
 test("chat: el negocio sale del token; pedir otro negocio en el cuerpo se rechaza y no cruza datos", async () => {

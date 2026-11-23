@@ -20,9 +20,9 @@ export const FAQS: FaqItem[] = [
   },
   {
     id: "faq2",
-    question: "¿Stella ya puede atender a mis clientes por WhatsApp?",
+    question: "¿Qué hace Stella hoy?",
     answer:
-      "Todavía no. Stella, nuestra asistente con IA, está en desarrollo: lo que ves en la web es una demostración con datos de ejemplo. Hoy tu web incluye un botón de WhatsApp que abre una conversación contigo. Si te interesa Stella, pídelo en la auditoría y te avisaremos cuando esté disponible.",
+      "Stella es una asistente con IA que se instala en la web de tu negocio con una línea de código. Responde al momento las dudas de tus clientes con la información que tú le das (servicios, precios, horarios y preguntas frecuentes), te dice cuándo no sabe algo y ofrece tu WhatsApp. Si la persona quiere, deja su nombre y teléfono con su consentimiento y te avisamos. Todavía NO atiende WhatsApp por su cuenta, no agenda citas ni factura: son módulos en desarrollo. Pídela con el botón «Quiero Stella en mi web» o en la auditoría; no se activa ni se cobra nada sin tu confirmación.",
     category: "Stella IA",
   },
   {

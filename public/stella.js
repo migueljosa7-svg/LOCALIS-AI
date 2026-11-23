@@ -130,6 +130,18 @@
     if (e.key === "Escape" && open) toggle();
   });
 
+  // La web que lo instala puede abrir el chat desde cualquier botón propio: window.dispatchEvent(new Event("stella:open"))
+  window.addEventListener("stella:open", function () {
+    window.__stellaOpenPending = false;
+    if (!host) build();
+    if (host && !open) toggle();
+  });
+
   if (document.body) build();
   else document.addEventListener("DOMContentLoaded", build);
+  // Si alguien pulsó un botón «Hablar con Stella» antes de que este script terminara de cargar, se abre ahora.
+  if (window.__stellaOpenPending) {
+    window.__stellaOpenPending = false;
+    if (host && !open) toggle();
+  }
 })();

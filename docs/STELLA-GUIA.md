@@ -25,7 +25,7 @@ El script `supabase/stella.sql` **solo crea tablas y funciones nuevas** (negocio
 | `STELLA_GLOBAL_DAILY_USD` | tope de gasto diario sumando todos los negocios (por defecto 3) | No |
 | `STELLA_GLOBAL_MONTHLY_USD` | tope mensual global (por defecto 20) | No |
 | `STELLA_ENABLED` | `false` apaga Stella en toda la plataforma al instante (tras Redeploy) | No |
-| `STELLA_SITE_WIDGET` | `on` muestra Stella también en la web de LOCALIS (por defecto apagado) | No |
+| `STELLA_SITE_WIDGET` | `on` muestra Stella real en la web de LOCALIS (chat + sección «Stella atiende tu web» + botón «Quiero Stella en mi web»). Apagado: la web queda como hoy. **Requiere Redeploy** | No (pero es lo que «enciende» Stella en tu web) |
 
 Ya tienes `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_USER`, `ADMIN_PASSWORD`, `RESEND_API_KEY` y `LEAD_INBOX_EMAIL` de la captación de leads. **Después de añadir o cambiar variables hay que hacer Redeploy** (Deployments → ⋯ → Redeploy).
 
@@ -41,6 +41,22 @@ Ya tienes `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_USER`, `ADMIN_PASS
    Hace 8 preguntas de prueba (precio conocido, dato desconocido, manipulación, etc.) y muestra respuestas, tokens y coste. **Lee las respuestas**: si Haiku no te convence, repite con `$env:STELLA_MODEL="claude-sonnet-5-5"` y compara.
 
 > **Coste orientativo** (precios oficiales a 23-nov-2026): Haiku 5.5 cuesta 0,10 $ por millón de tokens de entrada y 0,50 $ de salida. Un mensaje típico (ficha corta) ≈ 0,0002–0,0005 $, es decir, **1.000 mensajes ≈ 0,2–0,5 $**. Sonnet 5.5 (2 $ / 10 $) sale unas 20 veces más caro. El consumo real de cada negocio se ve en su ficha del panel.
+
+---
+
+## Qué te llega a `/admin` y qué hacer con cada cosa
+
+Todo lo que entra aparece en **`/admin`** (y te avisa un email). La columna «Servicio» y el origen te dicen de qué se trata:
+
+| Lo que ves | Qué es | Qué haces |
+| --- | --- | --- |
+| Etiqueta **PEDIDO DE STELLA** (origen `stella-pedido`), email con asunto «PEDIDO DE STELLA: …» | Un negocio ha pulsado «Quiero Stella en mi web» | Contáctale, acuerda servicio y precio. Luego pulsa **«Crear negocio Stella con estos datos»** en esa fila y sigue el recorrido de abajo. Pasa el lead a «contactado» → «propuesta» → «ganado» |
+| Origen `auditoria`, `cita`… (formularios de la web) | Solicitud de auditoría o demo de web | Contáctale; es un cliente potencial de diseño web (y, si quiere, de Stella) |
+| Origen `stella:<id-del-negocio>` (por ejemplo `stella:peluqueria-ana`) | **Un visitante de la web de un cliente** ha dejado sus datos en el chat de Stella con consentimiento | Es un contacto **de ese cliente**, no tuyo: se lo reenvías o se le avisa (el email de aviso te llega a ti; si el cliente tiene dominio verificado en Resend, también a él). Vigila que los atienda |
+| Solicitud del estudio «Diseña tu web» (origen del configurador) | Un cliente ha configurado una web y pide presupuesto | Revisa la configuración, prepara el presupuesto definitivo (ver Guía B cuando esté publicada) |
+| Sección «Oportunidades» | Empresas investigadas por el Lead Engine (no han pedido nada) | Solo contactas con tu autorización; no se envía nada automático |
+
+**Regla de oro:** el sistema nunca envía mensajes comerciales, ni activa ni cobra un servicio por su cuenta. Lo único automático hacia una persona externa es el email de confirmación de «hemos recibido tu solicitud» del formulario de la web.
 
 ---
 

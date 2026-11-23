@@ -38,6 +38,7 @@ const env = {
 };
 delete env.RESEND_API_KEY;
 delete env.STELLA_SITE_WIDGET;
+if (process.env.E2E_SITE_WIDGET === "on") env.STELLA_SITE_WIDGET = "on";
 const next = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-p", String(PORTS.next)], { env, stdio: ["ignore", "pipe", "pipe"] });
 let nextLog = "";
 next.stdout.on("data", (d) => (nextLog += d));
@@ -150,6 +151,33 @@ try {
     await ctx.close();
   }
 
+  // ── 1b. Stella real en la web de LOCALIS y pedido de Stella (solo con E2E_SITE_WIDGET=on) ──
+  if (process.env.E2E_SITE_WIDGET === "on") {
+    console.log("[web LOCALIS] Stella real + pedido");
+    for (const vp of VIEWPORTS) {
+      const { ctx, page, problems } = await newPage(vp);
+      await page.goto(`https://${HOSTS.site}/`, { waitUntil: "load" });
+      check(`[${vp.name}] la sección «Stella real» aparece en la home`, (await page.locator("#stella-real").count()) === 1);
+      await page.locator("#stella-real").getByRole("button", { name: "Hablar con Stella ahora" }).click();
+      const frame = page.frameLocator('iframe[title="Chat con Stella"]');
+      await frame.getByText("asistente virtual con IA de LOCALIS AI").waitFor({ timeout: 20000 });
+      check(`[${vp.name}] el botón de la home abre el chat real de LOCALIS`, true);
+      if (vp.name === "escritorio") {
+        await frame.locator("textarea").fill("¿Cuánto cuesta un corte?");
+        await frame.getByRole("button", { name: "Enviar mensaje" }).click();
+        await frame.getByText("Un corte de pelo cuesta 15 €.").waitFor({ timeout: 15000 });
+        check("[escritorio] Stella de LOCALIS responde por la misma ruta segura", true);
+        await page.keyboard.press("Escape");
+        await page.locator("#stella-real").getByRole("button", { name: "Quiero Stella en mi web" }).click();
+        await page.getByRole("dialog").waitFor({ timeout: 10000 });
+        check("[escritorio] «Quiero Stella en mi web» abre el formulario con el pedido precargado", (await page.getByText("Pedido: Stella").count()) > 0);
+        await page.screenshot({ path: path.join(outDir, "04-pedido-stella.png") });
+      }
+      check(`[${vp.name}] home sin errores de consola`, problems.filter((p) => !/googletagmanager|gtag|favicon/.test(p)).length === 0, problems.join(" | ").slice(0, 300));
+      await ctx.close();
+    }
+  }
+
   // ── 2. Web NO autorizada ─────────────────────────────────────────
   console.log("\n[seguridad] web no autorizada");
   {
@@ -181,7 +209,7 @@ try {
     check("[cabeceras] el resto de la web conserva X-Frame-Options: SAMEORIGIN", home.headers()["x-frame-options"] === "SAMEORIGIN");
     const js = await api.get("/stella.js");
     check(`[cabeceras] stella.js con caché corta y ligero (${(await js.body()).length} bytes)`, (js.headers()["cache-control"] ?? "").includes("max-age=300") && (await js.body()).length < 9000);
-    check("[producción] la web de LOCALIS sigue igual: sin widget de Stella (STELLA_SITE_WIDGET apagado) y con WhatsApp", !(await home.text()).includes("stella.js") && (await home.text()).includes("wa.me"));
+    if (process.env.E2E_SITE_WIDGET !== "on") check("[producción] la web de LOCALIS sigue igual: sin widget de Stella (STELLA_SITE_WIDGET apagado) y con WhatsApp", !(await home.text()).includes("stella.js") && (await home.text()).includes("wa.me") && !(await home.text()).includes("stella-real"));
   }
 
   // ── 4. API: un script externo (peticiones fraudulentas) ──────────

@@ -97,6 +97,7 @@ export default async function AdminPage() {
                       </p>
                     </td>
                     <td className="p-3">
+                      {l.source === "stella-pedido" && <p className="mb-1 inline-block rounded-full bg-cyan-500/15 px-2 py-0.5 text-[11px] font-bold text-cyan-300">PEDIDO DE STELLA</p>}
                       <p>{l.service}</p>
                       <p className="text-xs text-muted">{l.source ?? "—"}</p>
                       <p className="text-xs text-muted">{l.email_notified ? "Aviso por email enviado" : "Sin aviso por email"}</p>

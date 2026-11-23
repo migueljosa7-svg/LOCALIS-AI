@@ -9,7 +9,7 @@ export const PLANS: Plan[] = [
     description: "Para fruterías, panaderías y comercios locales que quieren automatizar su agenda y facturación.",
     features: [
       "Web profesional y mantenimiento",
-      "Asistente Stella IA (en desarrollo)",
+      "Asistente Stella IA en tu web (responde dudas y recoge contactos)",
       "Agenda inteligente (Google Calendar) (en desarrollo)",
       "Facturación básica PDF (en desarrollo)",
       "WhatsApp empresarial integrado (en desarrollo)",
