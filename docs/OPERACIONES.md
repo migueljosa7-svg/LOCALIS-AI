@@ -13,8 +13,9 @@ Rama: `feat/captacion-segura`. Nada de esto afecta a producción hasta que se fu
 ## 1. Supabase (gratis) — 10 minutos
 
 1. Crea cuenta en supabase.com → **New project** (región: Europe, p. ej. Frankfurt o París). Guarda la contraseña de la base de datos en tu gestor de contraseñas.
-2. **SQL Editor → New query** → pega el contenido de `supabase/schema.sql` → **Run**.
-3. **Project Settings → API**: copia `Project URL` y la clave **service_role** (secreta).
+2. **SQL Editor → New query** → pega el contenido de `supabase/schema.sql` → **Run**. Incluye los permisos (`GRANT`) que Supabase exige desde octubre de 2026: sin ellos la API responde `42501 permission denied`.
+   - Si ya habías creado las tablas antes de este cambio, ejecuta también `supabase/fix-permisos.sql` (no toca los datos). La consulta final debe mostrar 8 filas de `service_role`.
+3. **Project Settings → API Keys**: copia la `Project URL` (`https://<proyecto>.supabase.co`) y una clave secreta: la **Secret key** (`sb_secret_…`, recomendada) o la antigua **service_role** (`eyJ…`, Supabase la retira a finales de 2026). Nunca la clave *publishable* ni la *anon*.
 4. Plan gratuito: un proyecto se pausa tras unos 7 días sin actividad; cada lead y cada visita al panel cuentan como actividad. Si se pausa, se reactiva desde el panel de Supabase.
 
 ## 2. Variables en Vercel — 5 minutos
@@ -24,7 +25,7 @@ Vercel → proyecto → **Settings → Environment Variables** (marca *Productio
 | Variable | Valor |
 | --- | --- |
 | `SUPABASE_URL` | Project URL de Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | clave service_role (nunca con prefijo `NEXT_PUBLIC_`) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Secret key `sb_secret_…` o service_role `eyJ…` (nunca con prefijo `NEXT_PUBLIC_`) |
 | `ADMIN_USER` | el usuario que quieras |
 | `ADMIN_PASSWORD` | contraseña de **16 caracteres o más**, generada por tu gestor |
 | `RESEND_API_KEY` | ya creada |
