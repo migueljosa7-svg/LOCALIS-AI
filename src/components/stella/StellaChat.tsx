@@ -16,7 +16,7 @@ export interface StellaPublicConfig {
   token: string;
 }
 
-type Msg = { role: "user" | "assistant"; content: string };
+type Msg = { role: "user" | "assistant"; content: string; meta?: { model: string; inputTokens: number; outputTokens: number } };
 
 const SUGGESTIONS = ["¿Qué servicios ofrecéis?", "¿Cómo puedo contactar?", "Quiero que me llamen"];
 
@@ -63,12 +63,12 @@ export default function StellaChat({ config, autoFocus = true, embedded = false 
         body: JSON.stringify({ token: config.token, messages: next.slice(-24) }),
         signal: AbortSignal.timeout(50_000),
       });
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; reply?: string; error?: string; showForm?: boolean; code?: string };
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; reply?: string; error?: string; showForm?: boolean; code?: string; meta?: Msg["meta"] };
       if (!res.ok || !data.ok || !data.reply) {
         setError({ text: data.error || "No he podido responder.", expired: data.code === "token" });
         return;
       }
-      setMessages([...next, { role: "assistant", content: data.reply }]);
+      setMessages([...next, { role: "assistant", content: data.reply, meta: data.meta }]);
       if (data.showForm) setShowForm(true);
     } catch (e) {
       setError({ text: e instanceof Error && e.name === "TimeoutError" ? "No he podido responder a tiempo." : "No hay conexión con el asistente." });
@@ -110,6 +110,11 @@ export default function StellaChat({ config, autoFocus = true, embedded = false 
         {messages.map((m, i) => (
           <Bubble key={i} role={m.role}>
             {m.content}
+            {m.meta && (
+              <span className="mt-1.5 block text-[10px] text-emerald-300/80" data-testid="stella-meta">
+                Respuesta real de {m.meta.model} · {m.meta.inputTokens} + {m.meta.outputTokens} tokens
+              </span>
+            )}
           </Bubble>
         ))}
         {busy && (

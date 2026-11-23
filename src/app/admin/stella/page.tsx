@@ -53,6 +53,10 @@ export default async function StellaAdminPage() {
 
       <p className="text-sm text-muted">
         Stella de LOCALIS (nuestra propia web):{" "}
+        <Link href="/admin/stella/nuevo?plantilla=prueba" className="text-cyan-300 underline">
+          crear negocio de PRUEBA (datos ficticios)
+        </Link>{" "}
+        ·{" "}
         <Link href="/admin/stella/localis/prueba" className="text-cyan-300 underline">
           abrir prueba
         </Link>

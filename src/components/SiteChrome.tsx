@@ -8,5 +8,7 @@ import { usePathname } from "next/navigation";
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   if (pathname?.startsWith("/stella/embed")) return null;
+  // Página de pruebas de instalación (solo Preview): ahí el único Stella debe ser el del negocio de prueba.
+  if (pathname?.startsWith("/prueba-stella")) return null;
   return <>{children}</>;
 }

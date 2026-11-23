@@ -282,3 +282,15 @@ test("token de prueba del panel: válido, marcado como prueba y ligado al negoci
   assert.ok(v.ok && v.payload.t === 1 && v.payload.b === "peluqueria-ana");
   assert.equal(await issueTestToken(config({ secret: null }), "x"), null);
 });
+
+test("chat: negocios «prueba-…» y tokens de prueba devuelven modelo y tokens reales de la API; los demás no", async () => {
+  const model = fakeModel({ usage: { input_tokens: 111, output_tokens: 22 } });
+  const store = new FakeStore(biz({ id: "prueba-peluqueria" }), biz());
+  const { deps } = setup({ store, model });
+  const a = await handleChat(deps, req({ token: await tokenFor("prueba-peluqueria"), messages: msgs }));
+  assert.deepEqual(a.body.meta, { model: "claude-haiku-5-5", inputTokens: 111, outputTokens: 22 });
+  const b = await handleChat(deps, req({ token: await tokenFor("peluqueria-ana", { t: 1 }), messages: msgs }));
+  assert.ok(b.body.meta, "el token de prueba del panel también");
+  const c = await handleChat(deps, req({ token: await tokenFor("peluqueria-ana"), messages: msgs }));
+  assert.equal(c.body.meta, undefined, "un negocio real no expone nada");
+});

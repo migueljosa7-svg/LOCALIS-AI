@@ -252,6 +252,49 @@ try {
     }
   }
 
+  // ── 3c. Página de pruebas de instalación (solo fuera de producción) ──
+  {
+    const prod = process.env.E2E_PROD === "1";
+    console.log(`
+[prueba] página /prueba-stella (${prod ? "producción" : "Preview"})`);
+    const r = await api.get("/prueba-stella", { failOnStatusCode: false });
+    if (prod) check("[prueba] en producción /prueba-stella responde 404 (no existe)", r.status() === 404);
+    else {
+      await seed("prueba-peluqueria", "Peluquería de Prueba", [HOSTS.site]);
+      const before = (await (await fetch(`http://127.0.0.1:${PORTS.anthropic}/__calls`)).json()).length;
+      const { ctx, page, problems } = await newPage(VIEWPORTS[0]);
+      // Lo que ve quien abre el chat directamente en una pestaña:
+      await page.goto(`https://${HOSTS.site}/stella/embed?negocio=prueba-peluqueria`);
+      check("[prueba] abrir /stella/embed directamente dice que solo se muestra dentro de la web del negocio (es lo esperado)", /solo se muestra dentro de la web del negocio/.test(await page.locator("body").innerText()));
+      await page.goto(`https://${HOSTS.site}/prueba-stella`, { waitUntil: "load" });
+      check("[prueba] la página muestra el dominio a autorizar y la línea de instalación", (await page.getByTestId("prueba-host").innerText()) === HOSTS.site);
+      check("[prueba] solo hay UN Stella (el del negocio de prueba), no el de LOCALIS", (await page.locator("[data-stella]").count()) === 1 && (await page.getByTestId("stella-pending-button").count()) === 0);
+      await page.locator('button[aria-controls="stella-panel"]').click();
+      const fr = page.frameLocator('iframe[title="Chat con Stella"]');
+      await fr.getByText("asistente virtual con IA de Peluquería de Prueba").waitFor({ timeout: 15000 });
+      await fr.locator("textarea").fill("¿Cuánto cuesta un corte?");
+      await fr.getByRole("button", { name: "Enviar mensaje" }).click();
+      await fr.getByText("Un corte de pelo cuesta 15 €.").waitFor({ timeout: 15000 });
+      const meta = await fr.getByTestId("stella-meta").innerText();
+      check("[prueba] la respuesta muestra el modelo y los tokens que devuelve la API de Anthropic", /claude-haiku-5-5/.test(meta) && /1800 \+ 60 tokens/.test(meta), meta);
+      const calls = await (await fetch(`http://127.0.0.1:${PORTS.anthropic}/__calls`)).json();
+      check("[prueba] se hizo UNA llamada real a Anthropic con la ficha del negocio de prueba (sin respuestas locales)", calls.length === before + 1 && String(calls.at(-1).system).includes("Peluquería de Prueba") && calls.at(-1).hasKey, `${calls.length - before}`);
+      await sleep(3200);
+      await fr.locator("textarea").fill("Quiero que me llamen");
+      await fr.getByRole("button", { name: "Enviar mensaje" }).click();
+      await fr.getByText("Deja tus datos y Peluquería de Prueba te contactará").waitFor({ timeout: 15000 });
+      await fr.locator('input[name="nombre"]').fill("Persona Ficticia");
+      await fr.locator('input[name="telefono"]').fill("600 000 111");
+      await fr.locator('input[name="consentimiento"]').check();
+      await fr.getByRole("button", { name: "Enviar mis datos" }).click();
+      await fr.getByText("Datos enviados a Peluquería de Prueba").waitFor({ timeout: 15000 });
+      const lead = (await q("select * from leads where source = 'stella:prueba-peluqueria'")).rows;
+      check("[prueba] el contacto se guarda con consentimiento y origen stella:prueba-peluqueria", lead.length === 1 && /Consentimiento: aceptado el/.test(lead[0].details));
+      check("[prueba] sin errores de consola", problems.filter((x) => !/googletagmanager|gtag|favicon/.test(x)).length === 0, problems.join(" | ").slice(0, 300));
+      await ctx.close();
+    }
+  }
+
   // ── 4. API: un script externo (peticiones fraudulentas) ──────────
   console.log("\n[seguridad] peticiones directas a la API");
   {

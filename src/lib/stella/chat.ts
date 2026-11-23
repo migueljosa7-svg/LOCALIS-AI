@@ -181,7 +181,10 @@ export async function handleChat(deps: ChatDeps, req: IncomingRequest): Promise<
       .map((b) => b.text)
       .join("\n");
     const { reply, showForm } = cleanReply(text);
-    return { status: 200, body: { ok: true, reply: reply || "¿Me lo puedes repetir de otra forma?", showForm } };
+    // En pruebas (token del panel o negocios «prueba-…») se devuelve de qué modelo y con cuántos tokens salió la respuesta:
+    // son datos que solo da la API de Anthropic, así se comprueba que no es una respuesta simulada. No son secretos.
+    const meta = payload.t || business.id.startsWith("prueba-") ? { model: response.model, inputTokens: response.usage.input_tokens ?? 0, outputTokens: response.usage.output_tokens ?? 0 } : undefined;
+    return { status: 200, body: { ok: true, reply: reply || "¿Me lo puedes repetir de otra forma?", showForm, ...(meta ? { meta } : {}) } };
   } catch (err) {
     // Se registra el tipo de error y el negocio, NUNCA el contenido de la conversación.
     const kind = (err as { status?: number })?.status ?? (err instanceof Error ? err.name : "desconocido");
