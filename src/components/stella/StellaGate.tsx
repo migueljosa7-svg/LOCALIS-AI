@@ -1,12 +1,20 @@
 import Script from "next/script";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
-import { readConfig } from "@/lib/stella/config";
+import StellaPendingLauncher from "./StellaPendingLauncher";
+import { siteStatus } from "@/lib/stella/status";
+import { waLink } from "@/lib/site";
 
-// Stella en la web de LOCALIS: SOLO si hay clave de la API Y se ha activado expresamente con
-// STELLA_SITE_WIDGET=on. Sin eso la web queda exactamente como hoy (botón flotante de WhatsApp).
-// Usa el mismo widget (/stella.js) que se instala en las webs de los clientes: una sola vía que probar.
+// Stella en la web de LOCALIS:
+//  · Chat REAL (widget /stella.js, el mismo que se instala en webs de clientes): solo con clave de IA y STELLA_SITE_WIDGET=on.
+//  · Sin configurar, en Preview/local: botón flotante «pendiente de configuración» (no responde ni finge respuestas).
+//  · Sin configurar, en producción: la web queda como siempre (botón flotante de WhatsApp), sin avisos.
 export default function StellaGate() {
-  const on = process.env.STELLA_SITE_WIDGET?.trim().toLowerCase() === "on" && readConfig().enabled;
-  if (!on) return <WhatsAppFloat />;
-  return <Script id="stella-widget" src="/stella.js" data-negocio="localis" data-bottom="84" strategy="lazyOnload" />;
+  const st = siteStatus();
+  if (st.live) return <Script id="stella-widget" src="/stella.js" data-negocio="localis" data-bottom="84" strategy="lazyOnload" />;
+  return (
+    <>
+      <WhatsAppFloat />
+      {st.showPending && <StellaPendingLauncher checks={st.checks} waHref={waLink()} />}
+    </>
+  );
 }

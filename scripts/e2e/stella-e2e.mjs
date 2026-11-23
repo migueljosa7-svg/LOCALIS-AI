@@ -39,6 +39,7 @@ const env = {
 delete env.RESEND_API_KEY;
 delete env.STELLA_SITE_WIDGET;
 if (process.env.E2E_SITE_WIDGET === "on") env.STELLA_SITE_WIDGET = "on";
+if (process.env.E2E_PROD === "1") env.VERCEL_ENV = "production";
 const next = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-p", String(PORTS.next)], { env, stdio: ["ignore", "pipe", "pipe"] });
 let nextLog = "";
 next.stdout.on("data", (d) => (nextLog += d));
@@ -210,6 +211,45 @@ try {
     const js = await api.get("/stella.js");
     check(`[cabeceras] stella.js con caché corta y ligero (${(await js.body()).length} bytes)`, (js.headers()["cache-control"] ?? "").includes("max-age=300") && (await js.body()).length < 9000);
     if (process.env.E2E_SITE_WIDGET !== "on") check("[producción] la web de LOCALIS sigue igual: sin widget de Stella (STELLA_SITE_WIDGET apagado) y con WhatsApp", !(await home.text()).includes("stella.js") && (await home.text()).includes("wa.me") && !(await home.text()).includes("stella-real"));
+  }
+
+  // ── 3b. Stella sin configurar en la web de LOCALIS (Preview) o en producción ──
+  if (process.env.E2E_SITE_WIDGET !== "on") {
+    const prod = process.env.E2E_PROD === "1";
+    console.log(`
+[web LOCALIS] Stella sin configurar (${prod ? "producción" : "Preview"})`);
+    for (const vp of VIEWPORTS) {
+      const { ctx, page, problems } = await newPage(vp);
+      let apiCalls = 0;
+      page.on("request", (r) => r.url().includes("/api/stella") && apiCalls++);
+      await page.goto(`https://${HOSTS.site}/`, { waitUntil: "load" });
+      const btn = page.getByTestId("stella-pending-button");
+      if (prod) {
+        check(`[${vp.name}] en producción sin configurar NO aparece el botón de Stella ni avisos (queda como siempre)`, (await btn.count()) === 0 && (await page.locator("#stella-pendiente").count()) === 0);
+      } else {
+        await btn.waitFor({ state: "visible", timeout: 10000 });
+        const box = await btn.boundingBox();
+        const inView = box.x >= 0 && box.y >= 0 && box.x + box.width <= vp.viewport.width && box.y + box.height <= vp.viewport.height;
+        check(`[${vp.name}] el botón flotante «Stella · chat IA» es visible en pantalla y táctil (${Math.round(box.width)}×${Math.round(box.height)})`, inView && box.height >= 44);
+        const waBox = await page.locator('a[aria-label*="WhatsApp"]').first().boundingBox().catch(() => null);
+        if (waBox && waBox.width > 0) check(`[${vp.name}] no se solapa con el botón de WhatsApp`, box.y + box.height <= waBox.y || waBox.y + waBox.height <= box.y || box.x + box.width <= waBox.x || waBox.x + waBox.width <= box.x);
+        await page.locator("#stella-pendiente").waitFor();
+        check(`[${vp.name}] la home avisa de que el chat real está pendiente y distingue la demostración comercial`, /demostración comercial/.test(await page.locator("#stella-pendiente").innerText()));
+        await btn.click();
+        const panel = page.getByTestId("stella-pending-panel");
+        await panel.waitFor();
+        const t = await panel.innerText();
+        check(`[${vp.name}] el panel dice claramente que está pendiente de configuración, lista qué falta y NO finge respuestas`, /todavía no está activado/.test(t) && /ANTHROPIC_API_KEY/.test(t) && /STELLA_SITE_WIDGET/.test(t) && (await panel.locator("textarea, input").count()) === 0);
+        check(`[${vp.name}] ofrece WhatsApp mientras tanto`, (await panel.locator('a[href*="wa.me"]').count()) === 1);
+        check(`[${vp.name}] no se hizo ninguna llamada a la API de Stella`, apiCalls === 0);
+        check(`[${vp.name}] el panel no desborda`, await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+        await page.screenshot({ path: path.join(outDir, `05-pendiente-${vp.name}.png`) });
+        await page.keyboard.press("Escape");
+        check(`[${vp.name}] Escape cierra el panel`, (await panel.count()) === 0);
+      }
+      check(`[${vp.name}] home sin errores de consola`, problems.filter((p) => !/googletagmanager|gtag|favicon/.test(p)).length === 0, problems.join(" | ").slice(0, 300));
+      await ctx.close();
+    }
   }
 
   // ── 4. API: un script externo (peticiones fraudulentas) ──────────

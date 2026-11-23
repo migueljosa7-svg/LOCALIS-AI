@@ -156,3 +156,23 @@ test("readConfig: por defecto Haiku 5.5, apagada sin clave y con interruptor gen
   assert.equal(c.globalDailyMicro, 2_500_000);
   assert.equal(c.globalMonthlyMicro, 20_000_000);
 });
+
+// ── Estado de Stella en la web de LOCALIS ─────────────────────────
+import { siteStatus } from "../src/lib/stella/status";
+
+test("siteStatus: en Preview sin configurar avisa de qué falta; en producción no muestra nada; con todo configurado, chat real", () => {
+  const none = siteStatus({ VERCEL_ENV: "preview" });
+  assert.equal(none.live, false);
+  assert.equal(none.showPending, true);
+  assert.deepEqual(none.checks.map((c) => c.ok), [false, false, false, true]);
+  assert.equal(siteStatus({ VERCEL_ENV: "production" }).showPending, false, "en producción sin configurar la web queda como siempre");
+  assert.equal(siteStatus({}).showPending, true, "en local también se explica");
+  const keyOnly = siteStatus({ VERCEL_ENV: "preview", ANTHROPIC_API_KEY: "k", SUPABASE_URL: "u", SUPABASE_SERVICE_ROLE_KEY: "s" });
+  assert.equal(keyOnly.live, false, "sin STELLA_SITE_WIDGET=on no se enciende");
+  assert.equal(keyOnly.checks.find((c) => /STELLA_SITE_WIDGET/.test(c.label))?.ok, false);
+  const all = siteStatus({ VERCEL_ENV: "preview", ANTHROPIC_API_KEY: "k", SUPABASE_URL: "u", SUPABASE_SERVICE_ROLE_KEY: "s", STELLA_SITE_WIDGET: "on" });
+  assert.equal(all.live, true);
+  assert.equal(all.showPending, false);
+  assert.equal(siteStatus({ ANTHROPIC_API_KEY: "k", SUPABASE_SERVICE_ROLE_KEY: "s", STELLA_SITE_WIDGET: "on", STELLA_ENABLED: "false" }).live, false);
+  assert.ok(!JSON.stringify(all).includes('"k"') && !JSON.stringify(all).includes('"s"'), "nunca devuelve valores de variables");
+});

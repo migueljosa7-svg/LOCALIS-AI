@@ -1,6 +1,6 @@
 import { CheckCircle2, Code2 } from "lucide-react";
 import StellaLiveActions from "./StellaLiveActions";
-import { readConfig } from "@/lib/stella/config";
+import { siteStatus } from "@/lib/stella/status";
 import { SITE_URL } from "@/lib/site";
 
 const TODAY = [
@@ -12,11 +12,30 @@ const TODAY = [
 
 /** Stella de verdad (no demostración). Solo se muestra si hay clave de IA y STELLA_SITE_WIDGET=on. */
 export function stellaSiteLive(): boolean {
-  return process.env.STELLA_SITE_WIDGET?.trim().toLowerCase() === "on" && readConfig().enabled;
+  return siteStatus().live;
 }
 
 export default function StellaLiveSection() {
-  if (!stellaSiteLive()) return null;
+  const st = siteStatus();
+  if (!st.live) {
+    if (!st.showPending) return null;
+    // Solo en Preview/local: aviso claro de que el chat real aún no está activo (distinto de la demostración de más abajo).
+    return (
+      <section id="stella-pendiente" aria-labelledby="stella-pend-title" className="relative w-full pt-10">
+        <div className="mx-auto w-full max-w-4xl px-4 sm:px-6">
+          <div className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-5 text-sm text-amber-100">
+            <h2 id="stella-pend-title" className="font-display text-lg font-bold">Stella real: pendiente de configuración (aviso solo de Preview)</h2>
+            <p className="mt-1">El botón flotante «Stella · chat IA» abrirá el chat real cuando esté configurado. Lo que ves más abajo es solo la <strong>demostración comercial</strong> con datos de ejemplo, no el chat real.</p>
+            <ul className="mt-3 space-y-1">
+              {st.checks.map((c) => (
+                <li key={c.label}>{c.ok ? "✓" : "✗"} {c.label}{!c.ok && <span className="text-amber-200/80"> — {c.how}</span>}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section id="stella-real" aria-labelledby="stella-live-title" className="relative w-full pt-14 pb-6 lg:pt-20">
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
