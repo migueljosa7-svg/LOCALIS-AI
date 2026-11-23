@@ -38,6 +38,9 @@ export default async function AdminPage() {
           <Link href="/admin/stella" className="inline-flex min-h-[44px] items-center rounded-xl border border-cyan-500/40 px-4 text-sm font-semibold text-cyan-300">
             Stella · negocios y contactos →
           </Link>
+          <Link href="/admin/diseno" className="ml-3 inline-flex min-h-[44px] items-center rounded-xl border border-cyan-500/40 px-4 text-sm font-semibold text-cyan-300">
+            Diseños de clientes («Diseña tu web») →
+          </Link>
         </p>
         {(!leads.ok || !opps.ok) && (
           <p role="alert" className="mt-4 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -99,6 +102,10 @@ export default async function AdminPage() {
                     <td className="p-3">
                       {l.source === "stella-pedido" && <p className="mb-1 inline-block rounded-full bg-cyan-500/15 px-2 py-0.5 text-[11px] font-bold text-cyan-300">PEDIDO DE STELLA</p>}
                       <p>{l.service}</p>
+                      {l.source === "disena-tu-web" && (() => {
+                        const m = /\/admin\/diseno\/([0-9a-f-]{36})/i.exec(l.details ?? "");
+                        return m ? <Link href={`/admin/diseno/${m[1]}`} className="mt-1 inline-block rounded-full bg-cyan-500/15 px-2 py-0.5 text-[11px] font-bold text-cyan-300">VER SU WEB DISEÑADA →</Link> : <span className="mt-1 inline-block text-[11px] text-amber-200">Diseño solo en el prompt técnico</span>;
+                      })()}
                       <p className="text-xs text-muted">{l.source ?? "—"}</p>
                       <p className="text-xs text-muted">{l.email_notified ? "Aviso por email enviado" : "Sin aviso por email"}</p>
                     </td>

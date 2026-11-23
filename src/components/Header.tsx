@@ -212,7 +212,7 @@ export default function Header() {
             </div>
 
             <Link
-              href="/#configurador"
+              href="/disena-tu-web"
               data-tab="disena"
               onClick={close}
               className={cn(tabCls("disena"), "text-cyan-300 hover:text-cyan-200")}
@@ -233,7 +233,7 @@ export default function Header() {
             />
           </nav>
 
-          <Link href="/#configurador" onClick={close} className="btn btn-primary hidden lg:inline-flex min-h-[40px] px-4 text-sm shrink-0">
+          <Link href="/disena-tu-web" onClick={close} className="btn btn-primary hidden lg:inline-flex min-h-[40px] px-4 text-sm shrink-0">
             Calcular Ahorro <ArrowRight size={15} aria-hidden="true" />
           </Link>
 
@@ -308,7 +308,7 @@ export default function Header() {
               </div>
             </div>
 
-            <MobileLink href="/#configurador" active={active === "disena"} onClick={close} tabbable={open} highlight>
+            <MobileLink href="/disena-tu-web" active={active === "disena"} onClick={close} tabbable={open} highlight>
               <Sparkles size={17} aria-hidden="true" className="text-cyan-300" /> Diseña tu Web
             </MobileLink>
             <MobileLink href="/#precios" active={active === "tarifas"} onClick={close} tabbable={open}>
@@ -319,7 +319,7 @@ export default function Header() {
             <Link href="/#stella" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-ghost min-h-[54px] text-[15px]">
               <PlayCircle size={18} aria-hidden="true" /> Probar demo
             </Link>
-            <Link href="/#configurador" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-primary min-h-[54px] text-[15px]">
+            <Link href="/disena-tu-web" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-primary min-h-[54px] text-[15px]">
               Calcular Ahorro
             </Link>
           </div>

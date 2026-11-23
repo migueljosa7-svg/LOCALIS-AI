@@ -10,6 +10,7 @@ import PwaSetup from '@/components/pwa/PwaSetup';
 import SiteChrome from '@/components/SiteChrome';
 import StellaGate from '@/components/stella/StellaGate';
 import MobileStickyBar from '@/components/MobileStickyBar';
+import HideOnBuilder from '@/components/HideOnBuilder';
 import { SITE_URL } from '@/lib/site';
 import GtagLoader from '@/components/GtagLoader';
 
@@ -127,8 +128,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
         </SiteChrome>
         <SiteChrome>
-          <AmbientOrbs />
-          <GlowPointer />
+          <HideOnBuilder>
+            <AmbientOrbs />
+            <GlowPointer />
+          </HideOnBuilder>
         </SiteChrome>
         <MotionProvider>
           {children}
@@ -138,8 +141,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </SiteChrome>
         </MotionProvider>
         <SiteChrome>
-          <StellaGate />
-          <MobileStickyBar />
+          <HideOnBuilder>
+            <StellaGate />
+            <MobileStickyBar />
+          </HideOnBuilder>
         </SiteChrome>
       </body>
     </html>

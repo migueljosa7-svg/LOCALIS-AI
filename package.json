@@ -18,7 +18,9 @@
     "market:check": "node scripts/check-market-data.mjs",
     "test": "tsx --test tests/*.test.ts",
     "stella:smoke": "node scripts/stella-smoke.mjs",
-    "test:e2e": "node scripts/e2e/stella-e2e.mjs"
+    "test:e2e": "npm run test:e2e:stella && npm run test:e2e:builder",
+    "test:e2e:stella": "node scripts/e2e/stella-e2e.mjs",
+    "test:e2e:builder": "node scripts/e2e/builder-e2e.mjs"
   },
   "repository": {
     "type": "git",

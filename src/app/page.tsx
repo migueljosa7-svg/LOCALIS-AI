@@ -10,6 +10,7 @@ import SafeBoundary from "@/components/SafeBoundary";
 import { LeadProvider } from "@/components/lead/LeadProvider";
 import LeadModalGate from "@/components/lead/LeadModalGate";
 import StellaLiveSection from "@/components/stella/StellaLiveSection";
+import BuilderTeaser from "@/components/builder/BuilderTeaser";
 
 // Islas interactivas en chunks separados (se renderizan en el servidor para SEO,
 // pero su JS se descarga en paralelo y no bloquea el hero). Cada una va dentro
@@ -28,6 +29,7 @@ export default function LandingPage() {
       <Header />
       <main id="contenido" className="w-full min-w-0">
         <HeroSection />
+        <BuilderTeaser />
         <SafeBoundary name="Estudio visual · Diseña tu web" minHeight={400}>
           <WebConfigurator />
         </SafeBoundary>
