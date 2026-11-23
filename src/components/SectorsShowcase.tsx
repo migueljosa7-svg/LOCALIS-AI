@@ -92,7 +92,7 @@ const VERTICALS: Vertical[] = [
     pain: "Pedidos sueltos por WhatsApp, apuntes en libreta y entregas sin control.",
     metrics: [
       { label: "Pedidos online", value: "24/7" },
-      { label: "Entrega propia", value: "En vivo" },
+      { label: "Entrega propia", value: "Propia" },
       { label: "Comisiones", value: "0 €" },
     ],
     features: ["Tienda online y pedidos por WhatsApp ordenados", "Reparto a domicilio con enlace de seguimiento", "Facturas y resumen de caja diario automáticos"],
@@ -203,6 +203,7 @@ export default function SectorsShowcase() {
                     </div>
                   ))}
                 </dl>
+                <p className="mt-2 text-[11.5px] text-muted">Valores orientativos del sector, no resultados de clientes de LOCALIS.</p>
 
                 <ul className="mt-6 space-y-3">
                   {active.features.map((f) => (
@@ -212,6 +213,7 @@ export default function SectorsShowcase() {
                     </li>
                   ))}
                 </ul>
+                <p className="mt-3 text-[11.5px] text-muted">Las funciones de IA, citas, pedidos y reparto están en desarrollo. Hoy entregamos la web con formulario, WhatsApp y Google Maps.</p>
 
                 <a href="#cita" className="btn btn-primary mt-7 w-full sm:w-auto">
                   Ver cómo quedaría en mi {active.noun} <ArrowRight size={17} aria-hidden="true" />
@@ -222,7 +224,7 @@ export default function SectorsShowcase() {
                 <div className="flex items-center justify-between">
                   <p className="text-xs uppercase tracking-widest text-muted">{active.panelTitle} · demo</p>
                   <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400">
-                    <span className="live-dot" aria-hidden="true" /> En vivo
+                    Demo
                   </span>
                 </div>
                 <ul className="mt-4 rounded-2xl border border-white/[0.07] bg-[#0B0F17]/70 divide-y divide-white/[0.06]">

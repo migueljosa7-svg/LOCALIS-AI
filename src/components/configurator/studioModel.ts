@@ -80,9 +80,9 @@ export const HOVER_ANIMS: { id: HoverAnim; label: string; css: string }[] = [
 ];
 
 export const MODULES: { id: ModuleId; label: string; detail: string; price: number }[] = [
-  { id: "stella", label: "IA Stella 24/7", detail: "Citas, WhatsApp automático y facturas", price: 150 },
-  { id: "gps", label: "Mapa GPS de reparto", detail: "Tus repartidores en vivo, sin comisiones", price: 150 },
-  { id: "catalogo", label: "Catálogo / carta digital", detail: "Pedidos directos desde tu web", price: 100 },
+  { id: "stella", label: "IA Stella 24/7", detail: "En desarrollo · citas, WhatsApp y facturas", price: 150 },
+  { id: "gps", label: "Mapa GPS de reparto", detail: "En desarrollo · tus repartidores, sin comisiones", price: 150 },
+  { id: "catalogo", label: "Catálogo / carta digital", detail: "En desarrollo · pedidos directos desde tu web", price: 100 },
 ];
 
 export const PRICING = {

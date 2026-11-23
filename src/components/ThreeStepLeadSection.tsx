@@ -34,6 +34,7 @@ export default function ThreeStepLeadSection() {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<LeadErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const uid = useId();
 
@@ -56,13 +57,16 @@ export default function ThreeStepLeadSection() {
       return;
     }
     setSubmitting(true);
-    try {
-      await submitLead({ ...lead, source: "landing-cita-3pasos" });
+    setSubmitError(null);
+    const res = await submitLead({ ...lead, source: "landing-cita-3pasos" });
+    setSubmitting(false);
+    if (res.ok) {
       trackLead("form_cita", form.service);
-    } finally {
-      setSubmitting(false);
       setStep(2);
+      return;
     }
+    if (res.errors) setErrors(res.errors);
+    setSubmitError(res.error);
   };
 
   return (
@@ -218,6 +222,14 @@ export default function ThreeStepLeadSection() {
                       />
                     </Field>
                   </div>
+                  {submitError && (
+                    <p role="alert" className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                      {submitError}{" "}
+                      <a href={waLink(WA_AUDIT_TEXT)} target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-2">
+                        Abrir WhatsApp
+                      </a>
+                    </p>
+                  )}
                   <div className="flex gap-3 pt-2">
                     <button type="button" onClick={() => setStep(0)} className="btn btn-ghost px-4" aria-label="Volver al paso anterior">
                       <ArrowLeft size={17} aria-hidden="true" />

@@ -42,7 +42,7 @@ export default function LeadCaptureModal() {
   const [form, setForm] = useState<LeadData>(EMPTY);
   const [errors, setErrors] = useState<LeadErrors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "done">("idle");
-  const [degraded, setDegraded] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
   // Reset al abrir + foco inicial + bloqueo de scroll + cierre con Escape.
@@ -51,7 +51,7 @@ export default function LeadCaptureModal() {
     setForm({ ...EMPTY, sector: prefill?.sector ?? "" });
     setErrors({});
     setStatus("idle");
-    setDegraded(false);
+    setSubmitError(null);
     const t = setTimeout(() => firstFieldRef.current?.focus(), 220);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -85,17 +85,16 @@ export default function LeadCaptureModal() {
       return;
     }
     setStatus("submitting");
-    try {
-      const res = await submitLead({ ...form, source, details: prefill?.details ?? null });
-      if (!res.ok) throw new Error("submit-failed");
-      setDegraded(Boolean(res.degraded));
+    setSubmitError(null);
+    const res = await submitLead({ ...form, source, details: prefill?.details ?? null });
+    if (res.ok) {
       trackLead("modal", source ?? undefined);
       setStatus("done");
-    } catch {
-      // Sin red / API caída: no perdemos la solicitud (ya persistida en local).
-      setDegraded(true);
-      setStatus("done");
+      return;
     }
+    if (res.errors) setErrors(res.errors);
+    setSubmitError(res.error);
+    setStatus("idle");
   };
 
   return (
@@ -133,7 +132,7 @@ export default function LeadCaptureModal() {
 
             <AnimatePresence mode="wait">
               {status === "done" ? (
-                <SuccessView onClose={closeLead} degraded={degraded} />
+                <SuccessView onClose={closeLead} />
               ) : (
                 <motion.div
                   key="form"
@@ -240,6 +239,14 @@ export default function LeadCaptureModal() {
                       </Field>
                     </div>
 
+                    {submitError && (
+                      <p role="alert" className="rounded-xl border border-red-400/40 bg-red-500/10 px-3.5 py-2.5 text-sm text-red-200">
+                        {submitError}{" "}
+                        <a href="https://wa.me/34640809238" target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-2">
+                          Abrir WhatsApp
+                        </a>
+                      </p>
+                    )}
                     <button
                       type="submit"
                       disabled={status === "submitting"}
@@ -272,7 +279,7 @@ export default function LeadCaptureModal() {
 }
 
 
-function SuccessView({ onClose, degraded }: { onClose: () => void; degraded?: boolean }) {
+function SuccessView({ onClose }: { onClose: () => void }) {
   return (
     <motion.div
       key="success"
@@ -299,11 +306,6 @@ function SuccessView({ onClose, degraded }: { onClose: () => void; degraded?: bo
         Un especialista de <span className="text-cyan-400 font-semibold">LOCALIS AI</span> te contactará
         en breve para agendar tu demo personalizada.
       </p>
-      {degraded && (
-        <p className="mt-3 text-[11px] text-amber-300/90">
-          Conexión inestable: guardamos tu solicitud en este dispositivo para no perderla.
-        </p>
-      )}
       <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
         <Sparkles size={12} /> Respuesta habitual en menos de 24 h
       </div>

@@ -26,25 +26,24 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-14 items-center">
           <div className="text-center lg:text-left min-w-0 animate-rise">
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-6">
-              <span className="eyebrow">Diseño web e IA · Zaragoza</span>
-              <span className="eyebrow eyebrow-live">
-                <span className="live-dot" aria-hidden="true" /> 0% comisiones
-              </span>
+              <span className="eyebrow">Diseño web · Zaragoza</span>
+              <span className="eyebrow">Precio cerrado</span>
             </div>
 
             <h1
               id="hero-title"
               className="font-display font-bold text-[2.35rem] leading-[1.05] sm:text-5xl lg:text-[3.6rem] xl:text-[4.1rem]"
             >
-              Webs con IA que{" "}
-              <span className="gradient-text">atienden, agendan y reparten</span>{" "}
-              por ti
+              Webs que{" "}
+              <span className="gradient-text">convierten visitas en clientes</span>{" "}
+              para tu negocio
             </h1>
 
             <p className="mt-6 text-lg sm:text-xl text-muted max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Para PYMEs de Zaragoza: tu asistente <strong className="text-foreground font-semibold">Stella</strong> responde
-              por WhatsApp, cierra citas y factura 24/7, y tu propio GPS de reparto te libera del{" "}
-              <strong className="text-foreground font-semibold">20–30&nbsp;%</strong> que se quedan las plataformas.
+              Para negocios de Zaragoza y Aragón: web profesional con formulario de presupuesto, botón de WhatsApp, Google
+              Maps y SEO local, a <strong className="text-foreground font-semibold">precio cerrado</strong>. Y prueba la
+              demostración de <strong className="text-foreground font-semibold">Stella</strong>, la asistente con IA que
+              estamos desarrollando.
             </p>
 
             <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
@@ -54,7 +53,7 @@ export default function HeroSection() {
               </a>
               <a href="#configurador" className="btn btn-live text-base px-6 min-h-[54px]">
                 <Calculator size={19} aria-hidden="true" />
-                Calcular ahorro sin comisiones
+                Diseñar mi web y ver el precio
               </a>
             </div>
 

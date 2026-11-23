@@ -2,67 +2,47 @@ import type { FaqItem } from "@/types";
 
 // Preguntas frecuentes: se muestran en la sección #faq y alimentan el JSON-LD FAQPage
 // (Google exige que el contenido marcado sea visible en la página).
+// Regla: solo se describe como disponible lo que ya funciona hoy.
 export const FAQS: FaqItem[] = [
   {
     id: "faq0",
-    question: "¿Cuánto cuesta mi web y cuánto ahorro frente a una agencia?",
+    question: "¿Qué incluye hoy mi web?",
     answer:
-      "El desarrollo es un pago único: la Web Esencial (hasta 5 páginas, botones y animaciones) cuesta 400 €, cada página extra 15 €, IA Stella 150 €, el mapa GPS de reparto 150 € y la carta o catálogo digital 100 €, con un tope cerrado de 800 € aunque lo incluyas todo. En el estudio «Diseña tu web» lo configuras en directo y ves la comparativa con los precios que publican las agencias españolas, con sus fuentes. Después eliges el mantenimiento mensual (Iniciar 19 €, Pro 39 € o Empresarial).",
-    category: "Planes",
+      "Una web profesional adaptada al móvil con tus servicios, formulario de contacto o presupuesto, botón de WhatsApp, enlace a Google Maps y SEO local básico, con la imagen de tu negocio. El precio es cerrado y lo ves en el estudio «Diseña tu web» antes de hablar con nosotros.",
+    category: "Diseño web",
   },
   {
     id: "faq1",
-    question: "¿Necesito saber de tecnología para usar LOCALIS AI?",
+    question: "¿Necesito saber de tecnología?",
     answer:
-      "No. Nosotros diseñamos la web, configuramos a Stella con la información de tu negocio y conectamos tu agenda y tu WhatsApp. Tú solo usas un panel sencillo desde el móvil o el ordenador, y tienes soporte local en Zaragoza.",
+      "No. Nosotros diseñamos y publicamos la web y te explicamos cómo recibir los contactos. Tienes soporte local en Zaragoza.",
     category: "General",
   },
   {
     id: "faq2",
-    question: "¿Cómo atiende Stella a mis clientes por WhatsApp?",
+    question: "¿Stella ya puede atender a mis clientes por WhatsApp?",
     answer:
-      "Stella se conecta a tu número de WhatsApp Business a través de la API oficial de WhatsApp Cloud. Responde dudas sobre horarios, precios y servicios, propone huecos libres, confirma citas y envía recordatorios. Si una conversación necesita a una persona, te la pasa a ti.",
+      "Todavía no. Stella, nuestra asistente con IA, está en desarrollo: lo que ves en la web es una demostración con datos de ejemplo. Hoy tu web incluye un botón de WhatsApp que abre una conversación contigo. Si te interesa Stella, pídelo en la auditoría y te avisaremos cuando esté disponible.",
     category: "Stella IA",
   },
   {
     id: "faq3",
-    question: "¿Stella gestiona las citas en Google Calendar?",
+    question: "¿Puedo tener citas online o seguimiento de repartos?",
     answer:
-      "Sí. Cuando un cliente pide cita, Stella comprueba la disponibilidad real de tu calendario, crea el evento, envía la confirmación por WhatsApp y programa un recordatorio para reducir las ausencias.",
-    category: "Stella IA",
+      "Son módulos en desarrollo (citas con Google Calendar, catálogo con pedidos y reparto con GPS sin comisiones). Las demostraciones de la web muestran cómo funcionarán. No los cobramos hasta que estén terminados y probados.",
+    category: "Plataforma",
   },
   {
     id: "faq4",
-    question: "¿Por qué no pago comisiones por cada reparto?",
-    answer:
-      "Porque los repartos los hacen tus propios repartidores con el módulo LOCALIS GPS. A diferencia de Glovo, Uber Eats o Just Eat, que cobran entre un 20 % y un 30 % por pedido, tú solo pagas la tarifa plana de tu plan.",
-    category: "GPS",
-  },
-  {
-    id: "faq5",
     question: "¿Cuánto tarda en estar lista mi web?",
     answer:
       "Entre 5 y 10 días laborables desde que tenemos tus contenidos (logo, fotos, servicios y precios). Antes te hacemos una auditoría gratuita para proponerte exactamente lo que necesitas.",
     category: "Diseño web",
   },
   {
-    id: "faq6",
-    question: "¿Las facturas incluyen IVA?",
-    answer:
-      "Sí. Las facturas se generan con su IVA correspondiente, numeración correlativa y descarga en PDF, y Stella puede enviarlas por email o WhatsApp a tu cliente.",
-    category: "Stella IA",
-  },
-  {
-    id: "faq7",
-    question: "¿Puedo cancelar cuando quiera?",
-    answer: "Sí. Puedes cambiar de plan o cancelar tu suscripción en cualquier momento desde tu panel o escribiéndonos.",
+    id: "faq5",
+    question: "¿Puedo cancelar el mantenimiento cuando quiera?",
+    answer: "Sí. Puedes cambiar de plan o cancelar el mantenimiento en cualquier momento escribiéndonos.",
     category: "Planes",
-  },
-  {
-    id: "faq8",
-    question: "¿Cómo seguirán mis clientes su pedido?",
-    answer:
-      "Cada pedido genera un enlace de seguimiento que se envía por WhatsApp. Tu cliente ve en el mapa dónde está el repartidor y la hora estimada de llegada, sin descargar ninguna app.",
-    category: "GPS",
   },
 ];

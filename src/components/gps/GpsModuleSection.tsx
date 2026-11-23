@@ -52,15 +52,13 @@ export default function GpsModuleSection() {
     <section id="reparto" aria-labelledby="gps-title" className="cv-auto section-band relative w-full py-20 lg:py-28">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="eyebrow eyebrow-live mb-5">
-            <span className="live-dot" aria-hidden="true" /> LOCALIS GPS · Telemetría en tiempo real
-          </span>
+          <span className="eyebrow mb-5">Demostración · Módulo GPS en desarrollo</span>
           <h2 id="gps-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
-            Tus repartos en directo, <span className="gradient-text">con tus repartidores</span> y sin comisiones
+            Así funcionará el reparto propio, <span className="gradient-text">con tus repartidores</span> y sin comisiones
           </h2>
           <p className="mt-5 text-muted text-base sm:text-lg leading-relaxed">
-            Sigue cada pedido en el mapa, comparte el enlace de seguimiento por WhatsApp y deja de regalar entre un{" "}
-            <strong className="text-foreground">20 % y un 30 %</strong> de cada venta a Glovo, Uber Eats o Just Eat.
+            Demostración con repartidores y rutas ficticios: el seguimiento real está en desarrollo. Las plataformas se quedan
+            entre un <strong className="text-foreground">20 % y un 30 %</strong> de cada pedido; este módulo busca que dejes de pagarlo.
           </p>
         </div>
 
