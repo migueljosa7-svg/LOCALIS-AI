@@ -1,30 +1,16 @@
 /**
- * Variables de entorno tipadas con fallbacks seguros.
- * Nunca lances si falta una ENV opcional: usa fallbacks y avisa en dev.
+ * Variables de entorno del email de leads, con valores por defecto seguros.
+ * (Supabase, panel y Stella leen las suyas directamente en src/lib/db.ts,
+ * src/middleware.ts y src/lib/stella/businesses.ts.)
  */
 function str(name: string, fallback = ""): string {
   const v = process.env[name];
-  if (typeof v === "string" && v.length > 0) return v;
-  if (process.env.NODE_ENV !== "production" && fallback === "" && name.startsWith("NEXT_PUBLIC_")) {
-    // Silencioso: las públicas vacías son válidas en demo local.
-  }
-  return fallback;
+  return typeof v === "string" && v.length > 0 ? v : fallback;
 }
 
 export const env = {
-  siteUrl: str("NEXT_PUBLIC_SITE_URL", "http://localhost:3000"),
-  mapboxToken: str("NEXT_PUBLIC_MAPBOX_TOKEN", ""),
-  googleClientId: str("NEXT_PUBLIC_GOOGLE_CLIENT_ID", ""),
-  whatsappBusinessId: str("NEXT_PUBLIC_WHATSAPP_BUSINESS_ID", ""),
-  gpsWsUrl: str("NEXT_PUBLIC_GPS_WS_URL", ""),
-  apiBaseUrl: str("NEXT_PUBLIC_API_BASE_URL", ""),
-  plausibleDomain: str("NEXT_PUBLIC_PLAUSIBLE_DOMAIN", str("NEXT_PUBLIC_PLausible_DOMAIN", "")),
-  // Solo servidor (nunca exponer con NEXT_PUBLIC_):
-  googleClientSecret: str("GOOGLE_CLIENT_SECRET", ""),
-  whatsappToken: str("WHATSAPP_ACCESS_TOKEN", ""),
-  whatsappPhoneNumberId: str("WHATSAPP_PHONE_NUMBER_ID", ""),
   leadInbox: str("LEAD_INBOX_EMAIL", "migueljosa7@gmail.com"),
-  // Email de leads (Resend): sin API key el formulario funciona pero no envia correos.
+  // Email de leads (Resend): sin API key el formulario funciona pero no envía correos.
   resendApiKey: str("RESEND_API_KEY", ""),
   emailFrom: str("EMAIL_FROM", "LOCALIS AI <onboarding@resend.dev>"),
 } as const;

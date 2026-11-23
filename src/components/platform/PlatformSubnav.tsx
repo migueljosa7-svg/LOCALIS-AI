@@ -34,11 +34,6 @@ export default function PlatformSubnav() {
               >
                 <p.icon size={16} aria-hidden="true" className={active ? "text-cyan-300" : ""} />
                 {p.short}
-                {p.status === "demo" && (
-                  <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wide text-amber-200">
-                    Demo
-                  </span>
-                )}
               </Link>
             </li>
           );

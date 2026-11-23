@@ -327,7 +327,7 @@ export default function Header() {
           </nav>
           <div className="grid grid-cols-2 gap-2 pt-4">
             <Link href="/plataforma/stella" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-ghost min-h-[54px] text-[15px]">
-              <PlayCircle size={18} aria-hidden="true" /> Probar demo
+              <PlayCircle size={18} aria-hidden="true" /> Conocer a Stella
             </Link>
             <Link href="/disena-tu-web" onClick={close} tabIndex={open ? 0 : -1} className="btn btn-primary min-h-[54px] text-[15px]">
               Pedir presupuesto

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { PlayCircle, Calculator, ArrowRight, ShieldCheck, Clock3, MapPin } from "lucide-react";
 import HeroShowcaseCard from "./HeroShowcaseCard";
+import StellaOpenButton from "./stella/StellaOpenButton";
+import { stellaEnabled } from "@/lib/stella/businesses";
 
 const TRUST = [
   { icon: ShieldCheck, text: "Auditoría gratuita y sin compromiso" },
@@ -10,6 +12,7 @@ const TRUST = [
 
 // Componente de servidor: el hero (LCP) llega en el HTML sin esperar a JS.
 export default function HeroSection() {
+  const live = stellaEnabled();
   return (
     <section
       id="inicio"
@@ -42,9 +45,16 @@ export default function HeroSection() {
 
             <p className="mt-6 text-lg sm:text-xl text-muted max-w-xl mx-auto lg:mx-0 leading-relaxed">
               Para negocios de Zaragoza y Aragón: web profesional con formulario de presupuesto, botón de WhatsApp, Google
-              Maps y SEO local, a <strong className="text-foreground font-semibold">precio cerrado</strong>. Y prueba la
-              demostración de <strong className="text-foreground font-semibold">Stella</strong>, la asistente con IA que
-              estamos desarrollando.
+              Maps y SEO local, a <strong className="text-foreground font-semibold">precio cerrado</strong>.{" "}
+              {live ? (
+                <>
+                  ¿Dudas? Pregúntale a <strong className="text-foreground font-semibold">Stella</strong>, nuestra asistente con IA.
+                </>
+              ) : (
+                <>
+                  Y conoce a <strong className="text-foreground font-semibold">Stella</strong>, la asistente con IA que llega próximamente.
+                </>
+              )}
             </p>
 
             <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
@@ -52,10 +62,14 @@ export default function HeroSection() {
                 <Calculator size={19} aria-hidden="true" />
                 Diseñar mi web y ver el precio
               </Link>
-              <Link href="/plataforma/stella" className="btn btn-live text-base px-6 min-h-[54px]">
-                <PlayCircle size={20} aria-hidden="true" />
-                Probar la demo de Stella
-              </Link>
+              {live ? (
+                <StellaOpenButton label="Hablar con Stella" variant="live" />
+              ) : (
+                <Link href="/plataforma/stella" className="btn btn-live text-base px-6 min-h-[54px]">
+                  <PlayCircle size={20} aria-hidden="true" />
+                  Conocer a Stella
+                </Link>
+              )}
             </div>
 
             <Link

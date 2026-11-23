@@ -164,7 +164,7 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
     return { intent: "farewell", reply: "¡Hasta luego! Dejo agenda, facturas y GPS sincronizados. Dime resumen de hoy cuando vuelvas.", action: null };
   }
   if (has(t, ["horario", "abris", "cerrado", "apertura", "cierre"])) {
-    return { intent: "hours", reply: "Horario demo lun–sáb 09:00–20:00. Stella atiende 24/7: si pides fuera de hora te propongo el hueco más cercano. ¿Buscamos uno?",
+    return { intent: "hours", reply: "Horario de ejemplo lun–sáb 09:00–20:00. Stella atiende 24/7: si pides fuera de hora te propongo el hueco más cercano. ¿Buscamos uno?",
       action: null, chips: ["Tienes hueco mañana?", "¿Qué citas tengo mañana?"] };
   }
   const day = extractDay(t);

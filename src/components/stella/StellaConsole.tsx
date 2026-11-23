@@ -324,14 +324,14 @@ export default function StellaConsole({ titleAs: Title = "h2" }: { titleAs?: "h1
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="eyebrow mb-5">
-            <Bot size={13} aria-hidden="true" /> Demostración · Stella IA en desarrollo
+            <Bot size={13} aria-hidden="true" /> Próximamente · Stella en WhatsApp
           </span>
           <Title id="stella-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
             Así funcionará Stella: <span className="gradient-text">WhatsApp, citas y facturas</span>
           </Title>
           <p className="mt-5 text-muted text-base sm:text-lg leading-relaxed">
-            Demostración interactiva con datos de ejemplo: Stella todavía no está conectada a WhatsApp ni a calendarios reales.
-            La estamos desarrollando por fases. Si te interesa para tu negocio, pide la auditoría y te avisamos cuando esté lista.
+            Pruébalo: así será la siguiente versión de Stella, conectada a tu WhatsApp y a tu calendario. Las conversaciones, citas y
+            facturas de este simulador son de ejemplo. Pídelo en la auditoría y te avisamos en cuanto puedas activarlo.
           </p>
         </div>
 

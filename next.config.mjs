@@ -23,7 +23,17 @@ const nextConfig = {
   },
   async headers() {
     return [
-      { source: "/:path*", headers: securityHeaders },
+      // Todas las páginas: no se pueden incrustar en otras webs (X-Frame-Options)…
+      { source: "/((?!stella/embed).*)", headers: securityHeaders },
+      // …salvo el chat de Stella, que se instala en webs de clientes. La página
+      // comprueba además que la web que lo incrusta esté autorizada en su ficha.
+      {
+        source: "/stella/embed",
+        headers: [
+          ...securityHeaders.filter((h) => h.key !== "X-Frame-Options"),
+          { key: "Content-Security-Policy", value: "frame-ancestors *" },
+        ],
+      },
       {
         // El Service Worker nunca debe quedarse cacheado: así cada deploy se aplica.
         source: "/sw.js",

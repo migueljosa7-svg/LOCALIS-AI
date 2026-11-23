@@ -135,7 +135,7 @@ export interface LeadEmailResult {
  *  2) Confirmacion automatica al cliente.
  * Nunca lanza excepciones: siempre devuelve un resultado controlado.
  */
-export async function sendLeadNotifications(lead: LeadEmailData): Promise<LeadEmailResult> {
+export async function sendLeadNotifications(lead: LeadEmailData, opts: { inbox?: string } = {}): Promise<LeadEmailResult> {
   try {
     const apiKey = env.resendApiKey;
     if (!apiKey) {
@@ -147,7 +147,7 @@ export async function sendLeadNotifications(lead: LeadEmailData): Promise<LeadEm
     }
 
     const from = env.emailFrom;
-    const inbox = env.leadInbox;
+    const inbox = opts.inbox || env.leadInbox;
     const receivedAt = new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' });
 
     const [adminOk, clientOk] = await Promise.all([
@@ -157,15 +157,18 @@ export async function sendLeadNotifications(lead: LeadEmailData): Promise<LeadEm
         to: [inbox],
         subject: 'Nueva solicitud: ' + lead.businessName + ' (' + lead.sector + ')',
         html: adminHtml(lead, receivedAt),
-        replyTo: lead.email,
+        replyTo: lead.email || undefined,
       }),
-      sendOne({
-        apiKey,
-        from,
-        to: [lead.email],
-        subject: 'Hemos recibido tu solicitud - LOCALIS AI',
-        html: clientHtml(lead),
-      }),
+      // Confirmación al cliente solo si dejó email (en el chat de Stella es opcional).
+      lead.email
+        ? sendOne({
+            apiKey,
+            from,
+            to: [lead.email],
+            subject: 'Hemos recibido tu solicitud - LOCALIS AI',
+            html: clientHtml(lead),
+          })
+        : Promise.resolve(false),
     ]);
 
     if (!adminOk) {

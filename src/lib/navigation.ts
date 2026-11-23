@@ -24,15 +24,16 @@ export interface PlatformItem {
   short: string; // etiqueta corta para la navegación secundaria
   detail: string;
   icon: LucideIcon;
-  status: "info" | "demo";
+  /** "proximamente": aún no se vende; la página lo explica. Stella depende de stellaEnabled(). */
+  status: "info" | "stella" | "proximamente";
 }
 
 export const PLATFORM: PlatformItem[] = [
-  { href: ROUTES.plataforma, title: "Resumen de la plataforma", short: "Resumen", detail: "Qué funciona hoy y qué está en desarrollo", icon: Layers, status: "info" },
-  { href: ROUTES.stella, title: "IA Stella (demo)", short: "Stella IA", detail: "En desarrollo · citas, WhatsApp y facturas", icon: Bot, status: "demo" },
-  { href: ROUTES.reparto, title: "Mapa GPS (demo)", short: "Reparto GPS", detail: "En desarrollo · repartos propios, sin comisiones", icon: MapPin, status: "demo" },
+  { href: ROUTES.plataforma, title: "Resumen de la plataforma", short: "Resumen", detail: "Todo lo que hacemos por tu negocio", icon: Layers, status: "info" },
+  { href: ROUTES.stella, title: "Stella IA", short: "Stella IA", detail: "Asistente virtual con IA para tu web", icon: Bot, status: "stella" },
+  { href: ROUTES.reparto, title: "Reparto GPS", short: "Reparto GPS", detail: "Repartos propios, sin comisiones", icon: MapPin, status: "proximamente" },
   { href: ROUTES.sectores, title: "Soluciones por sector", short: "Sectores", detail: "Restaurantes, clínicas, talleres y comercios", icon: LayoutGrid, status: "info" },
-  { href: ROUTES.panel, title: "Panel de control (demo)", short: "Panel", detail: "Vista previa con datos de ejemplo", icon: LayoutDashboard, status: "demo" },
+  { href: ROUTES.panel, title: "Panel de control", short: "Panel", detail: "Citas, contactos y repartos en una pantalla", icon: LayoutDashboard, status: "proximamente" },
 ];
 
 /**

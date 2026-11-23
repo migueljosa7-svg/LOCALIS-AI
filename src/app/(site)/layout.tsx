@@ -15,7 +15,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         {children}
       </main>
       <Footer />
-      <SafeBoundary name="Formulario de demo">
+      <SafeBoundary name="Formulario de contacto">
         <LeadModalGate />
       </SafeBoundary>
     </LeadProvider>

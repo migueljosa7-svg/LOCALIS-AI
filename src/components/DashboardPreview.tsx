@@ -64,14 +64,14 @@ export default function DashboardPreview({ titleAs: Title = "h2" }: { titleAs?: 
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="eyebrow mb-5">
-            <LayoutDashboard size={13} aria-hidden="true" /> Vista previa · en desarrollo
+            <LayoutDashboard size={13} aria-hidden="true" /> Próximamente · Panel de control
           </span>
           <Title id="demo-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
             Todo tu negocio, <span className="gradient-text">en una sola pantalla</span>
           </Title>
           <p className="mt-5 text-muted text-base sm:text-lg">
-            Así será el panel para gestionar citas, conversaciones, facturas y repartos. Los datos son de ejemplo: el panel está en
-            desarrollo.
+            Así será el panel para gestionar citas, conversaciones, facturas y repartos desde una sola pantalla. Los datos que ves
+            son de ejemplo.
           </p>
         </div>
 

@@ -39,6 +39,23 @@ Nunca pegues estas claves en chats, en GitHub ni en documentos.
 - Para escribir a clientes hay que **verificar un dominio propio** (registros DNS SPF y DKIM) y poner `EMAIL_FROM="LOCALIS AI <avisos@tudominio.es>"`. Requiere comprar dominio (decisión tuya).
 - Mientras tanto: `LEAD_INBOX_EMAIL` = el email de tu cuenta de Resend.
 
+## 3b. Stella (asistente con IA) — opcional, con coste por uso
+
+Stella está desactivada mientras no exista `ANTHROPIC_API_KEY`: la web muestra el botón de WhatsApp como siempre.
+
+1. Crea una clave en https://platform.claude.com → API Keys (requiere añadir saldo; pon un **límite de gasto mensual** en la consola).
+2. Vercel → Environment Variables: `ANTHROPIC_API_KEY` (Production y Preview). Opcional: `STELLA_MODEL` (por defecto `claude-opus-5-5`; más barato: `claude-haiku-5-5`).
+3. **Redeploy**: la web decide si muestra a Stella al compilar.
+4. Prueba: abre la web → «Pregunta a Stella» → pide que te llamen con un teléfono TEST → debe aparecer en `/admin` con origen `stella:localis`.
+
+**Nuevo cliente con Stella:** añade su ficha en `src/lib/stella/businesses.ts` (datos, servicios y precios, contacto/WhatsApp/email de avisos, preguntas frecuentes y `domains` con su web) y pega en su web:
+
+```html
+<script src="https://localis-ai-one.vercel.app/stella.js" data-negocio="ID" defer></script>
+```
+
+Límites: 40 mensajes por visitante cada 10 minutos, 24 mensajes de historial, 1.000 caracteres por mensaje. Los avisos por email a clientes requieren dominio verificado en Resend.
+
 ## 4. Probar en la vista previa (antes de producción)
 
 1. Haz push de la rama: Vercel crea una URL de *preview*.

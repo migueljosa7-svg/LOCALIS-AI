@@ -53,7 +53,7 @@ export default function HeroShowcaseCard() {
           </div>
           <span className="text-[11px] font-medium text-muted tracking-wide truncate">Panel LOCALIS · Frutería Pepe</span>
           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 shrink-0">
-            Demostración
+            Vista de ejemplo
           </span>
         </div>
 

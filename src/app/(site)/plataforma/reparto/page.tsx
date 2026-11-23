@@ -4,9 +4,9 @@ import SafeBoundary from "@/components/SafeBoundary";
 import { ROUTES } from "@/lib/navigation";
 
 export const metadata: Metadata = {
-  title: "Reparto con GPS sin comisiones (demostración)",
+  title: "Reparto con GPS sin comisiones (próximamente)",
   description:
-    "Demostración del módulo de reparto con seguimiento GPS que LOCALIS AI está desarrollando para negocios con repartidores propios en Zaragoza.",
+    "Próximamente: reparto con seguimiento GPS en tiempo real para negocios de Zaragoza con repartidores propios, sin comisiones de plataformas.",
   alternates: { canonical: ROUTES.reparto },
 };
 

@@ -54,7 +54,7 @@ export function InvoiceModal({ open, onClose, client }: { open: boolean; onClose
       ${INVOICE_ITEMS.map((i) => `<tr><td>${i.d}</td><td>${i.q}</td><td>${i.p} EUR</td><td>${i.t} EUR</td></tr>`).join("")}
       </table>
       <p>Subtotal: ${subtotal} EUR · IVA 21%: ${iva} EUR</p><p><b>TOTAL: ${total} EUR</b></p>
-      <p style="color:#888">Generado por LOCALIS AI (demo)</p></body></html>`;
+      <p style="color:#888">Generado por LOCALIS AI (ejemplo)</p></body></html>`;
     const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
     const a = document.createElement("a");
     a.href = url;

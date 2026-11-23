@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Clock3 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import { PLATFORM, ROUTES } from "@/lib/navigation";
+import { stellaEnabled } from "@/lib/stella/businesses";
 
 export const metadata: Metadata = {
-  title: "Plataforma: qué funciona hoy y qué está en desarrollo",
+  title: "Plataforma para negocios locales",
   description:
-    "Webs de captación para negocios de Zaragoza disponibles hoy, y demostraciones de Stella IA, reparto con GPS y panel de control en desarrollo.",
+    "Webs de captación para negocios de Zaragoza, Stella (asistente virtual con IA para tu web) y las próximas herramientas: reparto con GPS y panel de control.",
   alternates: { canonical: ROUTES.plataforma },
 };
 
-// Debe coincidir con lib/faqs.ts: solo es "disponible" lo que ya entregamos.
+// Debe coincidir con lib/faqs.ts: solo se presenta como disponible lo que ya entregamos.
 const AVAILABLE = [
   "Web profesional adaptada al móvil, con tus servicios",
   "Formulario de presupuesto y de auditoría gratuita",
@@ -18,9 +19,10 @@ const AVAILABLE = [
   "SEO local básico para Zaragoza y alrededores",
   "Estudio «Diseña tu web» con precio cerrado al momento",
 ];
+const STELLA_LIVE = "Stella: asistente virtual con IA que responde en tu web, recoge contactos y los pasa a WhatsApp";
 
-const IN_PROGRESS = [
-  "Stella: asistente con IA para WhatsApp y la web",
+const NEXT = [
+  "Stella en WhatsApp: respuestas automáticas en tu número",
   "Citas online sincronizadas con Google Calendar",
   "Catálogo o carta digital con pedidos",
   "Reparto con seguimiento GPS sin comisiones",
@@ -28,18 +30,22 @@ const IN_PROGRESS = [
 ];
 
 export default function PlataformaPage() {
+  const live = stellaEnabled();
+  const available = live ? [...AVAILABLE, STELLA_LIVE] : AVAILABLE;
   const sections = PLATFORM.filter((p) => p.href !== ROUTES.plataforma);
+  const soon = (status: string) => status === "proximamente" || (status === "stella" && !live);
+
   return (
     <section aria-labelledby="plataforma-title" className="relative w-full py-14 lg:py-20">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           <span className="eyebrow">Plataforma LOCALIS AI</span>
           <h1 id="plataforma-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
-            Lo que funciona hoy y <span className="gradient-text">lo que estamos construyendo</span>
+            Todo lo que tu negocio necesita para <span className="gradient-text">captar clientes</span>
           </h1>
           <p className="mt-5 text-muted text-base sm:text-lg leading-relaxed">
-            Hoy entregamos webs de captación para negocios locales. Las herramientas marcadas como <strong className="text-foreground">demo</strong>{" "}
-            están en desarrollo: puedes probarlas con datos de ejemplo, pero todavía no las vendemos ni las cobramos.
+            Empezamos por una web que convierte visitas en contactos y vamos sumando herramientas. Te contamos con claridad qué puedes contratar
+            hoy y qué llega próximamente.
           </p>
         </div>
 
@@ -49,7 +55,7 @@ export default function PlataformaPage() {
               <CheckCircle2 size={20} className="text-emerald-300" aria-hidden="true" /> Disponible hoy
             </h2>
             <ul className="mt-5 space-y-3">
-              {AVAILABLE.map((t) => (
+              {available.map((t) => (
                 <li key={t} className="flex gap-2.5 text-sm text-foreground/90">
                   <CheckCircle2 size={17} className="text-emerald-300 shrink-0 mt-px" aria-hidden="true" /> {t}
                 </li>
@@ -59,18 +65,18 @@ export default function PlataformaPage() {
               Diseñar mi web <ArrowRight size={17} aria-hidden="true" />
             </Link>
           </div>
-          <div className="glass rounded-3xl p-6 sm:p-7 border border-amber-400/20">
+          <div className="glass rounded-3xl p-6 sm:p-7 border border-cyan-500/20">
             <h2 className="font-display font-bold text-xl flex items-center gap-2">
-              <Clock3 size={20} className="text-amber-200" aria-hidden="true" /> En desarrollo
+              <Sparkles size={20} className="text-cyan-300" aria-hidden="true" /> Próximamente
             </h2>
             <ul className="mt-5 space-y-3">
-              {IN_PROGRESS.map((t) => (
+              {NEXT.map((t) => (
                 <li key={t} className="flex gap-2.5 text-sm text-muted">
-                  <Clock3 size={17} className="text-amber-200 shrink-0 mt-px" aria-hidden="true" /> {t}
+                  <Sparkles size={16} className="text-cyan-300 shrink-0 mt-0.5" aria-hidden="true" /> {t}
                 </li>
               ))}
             </ul>
-            <p className="mt-7 text-sm text-muted">Si te interesa alguna, pídela en la auditoría y te avisaremos cuando esté lista.</p>
+            <p className="mt-7 text-sm text-muted">Pídelo en la auditoría y te avisamos en cuanto puedas activarlo. No se cobra hasta que esté listo.</p>
           </div>
         </div>
 
@@ -83,9 +89,11 @@ export default function PlataformaPage() {
                   <span className="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-300">
                     <p.icon size={20} aria-hidden="true" />
                   </span>
-                  {p.status === "demo" && (
-                    <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[11px] font-semibold text-amber-200">Demo</span>
-                  )}
+                  {soon(p.status) ? (
+                    <span className="rounded-full border border-cyan-500/25 bg-cyan-500/[0.06] px-2 py-0.5 text-[11px] font-semibold text-cyan-200">Próximamente</span>
+                  ) : p.status === "stella" ? (
+                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-300">Disponible</span>
+                  ) : null}
                 </span>
                 <span className="mt-5 font-display font-semibold text-lg">{p.title}</span>
                 <span className="mt-2 text-sm text-muted leading-relaxed flex-1">{p.detail}</span>
