@@ -9,7 +9,11 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ kind: string;
   const { kind, id } = await ctx.params;
   const origin = req.headers.get("origin");
   const host = req.headers.get("host");
-  if (!origin || !host || new URL(origin).host !== host) {
+  let originHost = "";
+  try {
+    originHost = new URL(origin ?? "").host; // un Origin malformado o «null» se rechaza (antes provocaba un error 500)
+  } catch {}
+  if (!origin || !host || originHost !== host) {
     return NextResponse.json({ ok: false, error: "Origen no permitido." }, { status: 403 });
   }
   if (!UUID.test(id) || (kind !== "leads" && kind !== "opportunities")) {
