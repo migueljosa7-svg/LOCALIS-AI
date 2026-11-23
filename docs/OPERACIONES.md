@@ -24,7 +24,7 @@ Vercel → proyecto → **Settings → Environment Variables** (marca *Productio
 
 | Variable | Valor |
 | --- | --- |
-| `SUPABASE_URL` | Project URL de Supabase |
+| `SUPABASE_URL` | `https://<proyecto>.supabase.co` (sin `/rest/v1/`) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Secret key `sb_secret_…` o service_role `eyJ…` (nunca con prefijo `NEXT_PUBLIC_`) |
 | `ADMIN_USER` | el usuario que quieras |
 | `ADMIN_PASSWORD` | contraseña de **16 caracteres o más**, generada por tu gestor |
