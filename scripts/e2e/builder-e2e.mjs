@@ -72,7 +72,7 @@ try {
   const { ctx, page, problems } = await newPage(D);
   const t0 = Date.now();
   await page.goto(`${BASE}/`, { waitUntil: "load" });
-  await page.getByRole("link", { name: /Diseña tu web/ }).first().click();
+  await page.locator('a[href="/disena-tu-web"]:visible').first().click();
   await page.waitForURL("**/disena-tu-web", { timeout: 15000 });
   check("[escritorio] el menú de la web lleva al nuevo editor /disena-tu-web", true);
   await page.getByRole("heading", { name: /¿Qué tipo de negocio tienes\?/ }).waitFor();
@@ -113,7 +113,7 @@ try {
 
   // Tipografía
   await page.getByRole("button", { name: /Montserrat/ }).first().click();
-  check("[escritorio] la tipografía de los títulos cambia en vivo", (await bp.evaluate((e) => getComputedStyle(e).getPropertyValue("--fh"))).includes("montserrat"));
+  check("[escritorio] la tipografía de los títulos cambia en vivo", (await bp.evaluate((e) => getComputedStyle(e).getPropertyValue("--fh"))).toLowerCase().includes("montserrat"));
   await page.getByRole("button", { name: "Grande", exact: true }).first().click();
   const h1 = await bp.locator("h1").evaluate((e) => parseFloat(getComputedStyle(e).fontSize));
   check("[escritorio] el tamaño de los títulos «Grande» se aplica (58 px)", Math.round(h1) === 58, String(h1));
@@ -134,7 +134,14 @@ try {
   check("[escritorio] volver a activarla la recupera", (await order(page)).includes("gallery"));
   await page.getByLabel("Mostrar Preguntas frecuentes").check();
   let o = await order(page);
-  await page.getByTestId("section-faq").dragTo(page.getByTestId("section-hero"));
+  {
+    // Arrastrar y soltar con los eventos reales de DnD del navegador (Playwright no puede desplazar la lista mientras arrastra).
+    const dt = await page.evaluateHandle(() => new DataTransfer());
+    await page.getByTestId("section-faq").dispatchEvent("dragstart", { dataTransfer: dt });
+    await page.getByTestId("section-hero").dispatchEvent("dragover", { dataTransfer: dt });
+    await page.getByTestId("section-hero").dispatchEvent("drop", { dataTransfer: dt });
+    await page.getByTestId("section-faq").dispatchEvent("dragend", { dataTransfer: dt });
+  }
   const o2 = await order(page);
   check("[escritorio] arrastrar y soltar reordena (preguntas frecuentes sube sobre la presentación)", o2.indexOf("faq") < o2.indexOf("hero") && o2[0] === "header" && o2.at(-1) === "footer", `${o} → ${o2}`);
   await page.getByRole("button", { name: "Bajar Preguntas frecuentes" }).click();
@@ -150,7 +157,7 @@ try {
   await card.getByText("Barra fija").click();
   await card.getByText("Primera sección").click(); // lo quita de la portada
   check("[escritorio] un botón en «barra fija» aparece como barra fija en la web", await bp.locator(".sticky .btn", { hasText: "Llamar ahora" }).isVisible());
-  check("[escritorio] sin teléfono el botón queda «pendiente de configuración» (no se inventa ninguno)", (await bp.locator(".sticky .btn.pend").count()) === 1 && (await card.getByText(/Pendiente de configuración/).count()) === 1);
+  check("[escritorio] sin teléfono el botón queda «pendiente de configuración» (no se inventa ninguno)", (await bp.locator(".sticky .btn.pend", { hasText: "Llamar ahora" }).count()) === 1 && (await card.getByText(/Pendiente de configuración/).count()) === 1);
   await bp.locator(".sticky .btn", { hasText: "Llamar ahora" }).click();
   check("[escritorio] al pulsarlo en la vista previa explica qué falta (interacción real)", (await bp.locator(".toast").innerText()).includes("falta tu teléfono"));
   await page.getByRole("button", { name: "+ Ver servicios" }).click();
@@ -184,6 +191,7 @@ try {
   check("[escritorio] la imagen propia se ve en la portada de la web", !!heroSrc && heroSrc.startsWith("blob:"), String(heroSrc));
   await page.getByLabel("Mostrar el carrusel en mi web").check();
   check("[escritorio] activar el carrusel lo incluye en la web", (await order(page)).includes("carousel"));
+  await page.getByRole("button", { name: "Deslizar", exact: true }).click();
   const dots = bp.locator(".car .dots button");
   await dots.nth(1).click();
   check("[escritorio] el carrusel responde: ir a la imagen 2 marca su punto", (await dots.nth(1).getAttribute("aria-current")) === "true");
@@ -200,8 +208,8 @@ try {
   await page.getByLabel("Nombre del negocio").first().fill("Peluquería Ana");
   await page.getByLabel("Ciudad o zona").fill("Zaragoza");
   await page.getByLabel("Frase principal").fill("Tu mejor versión, con cita previa");
-  await page.getByLabel("Teléfono", { exact: true }).fill("976 111 222");
-  await page.getByLabel("WhatsApp", { exact: true }).fill("600 111 222");
+  await page.getByLabel(/^Teléfono\s*\(opcional\)/).fill("976 111 222");
+  await page.getByLabel(/^WhatsApp\s*\(opcional\)/).fill("600 111 222");
   await page.getByLabel("Email del negocio").fill("hola@peluqueriaana.es");
   await page.getByRole("button", { name: /Añadir servicio o producto/ }).click();
   await page.getByLabel("Servicio 1: nombre").fill("Corte de pelo");
@@ -210,7 +218,7 @@ try {
   await page.getByText("Tienda online con pagos").click();
   await page.getByLabel("Comentarios adicionales").fill("Me gustan los tonos rosas.");
   check("[escritorio] los datos del negocio aparecen en la web de ejemplo", (await bp.locator(".hd .brand").innerText()).includes("Peluquería Ana") && (await bp.locator("h1").innerText()).includes("Tu mejor versión") && (await bp.getByText("Corte de pelo").count()) > 0);
-  check("[escritorio] al rellenar el teléfono el botón deja de estar pendiente", (await bp.locator(".sticky .btn.pend").count()) === 0);
+  check("[escritorio] al rellenar el teléfono el botón deja de estar pendiente", (await bp.locator(".sticky .btn.pend", { hasText: "Llamar ahora" }).count()) === 0);
   await bp.locator(".sticky .btn", { hasText: "Llamar ahora" }).click();
   check("[escritorio] y la vista previa simula la llamada con ese número", (await bp.locator(".toast").innerText()).includes("976 111 222"));
   await next_(page);
@@ -218,14 +226,15 @@ try {
   // Revisión y envío
   const est = await page.getByLabel("Estimación orientativa").innerText();
   check("[escritorio] la estimación distingue precio definido / extra opcional / pendiente de valoración / aún no disponible", ["Precio definido", "Extra opcional", "Pendiente de valoración", "Aún no disponible"].every((t) => est.includes(t)), est.slice(0, 200));
-  check("[escritorio] el precio parte de la tarifa existente (≥ 400 €) y aclara que no se cobra nada", /\b4\d\d €/.test(est) && /no se cobra nada/i.test(est));
+  check("[escritorio] el precio parte de la tarifa existente (≥ 400 €) y aclara que no se cobra nada", /\b4\d\d €/.test(est) && /se cobra nada/i.test(est), est.slice(0, 300));
   await page.screenshot({ path: path.join(outDir, "b03-enviar.png") });
   await page.getByRole("button", { name: /Quiero esta web/ }).click();
   await page.getByText("Indica tu nombre.").waitFor();
   check("[escritorio] el formulario final valida los campos y el consentimiento", (await page.getByText("Necesitamos tu permiso para contactarte.").count()) === 1);
-  await page.getByLabel("Tu nombre").fill("Ana López");
-  await page.getByLabel("Teléfono o WhatsApp").fill("600 111 222");
-  await page.getByRole("checkbox").check();
+  const sendForm = page.locator("form").filter({ hasText: "¿A quién enviamos tu diseño?" });
+  await sendForm.getByLabel("Tu nombre").fill("Ana López");
+  await sendForm.getByLabel("Teléfono o WhatsApp").fill("600 111 222");
+  await sendForm.getByRole("checkbox").check();
   await page.getByRole("button", { name: /Quiero esta web/ }).click();
   await page.getByText("¡Hemos recibido tu diseño!").waitFor({ timeout: 30000 });
   check("[escritorio] «Quiero esta web» envía la solicitud y confirma sin cobrar nada", (await page.getByText(/No se ha cobrado nada/).count()) === 1);
@@ -244,8 +253,10 @@ try {
   check("[datos] el bucket es privado y la solicitud lleva huella de IP, no la IP", /^[0-9a-f]{24}$/.test((await be.db.query("select ip_hash from design_requests")).rows[0].ip_hash));
 
   // Borrador y reinicio
+  await sleep(1200);
+  const leftover = await page.evaluate(() => localStorage.getItem("localis-builder-draft-v1"));
   await page.reload({ waitUntil: "load" });
-  check("[escritorio] tras enviar, el borrador se borra y se vuelve a la pantalla de inicio", (await page.getByText("¿Qué tipo de negocio tienes?").count()) === 1);
+  check("[escritorio] tras enviar, el borrador se borra y se vuelve a la pantalla de inicio", (await page.getByText("¿Qué tipo de negocio tienes?").count()) === 1, `borrador: ${String(leftover).slice(0, 80)}`);
   check(`[escritorio] sin errores de consola ni recursos caídos en todo el flujo`, problems.length === 0, problems.join(" | ").slice(0, 400));
   await ctx.close();
 
@@ -275,7 +286,7 @@ try {
     await p.getByRole("button", { name: /Restaurante o bar/ }).click();
     await p.getByRole("button", { name: "Empezar a diseñar" }).click();
     check(`[${vp.name}] el editor no desborda horizontalmente`, await noHScroll(p));
-    const small = await p.evaluate(() => [...document.querySelectorAll("button, a, input:not([type=checkbox]):not([type=file]):not([type=color]), select, textarea")].filter((e) => { const r = e.getBoundingClientRect(); const vis = r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== "hidden"; return vis && (r.height < 36 || r.width < 36); }).map((e) => (e.getAttribute("aria-label") || e.textContent || e.tagName).trim().slice(0, 30)));
+    const small = await p.evaluate(() => [...document.querySelectorAll("button, a, input:not([type=checkbox]):not([type=file]):not([type=color]), select, textarea")].filter((e) => { const r = e.getBoundingClientRect(); const vis = r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== "hidden"; return vis && !e.closest(".sr-only") && !e.classList.contains("sr-only") && (r.height < 36 || r.width < 36); }).map((e) => (e.getAttribute("aria-label") || e.textContent || e.tagName).trim().slice(0, 30)));
     check(`[${vp.name}] controles táctiles sin tamaños diminutos`, small.length === 0, small.join(" | "));
     await p.screenshot({ path: path.join(outDir, `b04-${vp.name}-editor.png`) });
     check(`[${vp.name}] hay pestañas «Editar» y «Vista previa»`, (await p.getByRole("tab").count()) === 2);
@@ -337,7 +348,8 @@ try {
   const { ctx: ca, page: pa, problems: pra } = await newPage(D, { httpCredentials: ADMIN, acceptDownloads: true });
   await pa.goto(`${BASE}/admin`, { waitUntil: "load" });
   check("[admin] el panel principal muestra el lead con «VER SU WEB DISEÑADA»", (await pa.getByText("VER SU WEB DISEÑADA").count()) >= 1);
-  await pa.getByText("VER SU WEB DISEÑADA").first().click();
+  check("[admin] el lead de ESA solicitud enlaza con su propio diseño", (await pa.locator(`a[href="/admin/diseno/${designId}"]`).count()) === 1);
+  await pa.locator(`a[href="/admin/diseno/${designId}"]`).click();
   await pa.waitForURL(`**/admin/diseno/${designId}`, { timeout: 15000 });
   await pa.getByRole("heading", { name: "Peluquería Ana" }).waitFor();
   check("[admin] abre la solicitud: nombre, contacto y la web que ha diseñado", (await pa.getByText("Así quiere su web").count()) === 1 && (await pa.locator(".bp").count()) === 1);

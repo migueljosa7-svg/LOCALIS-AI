@@ -3,6 +3,7 @@
 export const PREVIEW_CSS = `
 .bp{container-type:inline-size;container-name:bp;background:var(--c-bg);color:var(--c-text);font-family:var(--fb);font-size:var(--fs);line-height:1.6;position:relative;min-height:100%}
 .bp *{box-sizing:border-box}
+.bp{overflow-x:clip;overflow-wrap:break-word}
 .bp h1,.bp h2,.bp h3{font-family:var(--fh);font-weight:var(--fw);line-height:1.12;margin:0;letter-spacing:-.01em}
 .bp h1{font-size:calc(var(--h1) * 1px)}
 .bp h2{font-size:calc(var(--h1) * .62px)}
@@ -33,10 +34,10 @@ export const PREVIEW_CSS = `
 
 /* Cabecera */
 .bp .hd{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--c-bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid color-mix(in srgb,var(--c-text) 10%,transparent)}
-.bp .hd .wrap{display:flex;align-items:center;gap:20px;min-height:68px}
+.bp .hd .wrap{display:flex;align-items:center;gap:20px;min-height:68px;flex-wrap:wrap}
 .bp .brand{font-family:var(--fh);font-weight:var(--fw);font-size:1.25em;display:flex;align-items:center;gap:10px;text-decoration:none}
 .bp .brand img{height:34px;width:auto;border-radius:6px}
-.bp .nav{display:flex;gap:20px;margin-left:auto;align-items:center}
+.bp .nav{display:flex;flex-wrap:wrap;gap:6px 20px;margin-left:auto;align-items:center;min-width:0}
 .bp .nav a{text-decoration:none;opacity:.8;cursor:pointer;font-size:.92em}
 .bp .nav a:hover{opacity:1;color:var(--c-primary)}
 .bp .hd-actions{display:flex;gap:10px;align-items:center}
@@ -131,6 +132,11 @@ export const PREVIEW_CSS = `
 .bp .toast{position:sticky;bottom:72px;z-index:8;margin:0 auto;width:max-content;max-width:calc(100% - 32px);background:#111;color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;box-shadow:0 8px 28px rgba(0,0,0,.35)}
 
 /* Adaptación según el ancho del dispositivo simulado */
+@container bp (max-width: 980px){
+  .bp .nav{display:none}
+  .bp .burger{display:inline-flex;align-items:center;justify-content:center}
+  .bp .hd .wrap{flex-wrap:nowrap}
+}
 @container bp (max-width: 860px){
   .bp .wrap{padding:0 22px}
   .bp section{padding:48px 0}

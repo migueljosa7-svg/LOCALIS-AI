@@ -35,18 +35,18 @@ const DRAFT_KEY = "localis-builder-draft-v1";
 
 /** Ajusta el dispositivo simulado al espacio disponible (escala sin cambiar su ancho de diseño). */
 function useFit(width: number) {
-  const ref = useRef<HTMLDivElement>(null);
+  // Referencia por callback: el contenedor aparece solo después de la pantalla de inicio.
+  const [el, setEl] = useState<HTMLDivElement | null>(null);
   const [box, setBox] = useState({ w: 0, h: 0 });
   useEffect(() => {
-    const el = ref.current;
     if (!el) return;
     const ro = new ResizeObserver(() => setBox({ w: el.clientWidth, h: el.clientHeight }));
     ro.observe(el);
     setBox({ w: el.clientWidth, h: el.clientHeight });
     return () => ro.disconnect();
-  }, []);
-  const scale = box.w ? Math.min(1, (box.w - 2) / width) : 1;
-  return { ref, scale, box };
+  }, [el]);
+  const scale = box.w ? Math.min(1, box.w / width) : 1;
+  return { ref: setEl, scale, box };
 }
 
 export default function Builder() {
@@ -83,6 +83,13 @@ export default function Builder() {
 
   useEffect(() => {
     if (!loaded.current) return;
+    if (submit.status === "done") {
+      // Solicitud enviada: el borrador ya no hace falta (y no debe volver a guardarse).
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch {}
+      return;
+    }
     const t = window.setTimeout(() => {
       try {
         const noUploads: SiteConfig = { ...cfg, images: cfg.images.filter((i) => i.kind === "sample"), heroImage: cfg.heroImage && /^s\d/.test(cfg.heroImage) ? cfg.heroImage : null, logoImage: null };
@@ -90,7 +97,7 @@ export default function Builder() {
       } catch {}
     }, 400);
     return () => window.clearTimeout(t);
-  }, [cfg, step, started]);
+  }, [cfg, step, started, submit.status]);
 
   const set = useCallback((fn: (c: SiteConfig) => SiteConfig) => setCfg((c) => fn(c)), []);
   const est = useMemo(() => estimate(cfg), [cfg]);
@@ -245,10 +252,12 @@ export default function Builder() {
             </div>
             <p className="text-xs text-muted">Vista previa en directo · pulsa los botones y el menú para probarlos</p>
           </div>
-          <div ref={fit.ref} className="relative min-h-0 flex-1 overflow-hidden p-3 sm:p-4" data-testid="preview-area">
-            <div className="mx-auto overflow-hidden rounded-2xl border border-white/15 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)]" style={{ width: dev.width * fit.scale, height: Math.max(0, fit.box.h - 24) }}>
-              <div className="overflow-y-auto overscroll-contain" data-testid="preview-scroll" style={{ width: dev.width, height: Math.max(0, (fit.box.h - 24) / fit.scale), transform: `scale(${fit.scale})`, transformOrigin: "top left" }}>
-                <SitePreview cfg={cfg} imageSrc={store.src} />
+          <div className="relative min-h-0 flex-1 overflow-hidden" data-testid="preview-area">
+            <div ref={fit.ref} className="absolute inset-3 sm:inset-4">
+              <div className="mx-auto overflow-hidden rounded-2xl border border-white/15 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)]" style={{ width: dev.width * fit.scale, height: fit.box.h }}>
+                <div className="overflow-y-auto overscroll-contain" data-testid="preview-scroll" style={{ width: dev.width, height: fit.box.h / fit.scale, transform: `scale(${fit.scale})`, transformOrigin: "top left" }}>
+                  <SitePreview cfg={cfg} imageSrc={store.src} />
+                </div>
               </div>
             </div>
           </div>

@@ -353,7 +353,7 @@ export default function SitePreview({ cfg, imageSrc, interactive = true, showExa
   if (!servicesDone && on("hero") && btnsAt("afterServices").length) out.splice(1, 0, <Strip key="as" pos="afterServices" />);
 
   return (
-    <div ref={rootRef} className="bp" style={vars}>
+    <div ref={rootRef} className="bp" style={vars} role="region" aria-label="Vista previa de la web (ejemplo)">
       <style>{PREVIEW_CSS}</style>
       {out}
       {btnsAt("sticky").length > 0 && (
