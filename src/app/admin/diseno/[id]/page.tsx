@@ -136,7 +136,7 @@ export default async function DesignPage({ params, searchParams }: { params: Pro
               ))}
             </ul>
           )}
-          <h3 className="pt-1 text-sm font-semibold">Estimación orientativa: {euro(est.definedTotal)}</h3>
+          <h3 className="pt-1 text-sm font-semibold">Estimación orientativa: {est.packName}, {est.priceLabel}</h3>
           <ul className="space-y-1 text-sm">
             {est.lines.map((l, i) => <li key={i}><span className="mr-2 rounded-full bg-white/10 px-2 py-0.5 text-[11px]">{KIND_LABEL[l.kind]}</span>{l.label}{l.amount !== undefined && ` · ${l.amount > 0 ? "+" : ""}${euro(l.amount)}`}{l.detail && <span className="block text-xs text-muted">{l.detail}</span>}</li>)}
           </ul>

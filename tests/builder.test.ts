@@ -156,14 +156,15 @@ test("las imágenes de ejemplo se generan en SVG propio y los ids desconocidos n
 });
 
 // ── Presupuesto ───────────────────────────────────────────────────
-test("estimación: usa solo las tarifas de referencia (390 € hasta 5 páginas, 590 € hasta 10) y no inventa ningún precio", () => {
+test("estimación: usa solo las tarifas de referencia (Web Esencial 390 € IVA incluido hasta 5 páginas; Web Pro 590 € + IVA hasta 10) y no inventa ningún precio", () => {
   const c = defaultConfig("otro");
   for (const [pages, expected] of [[4, 390], [5, 390], [6, 590], [8, 590], [10, 590]] as const) {
     const e = estimate({ ...c, pages });
     assert.equal(e.definedTotal, expected, `${pages} páginas`);
     assert.equal(e.lines[0].amount, expected);
+    assert.equal(e.priceLabel, expected === 390 ? "390 € IVA incluido" : "590 € + IVA");
   }
-  assert.equal(TARIFAS.captacion.price, 390);
+  assert.equal(TARIFAS.esencial.price, 390);
   assert.equal(TARIFAS.pro.price, 590);
   assert.equal(TARIFAS.mantenimientoPorPagina, 15);
   assert.equal(clampPages(1), 4);

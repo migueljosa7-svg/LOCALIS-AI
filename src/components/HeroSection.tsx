@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, Clock3, MapPin, MessageCircle, Phone, ShieldCheck } from "lucide-react";
+import { ArrowRight, BadgeEuro, Clock3, MapPin, MessageCircle, Phone, ShieldCheck } from "lucide-react";
 import { ROUTES } from "@/lib/navigation";
 
 const TRUST = [
   { icon: ShieldCheck, text: "Presupuesto por escrito, sin compromiso" },
+  { icon: BadgeEuro, text: "Web Esencial desde 390 € IVA incluido" },
   { icon: Clock3, text: "Normalmente lista en 5–10 días laborables" },
   { icon: MapPin, text: "Trato cercano en Zaragoza" },
 ];

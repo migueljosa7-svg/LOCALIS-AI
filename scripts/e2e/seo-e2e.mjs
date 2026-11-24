@@ -201,8 +201,9 @@ try {
     }
     await pg.goto(BASE + "/tarifas", { waitUntil: "networkidle" });
     const t = await pg.evaluate(() => document.body.innerText);
-    check("[tarifas] muestra Web Captación 390 € + IVA y Web Pro 590 € + IVA como precios de referencia", /Web Captación/.test(t) && /390 €/.test(t) && /Web Pro/.test(t) && /590 €/.test(t) && /\+ IVA/.test(t) && /de referencia/i.test(t));
-    check("[tarifas] mantenimiento: 15 € por página al mes, ejemplo de 5 páginas = 75 € y factores de variación", /15 € por página al mes/.test(t) && /75 € al mes/.test(t) && /complejidad de la web/.test(t) && /servicios adicionales/.test(t));
+    check("[tarifas] Web Esencial 390 € IVA incluido (oferta de entrada, dominio el primer año) y Web Pro 590 € + IVA, sin contradicciones", /Web Esencial LOCALIS/.test(t) && /390 €\s*IVA incluido/.test(t) && /Oferta de entrada/.test(t) && /dominio propio con el registro del primer año/i.test(t) && /Web Pro/.test(t) && /590 €\s*\+ IVA/.test(t) && !/Web Captación/.test(t));
+    check("[tarifas] explica lo que aporta el cliente y lo que NO está incluido (alojamiento, renovación, mantenimiento)", /Lo que aportas tú/.test(t) && /No está incluido en los 390 €/.test(t) && /Alojamiento de la web: no está incluido/.test(t) && /Renovación del dominio a partir del segundo año/.test(t));
+    check("[tarifas] mantenimiento: 15 € por página al mes, ejemplo de 5 páginas = 75 € y factores de variación", /15 € por página al mes/.test(t) && /75 € al mes/.test(t) && /150 € al mes/.test(t) && /No son modificaciones ilimitadas/.test(t) && /complejidad de la web/.test(t) && /servicios adicionales/.test(t));
     check("[tarifas] Stella y el panel aparecen como servicios adicionales sin precio y el panel como no disponible", /Fase piloto/.test(t) && /Se presupuesta aparte/.test(t) && /No está disponible ni se puede contratar/.test(t));
     check("[tarifas] presupuesto personalizado y sin comparativas de competidores", /presupuesto a la medida/i.test(t) && !/competencia|otras empresas|agencias? cobran/i.test(t));
     await pg.goto(BASE + "/terms", { waitUntil: "networkidle" });

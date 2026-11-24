@@ -27,7 +27,14 @@ export const FAQS: FaqItem[] = [
     id: "faq4",
     question: "¿Cuánto cuesta?",
     answer:
-      "Como referencia: Web Captación (hasta 5 páginas) 390 € + IVA y Web Pro (hasta 10 páginas) 590 € + IVA. Son precios de partida: tras revisar tu diseño te enviamos un presupuesto por escrito adaptado a tu proyecto, antes de empezar y sin compromiso. Todo está explicado en la página de Tarifas.",
+      "Nuestra Web Esencial cuesta 390 € con el IVA incluido y es una oferta de entrada para autónomos y pequeños negocios: hasta 5 páginas, dominio propio con el primer año incluido y publicación. La Web Pro, para más páginas y más contenido, parte de 590 € + IVA. Son precios de referencia: tras revisar tu diseño te enviamos un presupuesto por escrito adaptado a tu proyecto, antes de empezar y sin compromiso. El alojamiento y el mantenimiento no están incluidos en esos importes; todo está explicado en la página de Tarifas.",
+    category: "Contratación",
+  },
+  {
+    id: "faq4b",
+    question: "¿Qué incluye y qué no incluye el precio de la Web Esencial?",
+    answer:
+      "Incluye hasta 5 páginas, diseño adaptado a móvil, dominio propio con el registro del primer año (.es o .com estándar, según disponibilidad), SEO básico inicial, botones de teléfono, WhatsApp y contacto, formulario de contacto, configuración y publicación. No incluye el alojamiento, la renovación del dominio a partir del segundo año ni el mantenimiento: te explicamos cada coste antes de empezar. Tú aportas los textos, las fotografías y los datos de tu negocio; si necesitas ayuda con textos o imágenes, se presupuesta aparte.",
     category: "Contratación",
   },
   {
@@ -48,7 +55,7 @@ export const FAQS: FaqItem[] = [
     id: "faq7",
     question: "¿Qué incluye el mantenimiento?",
     answer:
-      "El mantenimiento sirve para que tu web siga actualizada: cambios de textos, imágenes y datos, ajustes pequeños y soporte cuando lo necesites. Como referencia, 15 € por página al mes + IVA; el importe final depende del número de páginas, de la complejidad y de los cambios que necesites. Es opcional y no se activa ni se cobra nada sin tu confirmación.",
+      "Incluye cambios razonables de contenido (textos, imágenes, datos de contacto), pequeños ajustes y soporte por email o WhatsApp en horario laboral. Como referencia, 15 € por página al mes + IVA (una web de 5 páginas, 75 € al mes); el importe final depende del número de páginas, de la complejidad y de los cambios que necesites. No son modificaciones ilimitadas: si necesitas un cambio grande, te lo presupuestamos antes. Es opcional y no se activa ni se cobra nada sin tu confirmación.",
     category: "Mantenimiento",
   },
   {

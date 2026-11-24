@@ -169,9 +169,9 @@ export function Estimate({ cfg, compact = false }: { cfg: SiteConfig; compact?: 
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3.5" aria-label="Estimación orientativa">
       <div className="flex items-baseline justify-between gap-2">
         <p className="text-xs uppercase tracking-wider text-muted">Estimación orientativa</p>
-        <p className="font-display text-2xl font-bold">{euro(e.definedTotal)}</p>
+        <p className="text-right font-display text-xl font-bold leading-tight">{e.priceLabel}</p>
       </div>
-      <p className="text-xs text-muted">Precio de referencia para {e.pages} páginas. Importes sin IVA (+ IVA). No es un presupuesto cerrado ni se cobra nada: el presupuesto final se ajusta a tu proyecto tras revisar tu diseño.</p>
+      <p className="text-xs text-muted">{e.packName} para {e.pages} páginas. Precio de referencia: no es un presupuesto cerrado ni se cobra nada; el presupuesto final se ajusta a tu proyecto tras revisar tu diseño. El alojamiento y el mantenimiento no están incluidos.</p>
       {!compact && (
         <ul className="mt-3 space-y-2">
           {e.lines.map((l, i) => (

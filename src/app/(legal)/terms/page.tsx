@@ -48,7 +48,7 @@ export default function TermsPage() {
           <p className="text-muted">
             LOCALIS AI diseña y construye páginas web para negocios, autónomos y empresas de Zaragoza y Aragón, y ofrece su mantenimiento. Cada servicio
             se contrata mediante un presupuesto por escrito que el cliente acepta expresamente. Los precios publicados en la web son de referencia, se
-            indican sin IVA y no son vinculantes hasta la aceptación del presupuesto, que puede ajustarse a cada proyecto.
+            indican con la referencia de IVA que consta en cada caso (la Web Esencial, con IVA incluido; el resto, más IVA) y no son vinculantes hasta la aceptación del presupuesto, que puede ajustarse a cada proyecto.
           </p>
           <p className="text-muted">
             Stella (asistente con inteligencia artificial) se ofrece en fase piloto. El panel de control, el módulo de reparto con GPS, las citas y

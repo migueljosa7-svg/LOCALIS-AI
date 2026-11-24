@@ -19,7 +19,7 @@ export function summarize(cfg: SiteConfig, adminUrl?: string): string {
     `Secciones: ${on.map((s) => SECTION_DEFS[s].label).join(" → ")}`,
     `Botones (${cfg.buttons.length}): ${cfg.buttons.map((b) => `«${b.label}»`).join(", ") || "ninguno"}`,
     `Imágenes: ${uploads} propias, ${cfg.images.length - uploads} de ejemplo`,
-    `Estimación: ${euro(est.definedTotal)} (precio de referencia sin IVA; extras sin valorar)`,
+    `Estimación: ${est.packName}, ${est.priceLabel} (precio de referencia; extras sin valorar)`,
   ];
   if (adminUrl) lines.push(`Ver diseño completo: ${adminUrl}`);
   return lines.join("\n").slice(0, 1180);
@@ -58,7 +58,7 @@ export function techBrief(cfg: SiteConfig): string {
   out.push("");
   out.push("== Presupuesto orientativo (no vinculante) ==");
   for (const l of est.lines) out.push(`  [${KIND_LABEL[l.kind]}] ${l.label}${l.amount !== undefined ? `: ${euro(l.amount)}` : ""}${l.detail ? ` — ${l.detail}` : ""}`);
-  out.push(`Precio de referencia (sin IVA): ${euro(est.definedTotal)}. El presupuesto final se ajusta al proyecto.`);
+  out.push(`Precio de referencia: ${est.priceLabel}. El presupuesto final se ajusta al proyecto.`);
   if (cfg.wants.stella) out.push("Quiere Stella (asistente con IA) en su web: presupuestar aparte.");
   if (cfg.comments) out.push(`\nComentarios del cliente: ${cfg.comments}`);
   out.push("\nAviso: imágenes de ejemplo = marcadores. No publicar nada sin revisión y aprobación del cliente.");
