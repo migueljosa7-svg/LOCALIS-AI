@@ -75,12 +75,12 @@ export function AppModal({
 export function CalendarCard({ onOpen, dayLabel, dayDate, time, service, kind }: { onOpen: () => void; dayLabel?: string; dayDate?: string; time?: string; service?: string; kind?: "availability" | "booking" }) {
   const title = service ?? "Corte + barba · Cliente nuevo";
   const when = dayLabel && dayDate && time ? `${cap(dayLabel)} ${dayDate} · ${time} (45 min)` : "Jueves 10 de septiembre · 11:00 (45 min)";
-  const badge = kind === "availability" ? "huecos libres detectados" : "hueco libre confirmado";
+  const badge = kind === "availability" ? "huecos de ejemplo" : "hueco de ejemplo";
   return (
     <div className="border-glow rounded-xl p-4 max-w-xs">
       <div className="flex items-center gap-2 mb-2">
         <Calendar size={14} className="text-cyan-400" />
-        <p className="text-xs font-semibold">Google Calendar · sincronizado</p>
+        <p className="text-xs font-semibold">Agenda de ejemplo · sin conexión real</p>
       </div>
       <p className="text-sm font-bold">{title}</p>
       <p className="text-xs text-muted mt-1">{when}</p>
@@ -89,7 +89,7 @@ export function CalendarCard({ onOpen, dayLabel, dayDate, time, service, kind }:
           {badge}
         </span>
         <span className="text-[10px] px-2 py-1 rounded-md bg-[#25D366]/15 text-[#5ee08f] font-medium">
-          WhatsApp enviado
+          WhatsApp simulado
         </span>
       </div>
       <button
@@ -119,7 +119,7 @@ export function CalendarModal({ open, onClose, dayLabel, dayDate, time, service,
             <p className="font-bold">{title}</p>
             <p className="text-muted">{when}</p>
             <p className="text-muted">Cliente: {client ?? "Carlos Ruiz"} · +34 623 456 789</p>
-            <p className="text-xs text-cyan-300">Recordatorio por WhatsApp 2 h antes</p>
+            <p className="text-xs text-cyan-300">Recordatorio de ejemplo (simulado)</p>
           </div>
         </div>
         <button

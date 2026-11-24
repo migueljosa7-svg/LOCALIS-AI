@@ -55,9 +55,9 @@ const MODES: { id: StellaMode; label: string; icon: typeof CalendarDays }[] = [
 ];
 
 const GREETINGS: Record<StellaMode, string> = {
-  general: "Hola 👋 Soy Stella, la asistente IA de tu negocio. Atiendo WhatsApp, agendo citas, facturo y sigo tus repartos 24/7. Escríbeme o pulsa «Ver demo automática».",
-  citas: "Modo Citas 📅 Pregúntame por huecos libres o pide una cita y la confirmo en Google Calendar con aviso por WhatsApp.",
-  facturacion: "Modo Facturación 🧾 Pide una factura y la preparo al momento con IVA y PDF.",
+  general: "Hola 👋 Soy Stella, asistente con IA en fase piloto. Esto es una demostración con datos ficticios: agenda, facturas y reparto son simulaciones en desarrollo. Escríbeme o pulsa «Ver demo automática».",
+  citas: "Modo Citas 📅 (simulación) Pregúntame por huecos de ejemplo. No hay agenda, Google Calendar ni WhatsApp conectados: está en desarrollo.",
+  facturacion: "Modo Facturación 🧾 (simulación) Pide una factura y te muestro un borrador de ejemplo. La facturación está en desarrollo.",
   gps: "Modo Reparto 📍 Dime el número de pedido y abro el mapa en vivo del repartidor.",
 };
 
@@ -93,31 +93,31 @@ function buildScript(): ScriptStep[] {
     {
       user: "Hola! ¿Tenéis hueco mañana por la tarde para corte y barba?",
       ai: "¡Hola! 😊 Mañana tengo libre a las 16:00, 16:45 y 18:15. ¿Cuál te viene mejor?",
-      logs: [{ kind: "reply", text: "WhatsApp respondido en 2 s (fuera de horario)" }],
+      logs: [{ kind: "reply", text: "Respuesta simulada en 2 s" }],
     },
     {
       user: "A las 16:45 perfecto",
-      ai: "Reservado ✅ Corte + barba mañana a las 16:45. Te llegará la confirmación y un recordatorio 2 h antes.",
+      ai: "Así se vería la cita de Corte + barba mañana a las 16:45 (simulación: no se guarda ninguna reserva real).",
       action: "calendar",
       slots: { dayLabel: "mañana", dayDate: day, time: "16:45", service: "Corte + barba", client: "Lucía M.", kind: "booking" },
       logs: [
-        { kind: "calendar", text: "Cita creada en Google Calendar · mañana 16:45" },
-        { kind: "reminder", text: "Recordatorio por WhatsApp programado" },
+        { kind: "calendar", text: "Cita simulada · mañana 16:45 (sin agenda real)" },
+        { kind: "reminder", text: "Recordatorio simulado (no se envía nada)" },
       ],
     },
     {
       user: "Genial. ¿Me mandáis la factura del pedido de ayer?",
-      ai: "Claro, aquí la tienes: factura F-2026-104 con IVA incluido. También te la he enviado por email 📩",
+      ai: "Aquí tienes una factura de ejemplo: F-2026-104 con IVA incluido (simulación: no se emite ni se envía nada).",
       action: "invoice",
       slots: { client: "Lucía M." },
-      logs: [{ kind: "invoice", text: "Factura F-2026-104 emitida y enviada" }],
+      logs: [{ kind: "invoice", text: "Factura de ejemplo F-2026-104 (simulada)" }],
     },
     {
       user: "Y el pedido #104, ¿por dónde va?",
-      ai: "Va con Luis, a unos 650 m de tu casa. Llega en ~4 min. Te paso el enlace para seguirlo en directo 🛵",
+      ai: "Ejemplo de reparto: Luis (ficticio) va a unos 650 m, llega en ~4 min. El seguimiento real está en desarrollo 🛵",
       action: "tracking",
       slots: { orderId: "#104" },
-      logs: [{ kind: "tracking", text: "Enlace de seguimiento GPS enviado · sin comisión" }],
+      logs: [{ kind: "tracking", text: "Seguimiento GPS simulado" }],
     },
   ];
 }
@@ -139,17 +139,17 @@ function logsForAction(action: StellaAction, slots?: StellaSlots): { kind: LogKi
   switch (action) {
     case "calendar":
       return slots?.kind === "availability"
-        ? [{ kind: "calendar", text: `Agenda consultada · ${slots?.options?.length ?? 3} huecos libres` }]
+        ? [{ kind: "calendar", text: `Agenda de ejemplo · ${slots?.options?.length ?? 3} huecos simulados` }]
         : [
-            { kind: "calendar", text: `Cita creada · ${slots?.dayLabel ?? "jueves"} ${slots?.time ?? "11:00"}` },
-            { kind: "reminder", text: "Confirmación enviada por WhatsApp" },
+            { kind: "calendar", text: `Cita simulada · ${slots?.dayLabel ?? "jueves"} ${slots?.time ?? "11:00"}` },
+            { kind: "reminder", text: "Confirmación simulada (no se envía nada)" },
           ];
     case "invoice":
-      return [{ kind: "invoice", text: `Factura emitida para ${slots?.client ?? "cliente"}` }];
+      return [{ kind: "invoice", text: `Factura de ejemplo para ${slots?.client ?? "cliente"} (simulada)` }];
     case "tracking":
-      return [{ kind: "tracking", text: `Seguimiento GPS ${slots?.orderId ?? "#104"} compartido` }];
+      return [{ kind: "tracking", text: `Seguimiento GPS ${slots?.orderId ?? "#104"} simulado` }];
     case "summary":
-      return [{ kind: "summary", text: "Resumen diario generado" }];
+      return [{ kind: "summary", text: "Resumen de ejemplo (datos ficticios)" }];
     default:
       return [{ kind: "reply", text: "Consulta respondida al instante" }];
   }
@@ -204,7 +204,7 @@ export default function StellaConsole() {
     setLog((prev) => [...items.map((i) => ({ ...i, id: nextId("l"), time })).reverse(), ...prev].slice(0, 8));
     setStats((s) => ({
       replies: s.replies + 1,
-      bookings: s.bookings + items.filter((i) => i.kind === "calendar" && /creada/i.test(i.text)).length,
+      bookings: s.bookings + items.filter((i) => i.kind === "calendar" && /simulada/i.test(i.text)).length,
       invoices: s.invoices + items.filter((i) => i.kind === "invoice").length,
     }));
   }, []);
@@ -329,7 +329,7 @@ export default function StellaConsole() {
           </h2>
           <p className="mt-5 text-muted text-base sm:text-lg leading-relaxed">
             Demostración interactiva con datos de ejemplo: Stella todavía no está conectada a WhatsApp ni a calendarios reales.
-            La estamos desarrollando por fases. Si te interesa para tu negocio, pide la auditoría y te avisamos cuando esté lista.
+            La estamos desarrollando por fases. Si te interesa para tu negocio, pide información y te avisamos cuando esté lista.
           </p>
         </div>
 
@@ -646,10 +646,10 @@ const MessageList = memo(function MessageList({
             )}
             {m.action === "referral" && (
               <div className="border-glow rounded-xl p-4 max-w-sm">
-                <p className="text-xs font-bold text-foreground mb-1.5">Auditoría gratuita para tu negocio</p>
-                <p className="text-xs text-muted mb-3">Analizamos tu negocio y te preparamos una demo de Stella sin compromiso.</p>
+                <p className="text-xs font-bold text-foreground mb-1.5">Información y presupuesto para tu negocio</p>
+                <p className="text-xs text-muted mb-3">Cuéntanos qué necesitas y te respondemos con un presupuesto por escrito, sin compromiso.</p>
                 <a href="/contacto" className="btn btn-primary w-full min-h-[40px] text-xs">
-                  Reservar auditoría →
+                  Pedir presupuesto →
                 </a>
               </div>
             )}

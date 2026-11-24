@@ -127,15 +127,15 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
   if (/^(hola|buenas|buenos dias|buenas tardes|hey|saludos|que tal)\b/.test(t) && original.length < 40) {
     return {
       intent: "greeting",
-      reply: "¡Hola! Soy Stella, tu asistente virtual con IA 24/7 para negocios en Zaragoza.\n\nPuedo ayudarte con:\n• Resolver dudas de clientes y gestionar citas automáticamente\n• Sincronizar reservas con Google Calendar y WhatsApp\n• Derivar solicitudes directas al formulario de auditoría (#cita)\n• Emitir facturas con IVA y rastrear repartos GPS en vivo\n\n¿Quieres probar una reserva o pedir una cita para tu negocio?",
+      reply: "¡Hola! Soy Stella, el asistente con IA de LOCALIS AI. Esto es una demostración con datos ficticios: Stella está en fase piloto.\n\nEn tu web podría:\n• Responder las dudas de tus clientes con la información de tu negocio\n• Recoger el contacto de quien quiere que le llames, con su consentimiento\n\nAgenda, facturas y reparto los simulo aquí como ejemplo: están en desarrollo y todavía no se contratan.\n\n¿Quieres pedir información y un presupuesto para tu web?",
       action: null,
-      chips: ["📅 Pedir cita para mi negocio", "¿Qué puedes hacer?", "Tienes hueco mañana?", "Genera la factura de Pepe"]
+      chips: ["📝 Pedir presupuesto para mi negocio", "¿Qué puedes hacer?", "Tienes hueco mañana?", "Genera la factura de Pepe"]
     };
   }
-  if (has(t, ["auditoria", "cita zaragoza", "pedir cita", "formulario", "demo personalizada", "quiero cita", "agendar auditoria", "como gestionas citas", "como gestionas"])) {
+  if (has(t, ["presupuesto para mi negocio", "pedir presupuesto", "quiero presupuesto", "informacion y presupuesto", "auditoria", "cita zaragoza", "pedir cita", "formulario", "demo personalizada", "quiero cita", "agendar auditoria", "como gestionas citas", "como gestionas"])) {
     return {
       intent: "referral",
-      reply: "¡Excelente! Como asistente virtual IA para Zaragoza, atiendo a tus clientes 24/7, respondo preguntas de catálogo y derivo las solicitudes directamente al formulario de citas. Puedes reservar tu auditoría gratuita y demo personalizada ahora mismo:",
+      reply: "¡Perfecto! En tu web, Stella recogería la solicitud de tu cliente y te la haría llegar. Para tu negocio, puedes pedir información y un presupuesto por escrito, sin compromiso:",
       action: "referral",
       chips: ["¿Qué puedes hacer?", "Tienes hueco mañana?", "Resumen de hoy"]
     };
@@ -143,28 +143,28 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
   if (has(t, ["que puedes hacer", "que sabes hacer", "ayuda", "como funciona", "que haces", "capacidades", "para que sirves"])) {
     return {
       intent: "capabilities",
-      reply: "Como asistente IA para comercios y PYMEs en Zaragoza, opero tu negocio 24/7:\n\n1. GESTIÓN DE CITAS — Verifico huecos libres y sincronizo Calendar + WhatsApp.\n2. ATENCIÓN AL CLIENTE — Respondo dudas sobre servicios, precios y horarios sin esperas.\n3. DERIVACIÓN DIRECTA — Cualifico al cliente y lo dirijo a tu formulario de reserva (#cita).\n4. FACTURACIÓN Y GPS — Emito facturas y muestro el mapa de reparto en tiempo real.\n\nPrueba a escribir: 'Pedir cita para mi negocio' o 'Tienes hueco mañana'.",
+      reply: "Esto es una demostración. Lo que Stella haría en tu web (fase piloto):\n\n1. ATENCIÓN AL CLIENTE — Responde dudas sobre servicios, precios y horarios con la ficha de tu negocio.\n2. CONTACTOS — Recoge nombre y teléfono con consentimiento y te avisa.\n3. DERIVACIÓN — Si no sabe algo, lo dice y pasa al cliente a tu WhatsApp.\n\nLo que ves simulado (agenda, facturas y mapa de reparto) está en desarrollo y todavía no se contrata.\n\nPrueba a escribir: 'Pedir presupuesto para mi negocio'.",
       action: null,
-      chips: ["📅 Pedir cita para mi negocio", "Tienes hueco mañana?", "Resumen de hoy", "¿Dónde está el pedido #104?"]
+      chips: ["📝 Pedir presupuesto para mi negocio", "Tienes hueco mañana?", "Resumen de hoy", "¿Dónde está el pedido #104?"]
     };
   }
   if (has(t, ["cuanto cuesta", "cuanto vale", "precio", "precios", "planes", "tarifa", "cuota", "suscripcion"])) {
     return {
       intent: "pricing",
-      reply: "Planes transparentes y sin comisiones para Zaragoza:\n• Iniciar (19 €/mes): web completa con Stella IA y agenda inteligente.\n• Pro (39 €/mes): citas, facturación y módulo GPS de reparto en tiempo real.\n• Empresarial: flota avanzada y soporte dedicado.\n\nLa web se desarrolla desde 400 € (pago único, con tope cerrado de 800 € todo incluido) y sin comisiones de intermediarios (ahorra el 20–30 % que cobran Glovo o Just Eat).",
+      reply: "Cada web se presupuesta por escrito según lo que necesites, sin compromiso. Todavía no publicamos precios cerrados; en la página Tarifas tienes qué incluye cada servicio y cómo se calcula. Agenda, facturación y reparto con GPS están en desarrollo y no se incluyen en ningún presupuesto.",
       action: null,
-      chips: ["📅 Pedir cita para mi negocio", "¿Qué puedes hacer?", "Resumen de hoy"]
+      chips: ["📝 Pedir presupuesto para mi negocio", "¿Qué puedes hacer?", "Resumen de hoy"]
     };
   }
   if (has(t, ["gracias", "genial", "perfecto", "estupendo"])) {
-    return { intent: "thanks", reply: "¡De nada! Para eso estoy. Sigo con lo siguiente: otro hueco, una factura o un reparto.",
+    return { intent: "thanks", reply: "¡De nada! Si quieres, probamos otra simulación de la demo o pides información para tu web.",
       action: null, chips: ["Reserva el jueves a las 11:00", "Resumen de hoy", "¿Dónde está el pedido #104?"] };
   }
   if (has(t, ["adios", "hasta luego", "nos vemos", "chao"])) {
-    return { intent: "farewell", reply: "¡Hasta luego! Dejo agenda, facturas y GPS sincronizados. Dime resumen de hoy cuando vuelvas.", action: null };
+    return { intent: "farewell", reply: "¡Hasta luego! Cuando quieras, pide información y un presupuesto para tu web.", action: null };
   }
   if (has(t, ["horario", "abris", "cerrado", "apertura", "cierre"])) {
-    return { intent: "hours", reply: "Horario demo lun–sáb 09:00–20:00. Stella atiende 24/7: si pides fuera de hora te propongo el hueco más cercano. ¿Buscamos uno?",
+    return { intent: "hours", reply: "Horario de ejemplo de esta demo: lun–sáb 09:00–20:00. En tu web, Stella respondería con el horario real de tu negocio. ¿Probamos a buscar un hueco simulado?",
       action: null, chips: ["Tienes hueco mañana?", "¿Qué citas tengo mañana?"] };
   }
   const day = extractDay(t);
@@ -179,13 +179,13 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
     const who = client ?? "Frutería Pepe";
     const total = (34 + (hashStr(who) % 60) + ((hashStr(who) % 99) / 100)).toFixed(2).replace(".", ",");
     return { intent: "invoice",
-      reply: `He preparado la factura de ${who}. Base + IVA 21 por cien. Total ${total} euros. Vence en 7 días. PDF listo y borrador sincronizado. La tienes abajo: ábrela para descargar o enviarla. ¿La envío ya a ${who}?`,
+      reply: `Simulación: factura de ejemplo para ${who}. Base + IVA 21 por cien, total ${total} euros. La facturación está en desarrollo: no se genera ningún documento real. La tienes abajo como muestra.`,
       action: "invoice", slots: { client: who },
       chips: ["Resumen de hoy", "¿Dónde está el pedido #104?", "Reserva el jueves a las 11:00"] };
   }
   if (has(t, ["resumen", "caja", "ventas", "venta", "metricas", "ingresos", "beneficio", "cuanto llevo", "estadistica", "informe", "balance", "cierre"])) {
     return { intent: "summary",
-      reply: "Pulso de hoy: 1.463 euros facturados (+18 por cien vs ayer), 12 citas, 27 clientes. Ticket medio 54,2 euros. 2 citas pendientes. He abierto el panel con gráfico de 7 días y detalle. ¿Confirmo las pendientes o genero las facturas?",
+      reply: "Resumen de ejemplo (datos ficticios): 1.463 euros facturados, 12 citas, 27 clientes. Es una maqueta del panel que estamos desarrollando; no son datos de nadie.",
       action: "summary",
       chips: ["Genera la factura de Pepe", "¿Qué citas tengo mañana?", "¿Dónde está el pedido #104?"] };
   }
@@ -195,7 +195,7 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
     const driver = hashStr(oid) % 2 === 0 ? "Luis García" : "Marta Ruiz";
     const meters = 180 + (hashStr(oid + "m") % 900);
     return { intent: "tracking",
-      reply: `Localizado. El pedido ${oid} va con ${driver}, a ${meters} m del destino. ETA unos ${eta} min. He abierto el mapa en vivo: ruta, distancia y botón de WhatsApp. ¿Te aviso cuando esté a 1 minuto?`,
+      reply: `Simulación de reparto: el pedido ${oid} va con ${driver} (ficticio), a ${meters} m del destino, unos ${eta} min. El seguimiento GPS real está en desarrollo; abajo ves cómo se mostraría.`,
       action: "tracking", slots: { orderId: oid },
       chips: ["¿Cuánto falta para la entrega?", "Resumen de hoy", "Genera la factura de Pepe"] };
   }
@@ -208,7 +208,7 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
     const timeStr = time ?? "11:00";
     const who = client ? ` a nombre de ${client}` : "";
     return { intent: "booking",
-      reply: `Listo. He reservado ${service} ${dayLabel} ${dateStr} a las ${timeStr}${who}. Sincronizado con Google Calendar. WhatsApp enviado. Recordatorio 15 min antes. Tienes la tarjeta abajo con todos los datos. ¿Añado otra o genero su factura?`,
+      reply: `Simulación: así se vería una cita de ${service} ${dayLabel} ${dateStr} a las ${timeStr}${who}. No hay agenda, Google Calendar ni WhatsApp conectados: la reserva de citas está en desarrollo y no se ha guardado nada.`,
       action: "calendar",
       slots: { dayLabel, dayDate: dateStr, time: timeStr, service, client: client ?? undefined, kind: "booking" },
       chips: ["Tienes otro hueco ese día?", "Genera la factura de Pepe", "Resumen de hoy"] };
@@ -222,26 +222,26 @@ export function detectIntent(text: string, mode: StellaMode = "general"): Intent
     const opts = [...new Set(options)].sort().slice(0, 4);
     const svc = service !== "Servicio general" ? ` para ${service}` : "";
     return { intent: "availability",
-      reply: `He revisado la agenda ${dayLabel} (${dateStr})${svc}. Huecos libres: ${opts.join(", ")}. Dime cuál te viene bien, por ejemplo reserva ${dayLabel} a las ${opts[1] ?? opts[0]}, y lo confirmo con Calendar + WhatsApp.`,
+      reply: `Agenda de ejemplo ${dayLabel} (${dateStr})${svc}. Huecos simulados: ${opts.join(", ")}. Dime cuál y te muestro cómo se vería; no hay una agenda real conectada.`,
       action: "calendar",
       slots: { dayLabel, dayDate: dateStr, time: time ?? undefined, service, options: opts, kind: "availability" },
       chips: [`Reserva ${dayLabel} a las ${opts[0]}`, "¿Y el viernes?", "¿Qué citas tengo mañana?"] };
   }
   if (mode === "facturacion") {
     const who = client ?? "Pepe";
-    return { intent: "invoice", reply: `Modo Facturación: preparo el borrador de ${who} con IVA y PDF. Si me das importes los meto en líneas al momento.`, action: "invoice", slots: { client: who } };
+    return { intent: "invoice", reply: `Modo Facturación (simulación): te muestro un borrador de ejemplo de ${who}. La facturación está en desarrollo.`, action: "invoice", slots: { client: who } };
   }
   if (mode === "gps") {
     const oid = orderId ?? "#104";
-    return { intent: "tracking", reply: `Modo GPS: abro el seguimiento de ${oid} con posición en vivo y ETA. Si es otro dime su número y cambio de ruta.`, action: "tracking", slots: { orderId: oid } };
+    return { intent: "tracking", reply: `Modo GPS (simulación): te muestro el seguimiento de ejemplo de ${oid}. El seguimiento real está en desarrollo.`, action: "tracking", slots: { orderId: oid } };
   }
   const keys = normalize(original).split(" ").filter((w) => w.length > 3 && !STOP.has(w)).slice(0, 4);
   if (keys.length > 0) {
     return { intent: "fallback",
-      reply: `Te he entendido: mencionas ${keys.map((k) => `"${k}"`).join(", ")}. Lo registro. Conviértelo en acción: dime día y hora para cita, cliente para factura, o número para reparto. ¿Con cuál seguimos?`,
+      reply: `Te he entendido: mencionas ${keys.map((k) => `"${k}"`).join(", ")}. En esta demo solo simulo ejemplos de agenda, facturas y reparto. Prueba con un día y hora, un cliente o un número de pedido, o pide presupuesto para tu web.`,
       action: null, chips: ["¿Qué puedes hacer?", "Tienes hueco el viernes?", "Genera la factura de Pepe"] };
   }
   return { intent: "fallback",
-    reply: "Soy Stella. Trabajo con citas, facturas, resúmenes y GPS. Prueba: tienes sitio el viernes, reserva el jueves a las 11, factura de Pepe, o dónde está el pedido 104.",
+    reply: "Soy Stella (demostración con datos ficticios). Simulo ejemplos de agenda, facturas, resúmenes y reparto. Prueba: tienes sitio el viernes, factura de Pepe, o dónde está el pedido 104. O pide presupuesto para tu web.",
     action: null, chips: ["¿Qué puedes hacer?", "Resumen del día", "¿Dónde está el pedido #104?"] };
 }

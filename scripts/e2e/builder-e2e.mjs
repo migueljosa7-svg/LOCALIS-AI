@@ -387,6 +387,43 @@ try {
   check("[admin] el proxy de imágenes valida ids (400/404) y sirve con cabeceras seguras", bad1.status() === 400 && bad2.status() === 400 && good.status() === 200 && good.headers()["x-content-type-options"] === "nosniff" && good.headers()["cache-control"].includes("no-store") && /image\//.test(good.headers()["content-type"]));
   check("[admin] sin errores de consola", pra.filter((p) => !/favicon/.test(p)).length === 0, pra.join(" | ").slice(0, 300));
   await ca.close();
+
+  // ═══ Quien conserva las opciones por defecto: atajo a la revisión final (móvil) ═══
+  console.log("\n[movil] solo opciones por defecto");
+  {
+    const { ctx: dctx, page: dp, problems: dprob } = await newPage(VIEWPORTS[2]);
+    await dp.goto(`${BASE}/disena-tu-web`, { waitUntil: "load" });
+    await dp.getByRole("button", { name: /Taller o servicios técnicos/ }).click();
+    await dp.getByRole("button", { name: "Empezar a diseñar" }).click();
+    const skip = dp.getByTestId("saltar-revision");
+    check("[defecto] en el primer paso hay un atajo visible «Ir a la revisión final»", await skip.isVisible() && (await skip.boundingBox()).height >= 44);
+    await skip.click();
+    await dp.getByText("Paso 8 de 8").waitFor();
+    check("[defecto] el atajo lleva a la revisión final sin pasar por los pasos opcionales", (await dp.getByText("¿A quién enviamos tu diseño?").count()) === 1 && (await dp.getByTestId("saltar-revision").count()) === 0);
+    await sleep(800);
+    await dp.reload({ waitUntil: "load" });
+    await dp.getByText("Paso 8 de 8").waitFor({ timeout: 8000 }).catch(() => {}); // el borrador se restaura tras la hidratación
+    check("[defecto] el progreso guardado se conserva al recargar (sigue en la revisión final)", (await dp.getByText("Paso 8 de 8").count()) === 1, await dp.locator("body").innerText().then((t) => t.slice(0, 80)));
+    const rowsBefore = (await be.db.query("select count(*)::int as n from design_requests")).rows[0].n;
+    await dp.getByRole("button", { name: /Quiero esta web/ }).click();
+    check("[defecto] los datos obligatorios no se pueden saltar: nombre, contacto y consentimiento", (await dp.getByText("Indica tu nombre.").count()) === 1 && (await dp.getByText("Necesitamos tu permiso para contactarte.").count()) === 1);
+    check("[defecto] sin esos datos no se envía nada", (await be.db.query("select count(*)::int as n from design_requests")).rows[0].n === rowsBefore);
+    const f = dp.locator("form").filter({ hasText: "¿A quién enviamos tu diseño?" });
+    await f.getByLabel("Nombre del negocio").fill("Taller Prueba Defecto");
+    await f.getByLabel("Tu nombre").fill("Raúl Gil");
+    await f.getByLabel("Teléfono o WhatsApp").fill("611 222 333");
+    await f.getByLabel("Email").fill("raul@ejemplo.com");
+    await f.getByRole("checkbox").check();
+    // Las pruebas de abuso anteriores (misma IP local) activaron los límites antifraude (6 envíos/minuto y por hora): se espera a que expire el de 1 minuto y se envejecen los envíos previos para probar un envío normal.
+    await sleep(62000);
+    await be.db.query("update design_requests set created_at = now() - interval '3 hours'");
+    await dp.getByRole("button", { name: /Quiero esta web/ }).click();
+    await dp.getByText("¡Hemos recibido tu diseño!").waitFor({ timeout: 30000 }).catch(async (e) => { throw new Error(`${e.message} | aviso en pantalla: ${(await dp.getByRole("alert").allInnerTexts()).join(" / ")}`); });
+    const last = (await be.db.query("select d.config, d.lead_id, l.id as lid, l.source from design_requests d join leads l on l.id = d.lead_id order by d.created_at desc limit 1")).rows[0];
+    check("[defecto] con los valores por defecto el diseño se guarda completo y enlazado a su lead en el panel", last && last.source === "disena-tu-web" && last.config.sections.length >= 6 && last.config.buttons.length >= 1 && last.config.theme.colors.primary && last.lead_id === last.lid);
+    check("[defecto] sin errores de consola", dprob.filter((x) => !/favicon/.test(x)).length === 0, dprob.join(" | ").slice(0, 300));
+    await dctx.close();
+  }
 } catch (e) {
   check("EJECUCIÓN SIN EXCEPCIONES", false, String(e.stack ?? e).slice(0, 700));
 }

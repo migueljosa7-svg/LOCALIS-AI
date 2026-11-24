@@ -227,6 +227,9 @@ export default function Builder() {
             {STEPS[step].id !== "enviar" && (
               <div className="mt-8 rounded-2xl border border-white/10 p-3 text-xs text-muted">
                 Resumen: {cfg.sections.filter((s) => s.enabled).length - 2} secciones · {cfg.buttons.length} botones · {cfg.pages} páginas · estimación orientativa {euro(est.definedTotal)}.
+                <button type="button" data-testid="saltar-revision" onClick={() => go(STEPS.length - 1)} className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-400/10 px-3 text-sm font-semibold text-cyan-100 hover:bg-cyan-400/15">
+                  ¿Te gustan las opciones actuales? Ir a la revisión final <ArrowRight size={16} aria-hidden="true" />
+                </button>
               </div>
             )}
           </div>
