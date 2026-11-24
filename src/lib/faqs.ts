@@ -27,7 +27,7 @@ export const FAQS: FaqItem[] = [
     id: "faq4",
     question: "¿Cuánto cuesta?",
     answer:
-      "Depende del número de páginas y de lo que necesites. El configurador te da una estimación orientativa al momento y, tras revisar tu diseño, te enviamos un presupuesto cerrado por escrito antes de empezar. Las tarifas se explican en la página de Tarifas.",
+      "Como referencia: Web Captación (hasta 5 páginas) 390 € + IVA y Web Pro (hasta 10 páginas) 590 € + IVA. Son precios de partida: tras revisar tu diseño te enviamos un presupuesto por escrito adaptado a tu proyecto, antes de empezar y sin compromiso. Todo está explicado en la página de Tarifas.",
     category: "Contratación",
   },
   {
@@ -48,7 +48,7 @@ export const FAQS: FaqItem[] = [
     id: "faq7",
     question: "¿Qué incluye el mantenimiento?",
     answer:
-      "El mantenimiento sirve para que tu web siga actualizada: cambios de contenido, ajustes y soporte cuando lo necesites. El alcance y el coste se acuerdan contigo en el presupuesto; no hay nada que se active ni se cobre sin tu confirmación.",
+      "El mantenimiento sirve para que tu web siga actualizada: cambios de textos, imágenes y datos, ajustes pequeños y soporte cuando lo necesites. Como referencia, 15 € por página al mes + IVA; el importe final depende del número de páginas, de la complejidad y de los cambios que necesites. Es opcional y no se activa ni se cobra nada sin tu confirmación.",
     category: "Mantenimiento",
   },
   {

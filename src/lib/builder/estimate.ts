@@ -1,6 +1,6 @@
-// Estimación orientativa. Usa SOLO las tarifas que ya existen en el estudio actual (PRICING) y distingue
+// Estimación orientativa. Usa SOLO las tarifas de referencia de src/lib/pricing.ts y distingue
 // qué está definido, qué es opcional, qué hay que valorar y qué no existe todavía. Nunca cobra ni promete.
-import { PRICING } from "@/components/configurator/studioModel";
+import { TARIFAS, maintenanceFor, packageForPages } from "@/lib/pricing";
 import { INTERESTS, enabledSections, type SiteConfig } from "./model";
 
 export type LineKind = "definido" | "opcional" | "valorar" | "no-disponible";
@@ -15,9 +15,8 @@ export interface EstimateLine {
 
 export interface Estimate {
   lines: EstimateLine[];
-  /** precio base ya definido por tarifa (sin extras por valorar) */
+  /** precio de referencia del paquete (sin IVA y sin extras por valorar) */
   definedTotal: number;
-  capped: boolean;
   pages: number;
 }
 
@@ -28,18 +27,17 @@ export const KIND_LABEL: Record<LineKind, string> = {
   "no-disponible": "Aún no disponible",
 };
 
-export const clampPages = (n: number): number => Math.min(PRICING.maxPages, Math.max(PRICING.minPages, Math.round(Number.isFinite(n) ? n : PRICING.minPages)));
+const MIN_PAGES = 4;
+export const clampPages = (n: number): number => Math.min(TARIFAS.pro.pages, Math.max(MIN_PAGES, Math.round(Number.isFinite(n) ? n : MIN_PAGES)));
 
 export function estimate(cfg: SiteConfig): Estimate {
   const pages = clampPages(cfg.pages);
-  const extra = Math.max(0, pages - PRICING.includedPages);
-  const subtotal = PRICING.base + extra * PRICING.extraPage;
-  const definedTotal = Math.min(PRICING.cap, subtotal);
+  const pack = packageForPages(pages);
+  const definedTotal = pack.price;
   const lines: EstimateLine[] = [
-    { kind: "definido", label: "Web Esencial", detail: `Hasta ${PRICING.includedPages} páginas, con tus colores, secciones y botones`, amount: PRICING.base },
+    { kind: "definido", label: `${pack.name} (precio de referencia + IVA)`, detail: `Hasta ${pack.pages} páginas, con tus colores, secciones y botones`, amount: pack.price },
+    { kind: "opcional", label: "Mantenimiento mensual (opcional)", detail: `Referencia: ${TARIFAS.mantenimientoPorPagina} € por página al mes + IVA (${pages} páginas ≈ ${maintenanceFor(pages)} € al mes). Se presupuesta según tu caso` },
   ];
-  if (extra > 0) lines.push({ kind: "definido", label: `${extra} página${extra > 1 ? "s" : ""} extra`, detail: `${PRICING.extraPage} € por página`, amount: extra * PRICING.extraPage });
-  if (subtotal > PRICING.cap) lines.push({ kind: "definido", label: "Tope cerrado", detail: `El precio nunca supera ${PRICING.cap} €`, amount: PRICING.cap - subtotal });
 
   const on = enabledSections(cfg);
   if (on.includes("gallery") || on.includes("carousel")) lines.push({ kind: "valorar", label: "Galería y carrusel", detail: "Se confirma al revisar el diseño y las imágenes que aportes" });
@@ -50,7 +48,7 @@ export function estimate(cfg: SiteConfig): Estimate {
     const it = INTERESTS.find((i) => i.id === id);
     if (it) lines.push({ kind: "no-disponible", label: it.label, detail: "Todavía no existe: queda anotado como interés, no se presupuesta ni se cobra" });
   }
-  return { lines, definedTotal, capped: subtotal > PRICING.cap, pages };
+  return { lines, definedTotal, pages };
 }
 
 export const euro = (n: number): string => `${n.toLocaleString("es-ES")} €`;

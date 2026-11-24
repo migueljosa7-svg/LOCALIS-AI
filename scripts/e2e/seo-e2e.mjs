@@ -186,6 +186,31 @@ try {
     await c.close();
   }
 
+  // ── Textos comerciales: precios de referencia y nada que prometa lo que no existe ──
+  {
+    const c = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    await c.addInitScript(() => { try { localStorage.setItem("localis-cookie-consent", JSON.stringify({ analytics: false, marketing: false, necessary: true, version: "2026-10-24" })); } catch {} });
+    const pg = await c.newPage();
+    const FORBIDDEN = /auditor[ií]a (gratis|gratuita)|reserva(r)? (tu|mi) auditor|24\/7|descuento|más barat|reservas? automátic|facturación automátic/i;
+    for (const p of ["/", "/plataforma", "/disena-tu-web", "/tarifas", "/preguntas-frecuentes", "/contacto", "/diseno-web-zaragoza", "/terms", "/privacy", "/esta-pagina-no-existe"]) {
+      await pg.goto(BASE + p, { waitUntil: "networkidle" });
+      const txt = await pg.evaluate(() => document.body.innerText);
+      // El aviso legal nombra esas funciones precisamente para decir que NO forman parte del servicio (se comprueba aparte).
+      const m = p === "/terms" ? null : txt.match(FORBIDDEN);
+      check(`[textos] ${p} no promete auditorías gratuitas, descuentos, 24/7 ni reservas o facturación automáticas`, !m, m ? m[0] : "");
+    }
+    await pg.goto(BASE + "/tarifas", { waitUntil: "networkidle" });
+    const t = await pg.evaluate(() => document.body.innerText);
+    check("[tarifas] muestra Web Captación 390 € + IVA y Web Pro 590 € + IVA como precios de referencia", /Web Captación/.test(t) && /390 €/.test(t) && /Web Pro/.test(t) && /590 €/.test(t) && /\+ IVA/.test(t) && /de referencia/i.test(t));
+    check("[tarifas] mantenimiento: 15 € por página al mes, ejemplo de 5 páginas = 75 € y factores de variación", /15 € por página al mes/.test(t) && /75 € al mes/.test(t) && /complejidad de la web/.test(t) && /servicios adicionales/.test(t));
+    check("[tarifas] Stella y el panel aparecen como servicios adicionales sin precio y el panel como no disponible", /Fase piloto/.test(t) && /Se presupuesta aparte/.test(t) && /No está disponible ni se puede contratar/.test(t));
+    check("[tarifas] presupuesto personalizado y sin comparativas de competidores", /presupuesto a la medida/i.test(t) && !/competencia|otras empresas|agencias? cobran/i.test(t));
+    await pg.goto(BASE + "/terms", { waitUntil: "networkidle" });
+    const terms = await pg.evaluate(() => document.body.innerText);
+    check("[legal] el aviso legal describe webs y mantenimiento, marca Stella como piloto y no enlaza con otro dominio", /páginas web/.test(terms) && /Stella .*fase piloto/s.test(terms) && !/localis\.ai/i.test(terms) && !(await pg.locator('a[href*="localis.ai"]').count()));
+    await c.close();
+  }
+
   // ── Enlaces internos: ninguno roto ──
   const internal = [...allLinks].filter((h) => h && h.startsWith("/") && !h.startsWith("//"));
   const targets = [...new Set(internal.map((h) => h.split("#")[0] || "/"))];

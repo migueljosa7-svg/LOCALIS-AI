@@ -5,7 +5,7 @@
   "engines": {
     "node": ">=20.9.0"
   },
-  "description": "LOCALIS AI - Webs con IA autónoma Stella y GPS integrado para PYMEs",
+  "description": "LOCALIS AI - Diseño web para negocios y autónomos de Zaragoza y Aragón",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

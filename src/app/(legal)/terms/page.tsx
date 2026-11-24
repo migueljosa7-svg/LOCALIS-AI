@@ -1,10 +1,11 @@
 /**
  * Página: Aviso Legal
  * Válido desde 2026-10-10
- * Última actualización: 2026-10-10
+ * Última actualización: 2026-11-24
  */
 
 import Link from "next/link";
+import { CONTACT, LEGAL } from "@/lib/site";
 
 export const metadata = {
   title: "Aviso legal",
@@ -25,55 +26,59 @@ export default function TermsPage() {
             Aviso Legal
           </h1>
           <p className="mt-3 text-muted max-w-2xl">
-            Última actualización: <time dateTime="2026-10-10">10 de octubre de 2026</time>
+            Última actualización: <time dateTime="2026-11-24">24 de noviembre de 2026</time>
           </p>
         </header>
 
         <section className="space-y-4 border-border border-l-2 pl-4">
           <h2 className="text-xl font-bold font-display">1. Identificación del titular</h2>
-          <p className="text-muted">
-            <strong>LOCALIS AI</strong>, Zaragoza (España),
-            con representación en toda la Unión Europea.
-            <a href="mailto:migueljosa7@gmail.com" className="text-cyan-400 underline underline-offset-2">migueljosa7@gmail.com</a>
-          </p>
+          <ul className="space-y-1 text-muted">
+            <li><strong>LOCALIS AI</strong>, {CONTACT.city} ({CONTACT.region}, España).</li>
+            {LEGAL.titular && <li>Titular: {LEGAL.titular}.</li>}
+            {LEGAL.nif && <li>NIF/CIF: {LEGAL.nif}.</li>}
+            {LEGAL.domicilio && <li>Domicilio: {LEGAL.domicilio}.</li>}
+            <li>
+              Contacto: <a href={`mailto:${CONTACT.email}`} className="text-cyan-400 underline underline-offset-2">{CONTACT.email}</a> · {CONTACT.phoneDisplay}.
+            </li>
+          </ul>
         </section>
 
         <section className="space-y-4 border-border border-l-2 pl-4">
-          <h2 className="text-xl font-bold font-display">2. Objetivo del servicio</h2>
+          <h2 className="text-xl font-bold font-display">2. Servicios</h2>
           <p className="text-muted">
-            LOCALIS AI ofrece una plataforma web que permite a los negocios automatizar
-            agendas, facturación y control de repartos en tiempo real mediante IA y GPS,
-            todo ello sin comisiones por entrega.
+            LOCALIS AI diseña y construye páginas web para negocios, autónomos y empresas de Zaragoza y Aragón, y ofrece su mantenimiento. Cada servicio
+            se contrata mediante un presupuesto por escrito que el cliente acepta expresamente. Los precios publicados en la web son de referencia, se
+            indican sin IVA y no son vinculantes hasta la aceptación del presupuesto, que puede ajustarse a cada proyecto.
+          </p>
+          <p className="text-muted">
+            Stella (asistente con inteligencia artificial) se ofrece en fase piloto. El panel de control, el módulo de reparto con GPS, las citas y
+            reservas automáticas, la facturación y el WhatsApp automatizado que se muestran en la web son demostraciones o funciones en desarrollo:
+            no forman parte de ningún servicio contratado salvo que se indique expresamente por escrito en el presupuesto.
           </p>
         </section>
 
         <section className="space-y-4 border-border border-l-2 pl-4">
           <h2 className="text-xl font-bold font-display">3. Condiciones de uso</h2>
           <p className="text-muted">
-            El acceso y uso del portal <Link href="https://localis.ai" className="text-cyan-400 underline underline-offset-2">localis.ai</Link>
-            supone la aceptación de estas condiciones. El usuario se compromete a usar el
-            servicio de forma lícita y no realizar actividades que puedan perjudicar,
-            sobrecargar o comprometer el correcto funcionamiento de la plataforma.
+            El acceso y uso de este sitio web supone la aceptación de estas condiciones. El usuario se compromete a usarlo de forma lícita y a no
+            realizar actividades que puedan perjudicar, sobrecargar o comprometer su correcto funcionamiento.
           </p>
         </section>
 
         <section className="space-y-4 border-border border-l-2 pl-4">
           <h2 className="text-xl font-bold font-display">4. Propiedad intelectual</h2>
           <p className="text-muted">
-            Todo el contenido de la web —textos, logos, gráficos, software, marcas
-            registradas— es propiedad de LOCALIS AI y está protegido por las leyes
-            de propiedad intelectual. Queda prohibida su reproducción, distribución o
-            explotación comercial sin autorización expresa.
+            Los contenidos de esta web (textos, imágenes, diseño y software) son titularidad de LOCALIS AI o se utilizan con licencia, y están
+            protegidos por la normativa de propiedad intelectual. Queda prohibida su reproducción o explotación comercial sin autorización. Las
+            condiciones de titularidad de cada web entregada a un cliente se indican en su presupuesto.
           </p>
         </section>
 
         <section className="space-y-4 border-border border-l-2 pl-4">
           <h2 className="text-xl font-bold font-display">5. Limitación de responsabilidad</h2>
           <p className="text-muted">
-            LOCALIS AI no se hace responsable de los daños directos, indirectos o
-            consecuentes derivados del uso o imposible uso del servicio, salvo que
-            exista dolo o fault grave, y conforme a lo establecido por la legislación
-            aplicable.
+            LOCALIS AI no se hace responsable de los daños derivados del uso o de la imposibilidad de uso de este sitio, salvo en los casos de dolo o
+            negligencia grave y conforme a la legislación aplicable. Esto no limita los derechos que la ley reconozca al cliente en el servicio contratado.
           </p>
         </section>
 
@@ -87,12 +92,10 @@ export default function TermsPage() {
         </section>
 
         <section className="space-y-4 border-border border-l-2 pl-4">
-          <h2 className="text-xl font-bold font-display">7. Legitimación y ley aplicable</h2>
+          <h2 className="text-xl font-bold font-display">7. Ley aplicable y jurisdicción</h2>
           <p className="text-muted">
-            Este aviso legal se regula por las leyes españolas. Cualquier discusión o
-            litigio derivado del uso del servicio será resuelto por los juzgados y
-            tribunales de Zaragoza, sin perjuicio del artículo 24.1 de la Convención
-            Europea de Derechos Humanos.
+            Este aviso legal se rige por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y tribunales de
+            Zaragoza, salvo que la normativa de protección de consumidores y usuarios establezca otro fuero.
           </p>
         </section>
 

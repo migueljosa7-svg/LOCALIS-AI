@@ -34,11 +34,10 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   keywords: [
     'diseño web Zaragoza',
-    'asistente virtual IA Zaragoza',
-    'software reparto GPS sin comisiones',
-    'citas automáticas WhatsApp',
+    'diseño web Aragón',
+    'páginas web para autónomos',
     'páginas web PYME Zaragoza',
-    'calculadora ahorro comisiones Glovo',
+    'presupuesto página web Zaragoza',
     'configurador web restaurante clínica taller',
   ],
   authors: [{ name: 'LOCALIS AI' }],
@@ -52,7 +51,7 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'LOCALIS AI',
     locale: 'es_ES',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'LOCALIS AI · Webs con IA Stella y GPS integrado para PYMEs en Zaragoza' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'LOCALIS AI · diseño web para negocios y autónomos de Zaragoza' }],
   },
   twitter: {
     card: 'summary_large_image',

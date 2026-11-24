@@ -1,7 +1,7 @@
 // Ficha interna de LOCALIS AI (Stella en nuestra propia web). Los negocios clientes viven en la base de datos.
-// Solo afirma lo que existe hoy: los precios salen de las mismas constantes que usa el configurador.
+// Solo afirma lo que existe hoy: los precios salen de las mismas constantes que usa la web (src/lib/pricing.ts).
 import { CONTACT } from "@/lib/site";
-import { PRICING } from "@/components/configurator/studioModel";
+import { TARIFAS } from "@/lib/pricing";
 import type { StellaBusiness } from "./ficha";
 
 export const LOCALIS_ID = "localis";
@@ -12,15 +12,20 @@ export const LOCALIS_BUSINESS: StellaBusiness = {
   sector: "Diseño web para negocios locales",
   area: `${CONTACT.city} y ${CONTACT.region}`,
   about:
-    "Diseñamos webs profesionales a precio cerrado para comercios, clínicas, talleres y restaurantes: formulario de presupuesto, botón de WhatsApp, Google Maps y SEO local. También ofrecemos Stella, una asistente virtual con IA para la web de cada negocio.",
+    "Diseñamos webs profesionales con presupuesto por escrito para comercios, clínicas, talleres y restaurantes: formulario de presupuesto, botón de WhatsApp, Google Maps y SEO local. También ofrecemos Stella, una asistente virtual con IA para la web de cada negocio.",
   services: [
     {
-      name: "Web Esencial (pago único)",
-      price: `desde ${PRICING.base} €, con un tope cerrado de ${PRICING.cap} €`,
-      detail: `Incluye hasta ${PRICING.includedPages} páginas; cada página extra +${PRICING.extraPage} €. El precio exacto se calcula en el estudio «Diseña tu web»`,
+      name: TARIFAS.captacion.name,
+      price: `${TARIFAS.captacion.price} € + IVA (precio de referencia)`,
+      detail: `Hasta ${TARIFAS.captacion.pages} páginas. El presupuesto final se adapta a cada proyecto y se envía por escrito antes de empezar`,
     },
-    { name: "Auditoría gratuita", price: "gratis", detail: "Revisamos tu web o tu ficha de Google y te decimos qué mejorar, sin compromiso" },
-    { name: "Stella, asistente virtual con IA para tu web", detail: "El precio se presupuesta según el negocio; se solicita desde el formulario o por WhatsApp" },
+    {
+      name: TARIFAS.pro.name,
+      price: `${TARIFAS.pro.price} € + IVA (precio de referencia)`,
+      detail: `Hasta ${TARIFAS.pro.pages} páginas y más contenido. Presupuesto final por escrito según el proyecto`,
+    },
+    { name: "Mantenimiento de la web", price: `referencia ${TARIFAS.mantenimientoPorPagina} € por página al mes + IVA`, detail: "Cambios de textos, imágenes y datos, ajustes pequeños y soporte. El importe final depende de las páginas, la complejidad y los cambios que necesites" },
+    { name: "Stella, asistente virtual con IA para tu web", detail: "Está en fase piloto; el precio se presupuesta aparte según el negocio y se solicita desde el formulario o por WhatsApp" },
   ],
   faqs: [
     { q: "¿Cómo pido presupuesto?", a: "Puedes diseñar tu web en el estudio «Diseña tu web» y enviarnos la solicitud, o escribirnos por WhatsApp." },

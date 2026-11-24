@@ -25,4 +25,10 @@ export function waLink(text = "Hola LOCALIS AI, quiero información para mi nego
   return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
 }
 
-export const WA_AUDIT_TEXT = "Hola LOCALIS AI, quiero reservar una auditoría gratuita para mi negocio en Zaragoza";
+export const WA_QUOTE_TEXT = "Hola LOCALIS AI, quiero información y un presupuesto para la página web de mi negocio";
+
+/**
+ * Datos legales del titular (LSSI-CE art. 10). NO se inventan: se rellenan cuando el titular los aporte y aparecen solos en el Aviso legal.
+ * Vacío = no se muestra. Pendiente de aportar: nombre o razón social, NIF/CIF y domicilio.
+ */
+export const LEGAL: { titular: string; nif: string; domicilio: string } = { titular: "", nif: "", domicilio: "" };

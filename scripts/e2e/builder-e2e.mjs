@@ -229,7 +229,7 @@ try {
   // Revisión y envío
   const est = await page.getByLabel("Estimación orientativa").innerText();
   check("[escritorio] la estimación distingue precio definido / extra opcional / pendiente de valoración / aún no disponible", ["Precio definido", "Extra opcional", "Pendiente de valoración", "Aún no disponible"].every((t) => est.includes(t)), est.slice(0, 200));
-  check("[escritorio] el precio parte de la tarifa existente (≥ 400 €) y aclara que no se cobra nada", /\b4\d\d €/.test(est) && /se cobra nada/i.test(est), est.slice(0, 300));
+  check("[escritorio] el precio parte de la tarifa de referencia (390 € o 590 € + IVA) y aclara que no se cobra nada", /(390|590) €/.test(est) && /IVA/.test(est) && /se cobra nada/i.test(est), est.slice(0, 300));
   await page.screenshot({ path: path.join(outDir, "b03-enviar.png") });
   await page.getByRole("button", { name: /Quiero esta web/ }).click();
   await page.getByText("Indica tu nombre.").waitFor();
@@ -273,6 +273,7 @@ try {
     await next_(p);
     await sleep(700);
     await p.reload({ waitUntil: "load" });
+    await p.getByText(/Paso 2 de 8/).first().waitFor({ timeout: 8000 }).catch(() => {}); // el borrador se restaura tras la hidratación
     check("[borrador] al recargar la página se recupera el diseño y el paso en el que estabas", (await p.getByText(/Paso 2 de 8/).count()) === 1 && (await bpOf(p).evaluate((e) => getComputedStyle(e).backgroundColor)) === "rgb(248, 250, 252)");
     await p.getByRole("button", { name: /Restablecer/ }).click();
     await p.getByRole("button", { name: "Sí", exact: true }).click();

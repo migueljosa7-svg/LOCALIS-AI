@@ -9,7 +9,7 @@ import { estimate, clampPages } from "../src/lib/builder/estimate";
 import { summarize, techBrief } from "../src/lib/builder/summary";
 import { contrastRatio } from "../src/lib/builder/contrast";
 import { sampleSrc } from "../src/lib/builder/images";
-import { PRICING } from "../src/components/configurator/studioModel";
+import { TARIFAS } from "../src/lib/pricing";
 import { dropMissingUploads, handleDesignRequest, type RequestDeps } from "../src/lib/builder/request";
 
 // ── Modelo ────────────────────────────────────────────────────────
@@ -156,15 +156,20 @@ test("las imágenes de ejemplo se generan en SVG propio y los ids desconocidos n
 });
 
 // ── Presupuesto ───────────────────────────────────────────────────
-test("estimación: usa solo las tarifas existentes y no inventa ningún precio", () => {
+test("estimación: usa solo las tarifas de referencia (390 € hasta 5 páginas, 590 € hasta 10) y no inventa ningún precio", () => {
   const c = defaultConfig("otro");
-  for (const pages of [4, 5, 6, 8, 10]) {
+  for (const [pages, expected] of [[4, 390], [5, 390], [6, 590], [8, 590], [10, 590]] as const) {
     const e = estimate({ ...c, pages });
-    const expected = Math.min(PRICING.cap, PRICING.base + Math.max(0, pages - PRICING.includedPages) * PRICING.extraPage);
     assert.equal(e.definedTotal, expected, `${pages} páginas`);
+    assert.equal(e.lines[0].amount, expected);
   }
-  assert.equal(clampPages(1), PRICING.minPages);
-  assert.equal(clampPages(99), PRICING.maxPages);
+  assert.equal(TARIFAS.captacion.price, 390);
+  assert.equal(TARIFAS.pro.price, 590);
+  assert.equal(TARIFAS.mantenimientoPorPagina, 15);
+  assert.equal(clampPages(1), 4);
+  assert.equal(clampPages(99), TARIFAS.pro.pages);
+  const mant = estimate({ ...c, pages: 5 }).lines.find((l) => /Mantenimiento/.test(l.label));
+  assert.ok(mant && mant.kind === "opcional" && mant.amount === undefined && /75 €/.test(mant.detail ?? ""), "el mantenimiento es opcional, con referencia 15 €/página y sin importe cerrado");
   const e = estimate({ ...c, wants: { stella: true, interests: ["tienda", "reservas"] } });
   const withAmount = e.lines.filter((l) => l.amount !== undefined);
   assert.ok(withAmount.every((l) => l.kind === "definido"), "solo las líneas «definido» llevan importe");

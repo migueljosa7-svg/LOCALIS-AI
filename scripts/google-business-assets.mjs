@@ -200,12 +200,12 @@ async function ogImage() {
     svg(W, H, `${background(W, H)}
       ${mark(72, 64, 72)}${wordmark(164, 116, 44)}
       <text font-family="${FONT}" font-weight="700" font-size="70" letter-spacing="-2">
-        <tspan x="72" y="262" fill="${C.text}">Webs con IA que</tspan>
-        <tspan x="72" y="344" fill="url(#textgrad)">atienden, agendan</tspan>
-        <tspan x="72" y="426" fill="url(#textgrad)">y reparten <tspan fill="${C.text}">por ti</tspan></tspan>
+        <tspan x="72" y="262" fill="${C.text}">Tu negocio merece</tspan>
+        <tspan x="72" y="344" fill="${C.text}">una web que te</tspan>
+        <tspan x="72" y="426" fill="url(#textgrad)">traiga clientes</tspan>
       </text>
-      <text x="72" y="494" font-family="${FONT}" font-size="30" fill="${C.muted}">Stella IA 24/7 · WhatsApp · Citas · Facturas · GPS de reparto</text>
-      ${chip(72, 530, "ZARAGOZA", C.cyan, 20)}${chip(250, 530, "0% COMISIONES", C.emerald, 20)}
+      <text x="72" y="494" font-family="${FONT}" font-size="30" fill="${C.muted}">Diseño web para negocios y autónomos de Zaragoza y Aragón</text>
+      ${chip(72, 530, "ZARAGOZA", C.cyan, 20)}${chip(250, 530, "PRESUPUESTO POR ESCRITO", C.emerald, 20)}
       ${mark(860, 210, 260)}`),
     join(ROOT, "public")
   );

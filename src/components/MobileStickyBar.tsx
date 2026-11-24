@@ -1,6 +1,6 @@
 import { Palette } from "lucide-react";
 import WhatsAppIcon from "./WhatsAppIcon";
-import { WA_AUDIT_TEXT, waLink } from "@/lib/site";
+import { WA_QUOTE_TEXT, waLink } from "@/lib/site";
 
 // Barra de conversión fija en móvil: siempre a un toque del contacto.
 export default function MobileStickyBar() {
@@ -15,7 +15,7 @@ export default function MobileStickyBar() {
           Diseña tu web
         </a>
         <a
-          href={waLink(WA_AUDIT_TEXT)}
+          href={waLink(WA_QUOTE_TEXT)}
           target="_blank"
           rel="noopener noreferrer"
           className="btn flex-1 min-h-[48px] px-2 text-[13px] bg-[#25D366] text-[#05210f]"

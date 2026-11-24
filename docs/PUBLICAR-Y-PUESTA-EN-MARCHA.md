@@ -1,31 +1,30 @@
 # Publicar LOCALIS AI y ponerlo en marcha
 
-Código de referencia: rama `integracion/stella-configurador`, commit de código `f4a831d` (verificado: árbol limpio, 109/109 configurador, 143/143 SEO, 108/108 Stella, 49/49 auditoría, 64/64 producto, 94/94 unitarias, build con salida 0). Lo que no se ha podido verificar está marcado **(sin verificar)**.
+Rama `integracion/stella-configurador`. Lo que no se ha podido verificar está marcado **(sin verificar)**. Precios, comparativa y dominios: el documento interno `COMERCIAL-INTERNO.md` (guardado FUERA del repositorio, porque este es público). Estado técnico: `docs/ESTADO-FINAL-LOCALIS.md`.
 
 ## 1. Estado de Git y de los despliegues (comprobado el 24-nov-2026)
 
-- `main` está en `1e4ddfb` y es **ancestro** de la integración: no hay nada en `main` que falte en la integración y la fusión es **fast-forward, sin conflictos** (28 commits, 167 archivos).
-- **Actualizar `main` publica en Production automáticamente** (Vercel). Por eso no se ha hecho.
-- Production (https://localis-ai-one.vercel.app) sirve hoy la **web antigua de una sola página** (`/plataforma` da 404, aún dice «Auditoría gratis»). El último despliegue correcto de Production es `0d8da33` (12-nov). El de `1e4ddfb` figura como *cancelado desde el panel de Vercel* (hecho por ti).
-- `/admin` en Production responde **401**: indica que `ADMIN_USER` y `ADMIN_PASSWORD` (16+ caracteres) existen allí. Es lo único de Production que se ha podido confirmar sin acceso a Vercel.
-- Preview de `f4a831d`: desplegada correctamente; protegida por inicio de sesión de Vercel.
-- Ramas: `feat/captacion-segura`, `feat/configurador-web`, `feat/stella-produccion` están contenidas. `feat/rediseno-secciones` (5 commits) y `fix/revision-conexiones` (3, solo local) están **reemplazadas o ya integradas** (detalle en `ESTADO-FINAL-LOCALIS.md`). No hay trabajo válido sin integrar.
+- `main` está en `1e4ddfb` y es **ancestro** de la integración: la fusión es **fast-forward, sin conflictos**.
+- **Actualizar `main` publica en Production automáticamente** (Vercel). Nada se ha fusionado.
+- Production (https://localis-ai-one.vercel.app) sirve hoy la **web antigua de una sola página**. Último despliegue correcto de Production: `0d8da33` (12-nov); el de `1e4ddfb` consta como cancelado desde el panel de Vercel.
+- `/admin` en Production responde 401: confirma que `ADMIN_USER` y `ADMIN_PASSWORD` (16+ caracteres) existen allí. **No tengo acceso a las variables de Vercel**, así que el resto de variables de Production es **(sin verificar)** por mi parte.
+- **Supabase:** según tu confirmación, Production usa el **mismo proyecto** que Preview; por tanto las tablas y permisos que ya comprobaste con `/admin/entorno` en Preview valen también para Production y **no hace falta ejecutar SQL**.
 
 ## 2. Procedimiento de publicación (solo con tu autorización)
 
-Antes (5 minutos, en Vercel → Project → Settings → Environment Variables → **Production**):
+**Antes** (Vercel → Project → Settings → Environment Variables → **Production**; solo comprobar que existen, sin copiar valores):
 
 | Variable | Debe estar | Nota |
 | --- | --- | --- |
-| `ADMIN_USER`, `ADMIN_PASSWORD` | Sí | Ya funcionan (401 observado) |
-| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Sí | **(sin verificar)**. Deben apuntar a un Supabase con `schema.sql`, `fix-permisos.sql`, `stella.sql` y `configurador.sql` ya ejecutados (si es el mismo proyecto que usas en Preview, ya lo están) |
+| `ADMIN_USER`, `ADMIN_PASSWORD` | Sí | Confirmado (401) |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Sí | **(sin verificar)** |
 | `RESEND_API_KEY` | Sí | **(sin verificar)** |
 | `LEAD_INBOX_EMAIL` | Recomendado | Si falta, usa el email del código |
-| `STELLA_SITE_WIDGET` | **No debe existir** | Si existiera con valor `on`, Stella saldría en la web |
+| `STELLA_SITE_WIDGET` | **No debe existir** | Con `on` saldría Stella en la web |
 | `ANTHROPIC_API_KEY` | **Mejor que no exista** hasta validar Stella | |
-| `NEXT_PUBLIC_SITE_URL` | Cuando tengas dominio | Hasta entonces sitemap y canonical usan `localis-ai-one.vercel.app` |
+| `NEXT_PUBLIC_SITE_URL` | Cuando haya dominio | Hasta entonces sitemap y canonical usan `localis-ai-one.vercel.app` |
 
-Publicar (desde la carpeta del proyecto):
+**Publicar:**
 
 ```
 git checkout main
@@ -33,47 +32,37 @@ git merge --ff-only integracion/stella-configurador
 git push origin main
 ```
 
-Vercel despliega solo. Después, comprobar en la URL de Production: `/`, `/plataforma`, `/disena-tu-web`, `/tarifas`, `/preguntas-frecuentes`, `/contacto`, `/sitemap.xml`; que `/prueba-stella` da 404; enviar **un** lead de prueba por `/contacto` y ver que aparece en `/admin/leads` y llega el email; abrir `/admin/entorno` y pulsar las comprobaciones de Supabase, almacén y Resend.
+**Después, en la URL de Production:** revisar las seis páginas + `/tarifas` y `/diseno-web-zaragoza`; `/sitemap.xml` con 7 URLs; `/prueba-stella` debe dar 404; enviar **un** lead de prueba por `/contacto` y ver que aparece en `/admin/leads` y llega el aviso por email; en `/admin/entorno` pulsar las comprobaciones de Supabase, almacén y Resend.
 
-Volver atrás si algo falla: Vercel → Deployments → el despliegue `0d8da33` → *Promote to Production* (o *Instant Rollback*). Parar Stella en una emergencia: `STELLA_ENABLED=false` + Redeploy.
+**Volver atrás:** Vercel → Deployments → despliegue `0d8da33` → *Promote to Production* (o *Instant Rollback*). Alternativa por Git: `git revert -m 1 <commit>` o `git revert <rango>` en `main` y push. Parar Stella en una emergencia: `STELLA_ENABLED=false` + Redeploy.
 
-## 3. Stella: qué falta y prueba real
+## 3. Vercel: plan para uso comercial
 
-Estado: código, límites de gasto, dominios autorizados, consentimiento y panel completos y probados **con Anthropic simulado**. **No validada con la API real** (sin crédito al cierre; la clave existe en Preview según tu confirmación, **sin verificar desde aquí**). No se vende ni se activa en Production hasta pasar esta prueba.
+La documentación de Vercel indica que el plan gratuito **Hobby es solo para uso personal y no comercial**, y que **Pro cuesta 20 USD al mes por miembro** (fuentes: https://vercel.com/docs/plans/hobby y https://vercel.com/pricing, consultadas el 24-nov-2026). LOCALIS es un negocio: **el plan actual no es adecuado para uso comercial si es Hobby**. No puedo ver qué plan tienes ni cambiarlo. Decisión y pago: tuyos, antes de empezar a captar clientes de pago.
 
-1. En la consola de Anthropic: añadir crédito (unos 5 $ bastan) y poner un **límite de gasto mensual**. (Tú, con tu cuenta.)
-2. Prueba del modelo, una vez, en tu PowerShell (la clave no se escribe en ningún archivo ni en el chat): `$env:ANTHROPIC_API_KEY="…"; npm run stella:smoke`. Revisar las 8 respuestas: dice no saber lo desconocido, no inventa precios, no obedece «ignora tus instrucciones», no sale del tema, avisa de que es una IA.
-3. En Preview, `/admin/stella/diagnostico`: todo en verde. Luego `/admin/stella/prueba-peluqueria/prueba`: la respuesta debe decir «Respuesta real de claude-haiku-5-5 · N tokens».
-4. Instalar el chat en un negocio de prueba (guía `docs/STELLA-GUIA.md`): contacto con consentimiento → aparece como lead `stella:<negocio>` y llega el email.
-5. En `/admin/consumo`: mensajes, tokens y coste > 0, y el coste coincide con la consola de Anthropic. Probar que al agotar el tope diario deja de responder y ofrece WhatsApp.
-6. Solo si todo pasa: cambiar «Fase piloto» por la oferta comercial que decidas y, si quieres Stella en la web de LOCALIS, poner `STELLA_SITE_WIDGET=on` en Production.
+## 4. Stella: qué falta y prueba real
 
-## 4. Dominio, correo, SEO y Google
+Estado: código, límites de gasto, dominios autorizados, consentimiento y panel completos y probados **con Anthropic simulado**. **No validada con la API real** (sin crédito; la clave existe en Preview según tu confirmación, **sin verificar desde aquí**). Se mantiene en fase piloto y **fuera de Production**. No he activado la integración ni gastado crédito.
 
-**Dominio (tú: compra y DNS).** Comprar el dominio → Vercel → Project → Settings → Domains → Add → copiar los registros DNS que Vercel muestre en tu proveedor → esperar «Valid» → poner `NEXT_PUBLIC_SITE_URL=https://tudominio.es` en Production → Redeploy. Elegir si la versión principal es con o sin `www` (Vercel redirige la otra).
+1. En la consola de Anthropic: añadir crédito (unos 5 USD bastan) y fijar un **límite de gasto mensual**. (Tú.)
+2. Prueba del modelo, una vez, en tu PowerShell (la clave no se escribe en archivos ni en el chat): `$env:ANTHROPIC_API_KEY="…"; npm run stella:smoke`. Revisar las 8 respuestas: dice que no sabe lo desconocido, no inventa precios, no obedece «ignora tus instrucciones», no se sale del tema, avisa de que es una IA.
+3. En Preview, `/admin/stella/diagnostico` en verde; luego `/admin/stella/prueba-peluqueria/prueba`: «Respuesta real de claude-haiku-5-5 · N tokens».
+4. Instalar el chat en un negocio de prueba (`docs/STELLA-GUIA.md`): un contacto con consentimiento aparece como lead `stella:<negocio>` y llega el email.
+5. `/admin/consumo`: coste > 0 y coincide con la consola de Anthropic; probar que al agotar el tope diario deja de responder y ofrece WhatsApp.
+6. Solo si todo pasa: decidir la oferta comercial de Stella y, si quieres, `STELLA_SITE_WIDGET=on` en Production. **Antes, revisar la ficha de la Stella de LOCALIS** (`src/lib/stella/builtin.ts`): ya usa los precios de referencia y no ofrece auditorías.
 
-**Plan de Vercel (tú: decisión y pago).** El plan gratuito *Hobby* es solo para uso no comercial; para vender conviene *Pro*.
+## 5. Dominio, correo, SEO y Google
 
-**Correo / Resend.** Hoy el remitente es `onboarding@resend.dev`: Resend solo entrega a tu propia dirección. **Los avisos a ti funcionan; la confirmación automática al cliente que deja su email no le llegará** hasta verificar un dominio. Pasos: Resend → Domains → Add → copiar los registros SPF/DKIM en el DNS → Verify → en Vercel `EMAIL_FROM=LOCALIS AI <avisos@tudominio.es>` → Redeploy → botón de prueba de `/admin/entorno`.
+**Dominio.** Tres recomendaciones con disponibilidad, precio y **riesgo de marca** (hay empresas con nombres casi idénticos, entre ellas una agencia «Localis.ai») en el documento interno `COMERCIAL-INTERNO.md` (guardado FUERA del repositorio, porque este es público) §4. No se ha comprado nada. Tras comprar: Vercel → Settings → Domains → Add → copiar los registros DNS que muestre → esperar «Valid» → `NEXT_PUBLIC_SITE_URL=https://tudominio` en Production → Redeploy.
 
-**Search Console.** El sitemap ya existe y la verificación está soportada en código; **no está verificado ni enviado** (requiere tu cuenta). Pasos exactos en `ESTADO-FINAL-LOCALIS.md` §6, y hacerlo **con el dominio definitivo**.
+**Correo / Resend.** El remitente actual es `onboarding@resend.dev`: Resend solo entrega a tu propia dirección. **Los avisos a ti funcionan; la confirmación automática al cliente que deja su email no le llegará** hasta verificar un dominio: Resend → Domains → Add → registros SPF/DKIM en el DNS → Verify → `EMAIL_FROM=LOCALIS AI <avisos@tudominio>` en Vercel → Redeploy → botón de prueba de `/admin/entorno`.
 
-**Google Business Profile.** No se ha tocado nada. Igualar nombre, teléfono, horario y web con `/contacto`; web de la ficha = la portada; descripción sin «24/7» ni Stella como disponible.
+**Search Console.** Sitemap y verificación por etiqueta HTML (`GOOGLE_SITE_VERIFICATION`) listos en código; **no verificado ni enviado** (requiere tu cuenta). Pasos exactos en `ESTADO-FINAL-LOCALIS.md` §6; hazlo con el dominio definitivo.
 
-## 5. Legal y privacidad (necesita datos tuyos)
+**Google Business Profile.** No se ha tocado nada. Igualar nombre, teléfono, horario y web con `/contacto`. **No subas las imágenes de `public/google-business-assets/`** tal cual: incluyen piezas que muestran GPS de reparto, panel de control, Stella y «sin comisiones» como servicios disponibles. Usa solo logo y portada revisados.
 
-- Aviso legal: la identificación del titular solo dice «LOCALIS AI, Zaragoza» y un Gmail. La LSSI exige nombre o razón social, NIF/CIF, domicilio y contacto.
-- **Términos, apartado 2:** describe el servicio como «automatizar agendas, facturación y control de repartos en tiempo real mediante IA y GPS, sin comisiones», es decir, como si existiera hoy. Debe reescribirse con lo que realmente ofreces (web, mantenimiento, Stella en piloto). Pendiente de tu autorización y, idealmente, de revisión profesional.
-- Política de privacidad: comprobar con tu gestor/abogado el listado de encargados (Supabase, Vercel, Resend, Anthropic, Google) y los plazos de conservación. Los contactos de Stella ya se guardan con fecha y consentimiento.
-- El banner de cookies con Consent Mode v2 ya está en la web.
+## 6. Textos: qué se ha corregido y qué queda
 
-## 6. Residuos de texto detectados (no corregidos, esperan tu OK)
+Corregido en esta ronda: Tarifas con los precios de referencia; FAQ; mensaje de WhatsApp; emails de aviso y de confirmación; página 404; ficha de la Stella de LOCALIS (sin auditoría gratuita ni precios antiguos); Aviso legal (servicio real, sin enlace a otro dominio, sin datos inventados) y Política de privacidad (finalidades); imagen para compartir en redes (`og-image.png` regenerada: ya no dice «Stella 24/7, citas, facturas, GPS, 0 % comisiones»); manifest de la app y palabras clave; formulario de contacto. Se eliminaron componentes antiguos sin uso que contenían precios y promesas viejas.
 
-Visibles para el público o para tus clientes:
-
-- **Mensaje de WhatsApp** que se rellena al pulsar los botones: «quiero reservar una auditoría gratuita» (`WA_AUDIT_TEXT`, `src/lib/site.ts`). Propuesta: «quiero información y un presupuesto para mi web».
-- **Página 404** (`src/app/not-found.tsx`): «pide tu auditoría gratuita» y botón «Auditoría gratis».
-- **Emails de aviso y de confirmación al cliente** (`src/lib/email.ts`): hablan de «solicitud de auditoría/demo».
-- **Ficha de la Stella de LOCALIS** (`src/lib/stella/builtin.ts`): lista «Auditoría gratuita» como servicio y cita «desde 400 €, tope 800 €». Solo se vería con `STELLA_SITE_WIDGET=on`, pero **antes de activarla** debe alinearse con Tarifas (sin precios definitivos hasta que los apruebes).
-
-Internos o sin uso: estados del panel («Auditoría lista»), y `WebDesignSection`/`PricingSection`, que ya no se muestran en ninguna página.
+Queda (sin impacto público): estados internos de oportunidades del panel («Auditoría lista»); código antiguo del configurador previo (`src/components/configurator/*Model.ts`) que ya no se muestra en ninguna página; las imágenes de Google Business Profile del punto anterior.

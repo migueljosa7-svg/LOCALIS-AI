@@ -1,7 +1,7 @@
 {
-  "name": "LOCALIS AI — IA Autónoma y GPS para tu negocio",
+  "name": "LOCALIS AI — Diseño web para negocios de Zaragoza",
   "short_name": "LOCALIS AI",
-  "description": "Automatiza tu agenda, emite facturas, atiende a tus clientes 24/7 con la IA Stella y controla tus repartos en tiempo real sin comisiones.",
+  "description": "Diseño web profesional para negocios y autónomos de Zaragoza y Aragón. Diseña tu web online y recibe un presupuesto por escrito.",
   "id": "/?source=pwa",
   "start_url": "/?source=pwa",
   "scope": "/",
@@ -35,16 +35,16 @@
   ],
   "shortcuts": [
     {
-      "name": "Solicitar Demo",
-      "short_name": "Demo",
-      "description": "Hablar con un especialista de LOCALIS AI",
-      "url": "/?source=pwa#demo"
+      "name": "Diseña tu web",
+      "short_name": "Diseña",
+      "description": "Diseña tu web online y pide presupuesto",
+      "url": "/disena-tu-web?source=pwa"
     },
     {
-      "name": "Ver Precios",
-      "short_name": "Precios",
-      "description": "Planes transparentes sin comisiones",
-      "url": "/?source=pwa#precios"
+      "name": "Ver tarifas",
+      "short_name": "Tarifas",
+      "description": "Precios de referencia y mantenimiento",
+      "url": "/tarifas?source=pwa"
     }
   ]
 }

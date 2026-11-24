@@ -48,16 +48,16 @@ export default function PrivacyPolicyPage() {
             Podemos recopilar datos personales que nos facilitas directamente (nombre,
             email, teléfono, empresa, sector económico) o datos de carácter indirecto
             mediante el uso del servicio (página web, consultas, interacciones con la IA
-            Stella, módulos GPS, facturación demo, etc.).
+            Stella, etc.).
           </p>
         </section>
 
         <section className="space-y-4 border-border border-l-2 pl-4">
           <h2 className="text-xl font-bold font-display">3. Finalidades del tratamiento</h2>
           <ul className="list-disc pl-6 space-y-2 text-muted">
-            <li>Gestionar tu cuenta y la suscripción al servicio.</li>
-            <li>Atender tus consultas y gestionar la fecha de tu demo.</li>
-            <li>Proporcionar los módulos de IA (Stella), GPS y facturación.</li>
+            <li>Gestionar tu solicitud y, en su caso, la contratación y la prestación del servicio.</li>
+            <li>Atender tus consultas y enviarte la información y el presupuesto que solicites.</li>
+            <li>Prestar el asistente Stella a los negocios que lo contraten (fase piloto).</li>
             <li>Enviarte material de comunicación, no comercial, sobre nuestra oferta.</li>
             <li>Cumplir con las obligaciones legales derivadas del RGPD y la normativa aplicable.</li>
           </ul>

@@ -171,7 +171,7 @@ export function Estimate({ cfg, compact = false }: { cfg: SiteConfig; compact?: 
         <p className="text-xs uppercase tracking-wider text-muted">Estimación orientativa</p>
         <p className="font-display text-2xl font-bold">{euro(e.definedTotal)}</p>
       </div>
-      <p className="text-xs text-muted">Precio base ya definido, {e.pages} páginas. Importes sin IVA. No es un presupuesto cerrado ni se cobra nada: se confirma tras revisar tu diseño.</p>
+      <p className="text-xs text-muted">Precio de referencia para {e.pages} páginas. Importes sin IVA (+ IVA). No es un presupuesto cerrado ni se cobra nada: el presupuesto final se ajusta a tu proyecto tras revisar tu diseño.</p>
       {!compact && (
         <ul className="mt-3 space-y-2">
           {e.lines.map((l, i) => (

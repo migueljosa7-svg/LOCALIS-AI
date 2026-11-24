@@ -7,14 +7,14 @@ import { cn } from "@/lib/utils";
 import { submitLead, validateLead, type LeadErrors } from "@/lib/lead";
 import { trackLead } from "@/lib/analytics";
 import WhatsAppIcon from "./WhatsAppIcon";
-import { CONTACT, WA_AUDIT_TEXT, waLink } from "@/lib/site";
+import { CONTACT, WA_QUOTE_TEXT, waLink } from "@/lib/site";
 
 type Service = "web" | "ia" | "gps";
 
 const SERVICES: { value: Service; title: string; description: string; icon: typeof Globe; sector: string }[] = [
   { value: "web", title: "Página web", description: "Web rápida, con tu marca y lista para captar clientes en Google.", icon: Globe, sector: "Servicio: Página web" },
-  { value: "ia", title: "Asistente Stella IA", description: "Asistente con IA para tu web que responde dudas y recoge contactos. Fase piloto.", icon: Bot, sector: "Servicio: Asistente IA para citas" },
-  { value: "gps", title: "Reparto con GPS", description: "Tus repartidores en el mapa y seguimiento para el cliente, sin comisiones.", icon: Navigation, sector: "Servicio: Sistema GPS de reparto" },
+  { value: "ia", title: "Asistente Stella IA", description: "Asistente con IA para tu web que responde dudas y recoge contactos. Fase piloto.", icon: Bot, sector: "Servicio: Asistente IA (Stella, fase piloto)" },
+  { value: "gps", title: "Reparto con GPS", description: "En desarrollo: lo anotamos y te avisamos cuando esté disponible.", icon: Navigation, sector: "Servicio: Sistema GPS de reparto" },
 ];
 
 const STEPS = ["Tu necesidad", "Tus datos", "¡Listo!"];
@@ -225,7 +225,7 @@ export default function ThreeStepLeadSection() {
                   {submitError && (
                     <p role="alert" className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                       {submitError}{" "}
-                      <a href={waLink(WA_AUDIT_TEXT)} target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-2">
+                      <a href={waLink(WA_QUOTE_TEXT)} target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-2">
                         Abrir WhatsApp
                       </a>
                     </p>
@@ -267,7 +267,7 @@ export default function ThreeStepLeadSection() {
                     WhatsApp.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center mt-7">
-                    <a href={waLink(WA_AUDIT_TEXT)} target="_blank" rel="noopener noreferrer" className="btn bg-[#25D366] text-[#05210f]">
+                    <a href={waLink(WA_QUOTE_TEXT)} target="_blank" rel="noopener noreferrer" className="btn bg-[#25D366] text-[#05210f]">
                       <WhatsAppIcon size={18} /> Hablar ya por WhatsApp
                     </a>
                     <button
@@ -291,7 +291,7 @@ export default function ThreeStepLeadSection() {
         <div className="mt-8 flex flex-col items-center gap-3 text-center">
           <p className="text-sm text-muted">¿Prefieres hablar ahora mismo?</p>
           <a
-            href={waLink(WA_AUDIT_TEXT)}
+            href={waLink(WA_QUOTE_TEXT)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm font-semibold text-[#5ee08f] hover:text-[#7ff0a8]"
