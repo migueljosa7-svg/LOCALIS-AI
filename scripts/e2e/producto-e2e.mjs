@@ -91,6 +91,26 @@ try {
   check("[entorno] indica que no se usa ninguna API de mapas de pago", /ninguna|No se usa/.test(envTxt));
   await envCtx.close();
 
+  // ═══ 1b. Comprobación de integraciones desde el panel ═════════
+  console.log("[integraciones] botones de comprobación (Supabase y almacén simulados, Resend sin clave)");
+  {
+    const ictx = await newCtx({ httpCredentials: ADMIN, viewport: { width: 1280, height: 900 } });
+    const ip = await ictx.newPage();
+    await ip.goto(`${BASE}/admin/entorno`, { waitUntil: "load" });
+    await ip.getByTestId("btn-supabase").click();
+    const res = ip.getByTestId("resultado-supabase");
+    await res.waitFor({ timeout: 30000 });
+    const t = await res.innerText();
+    check("[integraciones] «Comprobar Supabase y almacén» pasa todas las comprobaciones y borra su imagen de prueba", /Todo correcto/.test(t) && !/✗/.test(t) && /Subir imagen/.test(t) && /Borrar la imagen/.test(t) && supa.storage.size === 0, t.split(String.fromCharCode(10)).filter((l, i, a) => l.startsWith("✗") || (i > 0 && a[i-1].startsWith("✗"))).join(" / ") + " storage=" + supa.storage.size);
+    check("[integraciones] el resultado no contiene claves ni valores", !/eyJ-clave-falsa|sk-ant-clave|contrasena-e2e/.test(t));
+    await ip.getByTestId("btn-resend").click();
+    const rr = ip.getByTestId("resultado-resend");
+    await rr.waitFor({ timeout: 15000 });
+    check("[integraciones] sin RESEND_API_KEY el botón de correo lo explica y no envía nada", /Falta RESEND_API_KEY/.test(await rr.innerText()));
+    check("[integraciones] sin desbordamiento horizontal", await noH(ip));
+    await ictx.close();
+  }
+
   // ═══ 2. Alta guiada ═══════════════════════════════════════════
   console.log("\n[alta] asistente guiado y enlace para el cliente");
   const actx = await newCtx({ httpCredentials: ADMIN, viewport: { width: 1280, height: 900 } });

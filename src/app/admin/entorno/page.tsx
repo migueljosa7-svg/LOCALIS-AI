@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { envChecks } from "@/lib/admin/overview";
+import Integrations from "./Integrations";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Configuración del entorno", robots: { index: false, follow: false } };
@@ -36,6 +37,7 @@ export default function EnvPage() {
           </ul>
         </section>
       ))}
+      <Integrations />
       <section className="rounded-2xl border border-white/10 p-4 text-sm text-muted">
         <h2 className="font-display text-lg font-bold text-foreground">Seguridad de las claves</h2>
         <ul className="mt-2 list-disc space-y-1 pl-5">

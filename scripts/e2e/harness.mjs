@@ -29,6 +29,7 @@ export async function startSupabase(root) {
     await db.exec(fs.readFileSync(cfgSql, "utf8").replace(/create extension if not exists pgcrypto;/i, ""));
   }
 
+  const storage = new Map();
   const colTypes = {};
   async function types(table) {
     if (!colTypes[table]) {
@@ -42,16 +43,30 @@ export async function startSupabase(root) {
 
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, "http://x");
-    const body = await new Promise((ok) => {
-      let b = "";
-      req.on("data", (c) => (b += c));
-      req.on("end", () => ok(b));
-    });
+    const chunks = [];
+    for await (const c of req) chunks.push(c);
+    const raw = Buffer.concat(chunks); // bytes tal cual (imágenes de prueba)
+    const body = raw.toString("utf8");
     const send = (status, data) => {
       res.writeHead(status, { "Content-Type": "application/json" });
       res.end(data === undefined ? "" : JSON.stringify(data));
     };
     try {
+      // Almacenamiento simulado (un solo bucket privado «design-uploads»).
+      if (url.pathname.startsWith("/storage/v1/")) {
+        const bucket = url.pathname.match(/^\/storage\/v1\/bucket\/design-uploads$/);
+        if (bucket) return send(200, { id: "design-uploads", public: false });
+        const obj = url.pathname.match(/^\/storage\/v1\/object\/(public\/)?design-uploads\/(.+)$/);
+        if (!obj) return send(404, { message: "no" });
+        const objPath = decodeURIComponent(obj[2]);
+        if (obj[1]) return send(400, { message: "Bucket not public" });
+        if (req.method === "POST") { storage.set(objPath, { bytes: raw, mime: String(req.headers["content-type"]) }); return send(200, { Key: objPath }); }
+        if (req.method === "DELETE") { storage.delete(objPath); return send(200, { message: "ok" }); }
+        const f = storage.get(objPath);
+        if (!f) return send(404, { message: "no" });
+        res.writeHead(200, { "Content-Type": f.mime });
+        return res.end(f.bytes);
+      }
       const m = url.pathname.match(/^\/rest\/v1\/(.+)$/);
       if (!m) return send(404, { message: "no" });
       const target = m[1];
@@ -109,7 +124,7 @@ export async function startSupabase(root) {
     }
   });
   await new Promise((ok) => server.listen(PORTS.supabase, "127.0.0.1", ok));
-  return { db, close: () => new Promise((ok) => server.close(ok)) };
+  return { db, storage, close: () => new Promise((ok) => server.close(ok)) };
 }
 
 /** "Anthropic" falso: responde según la pregunta y guarda cada petición para inspeccionarla. */
