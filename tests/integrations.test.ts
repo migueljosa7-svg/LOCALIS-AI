@@ -13,6 +13,7 @@ function fakeSupabase(opts: { missing?: string[]; denied?: string[]; publicBucke
     const method = init?.method ?? "GET";
     calls.push(`${method} ${url.replace("https://proyecto.supabase.co", "")}`);
     const h = (init?.headers ?? {}) as Record<string, string>;
+    const bodyBytes = init?.body as Uint8Array;
     const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
     const tbl = /\/rest\/v1\/([a-z_]+)\?select/.exec(url)?.[1];
     if (tbl) {
@@ -26,11 +27,11 @@ function fakeSupabase(opts: { missing?: string[]; denied?: string[]; publicBucke
     if (obj) {
       if (opts.storageDown) return json(500, { message: "boom" });
       const path = decodeURIComponent(obj[2]);
-      if (obj[1]) return opts.publicBucket && objects.has(path) ? new Response(objects.get(path)) : json(400, { message: "not found" });
+      if (obj[1]) return opts.publicBucket && objects.has(path) ? new Response(objects.get(path) as unknown as BodyInit) : json(400, { message: "not found" });
       if (!h.apikey) return json(401, { message: "no key" });
-      if (method === "POST") { objects.set(path, new Uint8Array(init!.body as Uint8Array)); return json(200, { Key: path }); }
+      if (method === "POST") { objects.set(path, new Uint8Array(bodyBytes)); return json(200, { Key: path }); }
       if (method === "DELETE") { objects.delete(path); return json(200, { message: "ok" }); }
-      return objects.has(path) ? new Response(objects.get(path)) : json(404, { message: "no" });
+      return objects.has(path) ? new Response(objects.get(path) as unknown as BodyInit) : json(404, { message: "no" });
     }
     return json(404, {});
   };
@@ -54,8 +55,8 @@ test("Supabase: señala la tabla que falta y el SQL a ejecutar, los permisos que
   const r = await checkSupabase({ fetchImpl: fakeSupabase({ missing: ["design_requests"], denied: ["leads"], noBucket: true }).impl, env: ENV });
   const by = (n: string) => r.find((x) => x.name.includes(n))!;
   assert.equal(by("design_requests").ok, false);
-  assert.match(by("design_requests").detail, /no existe.*supabase\/configurador\.sql/s);
-  assert.match(by("Tabla leads").detail, /permisos.*fix-permisos/s);
+  assert.match(by("design_requests").detail, /no existe[\s\S]*supabase\/configurador\.sql/);
+  assert.match(by("Tabla leads").detail, /permisos[\s\S]*fix-permisos/);
   assert.equal(by("Almacén design-uploads").ok, false);
   assert.match(by("Almacén design-uploads").detail, /configurador\.sql/);
   assert.equal(r.some((x) => x.name.includes("Subir imagen")), false, "sin almacén no se intenta subir");
