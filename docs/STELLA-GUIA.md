@@ -164,6 +164,25 @@ Si algo falla: botón no aparece → negocio desactivado, dominio distinto al qu
 
 ---
 
+## Si el chat responde «ahora mismo no puedo responder» (error 502)
+
+El 502 solo significa que la API de Anthropic devolvió un error. La causa exacta se ve así:
+
+1. **Panel → `/admin/stella/diagnostico`** (enlace «diagnóstico de la IA» en `/admin/stella`). Comprueba, sin mostrar valores, que la clave existe, tiene formato `sk-ant-`, no tiene espacios y no hay `ANTHROPIC_BASE_URL`. Pulsa **«Hacer una petición real mínima a Anthropic»** (unos 20 tokens, una fracción de céntimo): si todo va bien muestra la respuesta real, el modelo y los tokens; si falla, el **estado HTTP, el tipo de error, el mensaje de Anthropic, el id de petición y qué hacer**.
+2. **Chat de pruebas** (`/admin/stella/<negocio>/prueba` y negocios `prueba-…`): bajo el aviso rojo aparece «Diagnóstico (solo en pruebas)» con lo mismo. A los visitantes de negocios reales nunca se les muestra.
+3. **Registros de Vercel** (Logs → buscar `[stella]`): línea `fallo del modelo (negocio X, modelo Y): estado=… error=… peticion=… mensaje=…`. Nunca contiene la clave ni la conversación.
+
+| Estado | Causa habitual | Qué hacer |
+| --- | --- | --- |
+| 401 | Clave mal pegada, revocada o de otra organización | Crear otra en la consola, ponerla en Vercel (Preview) y Redeploy |
+| 404 | `STELLA_MODEL` con un identificador inválido | Borrar la variable (usa `claude-haiku-5-5`) o poner exactamente `claude-sonnet-5-5` |
+| 400 con «credit balance» | Sin saldo en la cuenta de Anthropic | Añadir crédito o activar la facturación |
+| 403 | Sin permiso para el modelo | Probar con otro modelo o revisar permisos |
+| 429 | Límite de uso de tu cuenta | Esperar o subir el límite en la consola |
+| 5xx / 529 | Saturación de Anthropic | Reintentar |
+
+---
+
 ## 5. Pruebas incluidas en el proyecto
 
 - `npm test`: 44 pruebas automáticas (incluye ejecutar el SQL real en un PostgreSQL de pruebas).

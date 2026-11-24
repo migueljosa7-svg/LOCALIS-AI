@@ -16,6 +16,7 @@ export interface StellaPublicConfig {
   token: string;
 }
 
+type Diag = { model: string; status: number | null; type: string | null; message: string | null; requestId: string | null; hint: string };
 type Msg = { role: "user" | "assistant"; content: string; meta?: { model: string; inputTokens: number; outputTokens: number } };
 
 const SUGGESTIONS = ["¿Qué servicios ofrecéis?", "¿Cómo puedo contactar?", "Quiero que me llamen"];
@@ -25,7 +26,7 @@ export default function StellaChat({ config, autoFocus = true, embedded = false 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<{ text: string; expired?: boolean } | null>(null);
+  const [error, setError] = useState<{ text: string; expired?: boolean; diag?: Diag } | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [saved, setSaved] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
@@ -63,9 +64,9 @@ export default function StellaChat({ config, autoFocus = true, embedded = false 
         body: JSON.stringify({ token: config.token, messages: next.slice(-24) }),
         signal: AbortSignal.timeout(50_000),
       });
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; reply?: string; error?: string; showForm?: boolean; code?: string; meta?: Msg["meta"] };
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; reply?: string; error?: string; showForm?: boolean; code?: string; meta?: Msg["meta"]; diagnostic?: Diag };
       if (!res.ok || !data.ok || !data.reply) {
-        setError({ text: data.error || "No he podido responder.", expired: data.code === "token" });
+        setError({ text: data.error || "No he podido responder.", expired: data.code === "token", diag: data.diagnostic });
         return;
       }
       setMessages([...next, { role: "assistant", content: data.reply, meta: data.meta }]);
@@ -132,6 +133,14 @@ export default function StellaChat({ config, autoFocus = true, embedded = false 
         )}
         {error && (
           <p role="alert" className="rounded-xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+            {error.diag && (
+              <span className="mb-1.5 block rounded-lg border border-red-400/30 bg-black/30 p-2 text-[11px] leading-snug text-red-100" data-testid="stella-diag">
+                <strong>Diagnóstico (solo en pruebas):</strong> modelo {error.diag.model} · estado {error.diag.status ?? "—"} · {error.diag.type ?? "sin tipo"}
+                {error.diag.message ? ` · «${error.diag.message}»` : ""}
+                {error.diag.requestId ? ` · petición ${error.diag.requestId}` : ""}
+                <span className="mt-1 block">{error.diag.hint}</span>
+              </span>
+            )}
             {error.text}{" "}
             {error.expired ? (
               <button type="button" onClick={() => window.location.reload()} className="font-semibold underline">

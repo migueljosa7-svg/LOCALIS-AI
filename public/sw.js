@@ -7,7 +7,7 @@
  *  - Estáticos del mismo origen: stale-while-revalidate.
  *  - Terceros (Google Ads, teselas de mapa): no se interceptan.
  */
-const CACHE_VERSION = "localis-ai-v2";
+const CACHE_VERSION = "localis-ai-v3";
 const APP_SHELL = ["/", "/manifest.json", "/favicon.svg", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {
@@ -36,6 +36,8 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/api/")) return;
+  // Nunca se guardan en caché páginas privadas ni el chat de Stella (llevan datos de personas o sesiones firmadas).
+  if (/^\/(admin|stella|prueba-stella)(\/|$)/.test(url.pathname)) return;
 
   if (req.mode === "navigate") {
     event.respondWith(
@@ -62,7 +64,7 @@ self.addEventListener("fetch", (event) => {
           }
           return res;
         })
-        .catch(() => cached);
+        .catch(() => cached || Response.error()); // nunca resolver con undefined (provocaba «Failed to convert value to Response»)
       return cached || network;
     })
   );
