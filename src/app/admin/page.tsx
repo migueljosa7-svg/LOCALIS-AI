@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
-import { LEAD_STATUSES, OPP_STATUSES, dbConfigured, listLeads, listOpportunities } from "@/lib/db";
+import { LEAD_STATUSES, OPP_STATUSES, dbConfigured, listLeads, listOpportunities, rest } from "@/lib/db";
 import Link from "next/link";
 import RowEditor from "./RowEditor";
+import { listBusinesses, monthUsage } from "@/lib/stella/store";
+import { buildOverview, envChecks, type DesignLite } from "@/lib/admin/overview";
+import { STAGE_LABEL, type DesignRow, type DesignStage } from "@/lib/builder/store";
 
 // Panel interno. Protegido por src/middleware.ts (usuario y contraseña).
 // Solo muestra datos reales de la base de datos: nunca cifras de ejemplo.
@@ -11,7 +14,14 @@ export const metadata: Metadata = { title: "Panel interno", robots: { index: fal
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString("es-ES", { timeZone: "Europe/Madrid", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 
-export default async function AdminPage() {
+const ORIGINS: { id: string; label: string; test: (src: string | null) => boolean }[] = [
+  { id: "stella", label: "Stella", test: (x) => (x ?? "").startsWith("stella") },
+  { id: "diseno", label: "Diseña tu web", test: (x) => x === "disena-tu-web" },
+  { id: "web", label: "Formularios de la web", test: (x) => !(x ?? "").startsWith("stella") && x !== "disena-tu-web" },
+];
+
+export default async function AdminPage({ searchParams }: { searchParams: Promise<{ estado?: string; origen?: string }> }) {
+  const { estado, origen } = await searchParams;
   if (!dbConfigured()) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-16">
@@ -24,24 +34,101 @@ export default async function AdminPage() {
     );
   }
 
-  const [leads, opps] = await Promise.all([listLeads(), listOpportunities()]);
-  const leadRows = leads.ok ? leads.data : [];
+  const [leads, opps, biz, usage, designsRes] = await Promise.all([
+    listLeads(),
+    listOpportunities(),
+    listBusinesses(),
+    monthUsage(),
+    rest<DesignRow[]>("design_requests?select=id,created_at,stage,lead_id,config&order=created_at.desc&limit=200"),
+  ]);
+  const allLeads = leads.ok ? leads.data : [];
+  const originDef = ORIGINS.find((o) => o.id === origen);
+  const leadRows = allLeads.filter((l) => (!estado || l.status === estado) && (!originDef || originDef.test(l.source)));
+  const designs: DesignLite[] = designsRes.ok ? designsRes.data.map((d) => ({ id: d.id, created_at: d.created_at, stage: d.stage, name: d.config?.business?.name || "Sin nombre" })) : [];
+  const ov = buildOverview({
+    now: Date.now(),
+    leads: allLeads,
+    businesses: biz.ok ? biz.data : [],
+    usage: usage.ok ? usage.data : [],
+    designs,
+    env: envChecks().filter((e) => e.required && !e.ok).map((e) => ({ ok: false, label: "falta " + e.name })),
+  });
   const oppRows = opps.ok ? opps.data : [];
-  const count = (s: string) => leadRows.filter((l) => l.status === s).length;
+  const count = (s: string) => allLeads.filter((l) => l.status === s).length;
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 space-y-12">
       <header>
         <h1 className="font-display text-3xl font-bold">Panel interno</h1>
         <p className="mt-1 text-sm text-muted">Datos reales de la base de datos · actualizado al cargar la página.</p>
-        <p className="mt-3">
-          <Link href="/admin/stella" className="inline-flex min-h-[44px] items-center rounded-xl border border-cyan-500/40 px-4 text-sm font-semibold text-cyan-300">
-            Stella · negocios y contactos →
-          </Link>
-          <Link href="/admin/diseno" className="ml-3 inline-flex min-h-[44px] items-center rounded-xl border border-cyan-500/40 px-4 text-sm font-semibold text-cyan-300">
-            Diseños de clientes («Diseña tu web») →
-          </Link>
-        </p>
+        <section aria-labelledby="resumen-h" className="mt-6 space-y-5">
+          <h2 id="resumen-h" className="sr-only">
+            Resumen
+          </h2>
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4" data-testid="resumen-tarjetas">
+            <Card label="Leads" value={ov.leads.total} note={`${ov.leads.last7} en los últimos 7 días · ${ov.leads.byStatus["nuevo"] ?? 0} nuevos`} href="/admin?estado=nuevo#leads" />
+            <Card label="Clientes" value={ov.leads.clients} note="leads en estado «ganado»" href="/admin?estado=ganado#leads" />
+            <Card label="Proyectos pendientes" value={ov.projects.pending.length} note="diseños sin entregar" href="/admin/diseno" />
+            <Card label="Stella activa" value={`${ov.stella.active}/${ov.stella.total}`} note={`${ov.stella.drafts} borrador(es) · IA este mes ${ov.stella.costMonthUsd.toFixed(2).replace(".", ",")} $`} href="/admin/stella" />
+          </div>
+          <div className="rounded-2xl border border-white/10 p-4" data-testid="resumen-atencion">
+            <h3 className="font-display text-lg font-bold">Requiere atención ({ov.problems.length})</h3>
+            {ov.problems.length === 0 ? (
+              <p className="mt-1 text-sm text-emerald-300">Todo en orden: no hay nada pendiente de revisar.</p>
+            ) : (
+              <ul className="mt-2 space-y-1.5">
+                {ov.problems.map((p, i) => (
+                  <li key={i}>
+                    <Link href={p.href} className="flex min-h-[44px] items-center gap-2 rounded-lg px-2 text-sm hover:bg-white/5">
+                      <span className={"shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold " + (p.level === "alta" ? "bg-red-500/20 text-red-200" : "bg-amber-500/20 text-amber-100")}>{p.level}</span>
+                      {p.text}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 p-4">
+              <h3 className="font-display text-lg font-bold">Proyectos de web pendientes</h3>
+              {ov.projects.pending.length === 0 ? (
+                <p className="mt-1 text-sm text-muted">Ninguno.</p>
+              ) : (
+                <ul className="mt-2 space-y-1">
+                  {ov.projects.pending.slice(0, 6).map((d) => (
+                    <li key={d.id}>
+                      <Link href={`/admin/diseno/${d.id}`} className="flex min-h-[44px] items-center justify-between gap-2 rounded-lg px-2 text-sm hover:bg-white/5">
+                        <span className="truncate">{d.name}</span>
+                        <span className="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-[11px]">{STAGE_LABEL[d.stage as DesignStage] ?? d.stage}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="rounded-2xl border border-white/10 p-4">
+              <h3 className="font-display text-lg font-bold">Stella: asistentes y consumo del mes</h3>
+              {ov.stella.rows.length === 0 ? (
+                <p className="mt-1 text-sm text-muted">Todavía no hay negocios de Stella.</p>
+              ) : (
+                <ul className="mt-2 space-y-1">
+                  {ov.stella.rows.slice(0, 8).map((r) => (
+                    <li key={r.id}>
+                      <Link href={`/admin/stella/${r.id}`} className="flex min-h-[44px] items-center justify-between gap-2 rounded-lg px-2 text-sm hover:bg-white/5">
+                        <span className="truncate">
+                          <span className={r.active ? "text-emerald-300" : "text-muted"}>●</span> {r.name}
+                        </span>
+                        <span className="shrink-0 text-xs text-muted">
+                          {r.messages} msj · {r.contacts} contactos · {r.costUsd.toFixed(2).replace(".", ",")} $ ({r.pct} %)
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </section>
         {(!leads.ok || !opps.ok) && (
           <p role="alert" className="mt-4 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
             Error al leer la base de datos ({!leads.ok ? "leads" : "oportunidades"}). Revisa las variables de Supabase, que el esquema esté creado
@@ -54,19 +141,35 @@ export default async function AdminPage() {
         )}
       </header>
 
-      <section aria-labelledby="leads-h">
+      <section id="leads" aria-labelledby="leads-h">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h2 id="leads-h" className="font-display text-2xl font-bold">
-            Leads ({leadRows.length})
+            Leads ({leadRows.length}{leadRows.length !== allLeads.length ? ` de ${allLeads.length}` : ""})
           </h2>
           <ul className="flex flex-wrap gap-2 text-xs">
             {LEAD_STATUSES.map((s) => (
-              <li key={s} className="rounded-full border border-white/10 px-3 py-1">
-                {s}: <strong>{count(s)}</strong>
+              <li key={s}>
+                <Link href={`/admin?estado=${s}${origen ? `&origen=${origen}` : ""}#leads`} className={"inline-flex min-h-[36px] items-center rounded-full border px-3 " + (estado === s ? "border-cyan-400 bg-cyan-400/15" : "border-white/10")}>
+                  {s}: <strong className="ml-1">{count(s)}</strong>
+                </Link>
               </li>
             ))}
           </ul>
         </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs" aria-label="Filtros de leads">
+          <span className="text-muted">Origen:</span>
+          {ORIGINS.map((o) => (
+            <Link key={o.id} href={`/admin?origen=${o.id}${estado ? `&estado=${estado}` : ""}#leads`} className={"inline-flex min-h-[36px] items-center rounded-full border px-3 " + (origen === o.id ? "border-cyan-400 bg-cyan-400/15" : "border-white/10")}>
+              {o.label}
+            </Link>
+          ))}
+          {(estado || origen) && (
+            <Link href="/admin#leads" className="inline-flex min-h-[36px] items-center rounded-full border border-white/20 px-3 text-cyan-300">
+              Quitar filtros
+            </Link>
+          )}
+        </div>
+
         {leadRows.length === 0 ? (
           <p className="mt-4 text-sm text-muted">Todavía no hay leads registrados.</p>
         ) : (
@@ -198,5 +301,15 @@ export default async function AdminPage() {
         )}
       </section>
     </main>
+  );
+}
+
+function Card({ label, value, note, href }: { label: string; value: string | number; note: string; href: string }) {
+  return (
+    <Link href={href} className="block min-h-[44px] rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-cyan-500/40">
+      <p className="text-xs uppercase tracking-wider text-muted">{label}</p>
+      <p className="mt-1 font-display text-3xl font-bold">{value}</p>
+      <p className="mt-1 text-xs text-muted">{note}</p>
+    </Link>
   );
 }

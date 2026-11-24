@@ -1,6 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef, useState } from "react";
+import { activationChecklist } from "@/lib/stella/ficha";
+import { parseServices, parseFaqs } from "@/lib/stella/ficha";
+import { parseDomains } from "@/lib/stella/domains";
 import { saveBusinessAction, type FormState } from "./actions";
 
 export interface FormDefaults {
@@ -30,9 +33,42 @@ const hint = "mt-0.5 block text-xs font-normal text-muted";
 
 export default function BusinessForm({ mode, defaults, leadId }: { mode: "create" | "edit"; defaults: FormDefaults; leadId?: string }) {
   const [state, action, pending] = useActionState<FormState, FormData>(saveBusinessAction, {});
+  // Alta nueva = asistente por pasos con revisión final. Edición = ficha completa en una sola pantalla.
+  const guided = mode === "create";
+  const [step, setStep] = useState(1);
+  const [stepError, setStepError] = useState("");
+  const [snap, setSnap] = useState<Record<string, string> | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const STEP_LABELS = ["Negocio", "Lo que sabe", "Contacto", "Seguridad", "Revisar"];
+  const read = (): Record<string, string> => {
+    const out: Record<string, string> = {};
+    if (formRef.current) new FormData(formRef.current).forEach((v, k) => (out[k] = String(v)));
+    return out;
+  };
+  const go = (n: number) => {
+    const v = read();
+    if (n > step && step === 1) {
+      if (!/^[a-z0-9-]{2,40}$/.test((v.id ?? "").trim())) return setStepError("El identificador solo admite minúsculas, números y guiones (2–40). Ej.: peluqueria-ana");
+      if ((v.name ?? "").trim().length < 2) return setStepError("Escribe el nombre del negocio.");
+    }
+    setStepError("");
+    if (n === 5) setSnap(v);
+    setStep(n);
+    if (typeof window !== "undefined") window.scrollTo({ top: 0 });
+  };
+  const show = (n: number) => !guided || step === n;
   const d = defaults;
   return (
-    <form action={action} className="space-y-8">
+    <form ref={formRef} action={action} noValidate={guided} onSubmit={(e) => guided && step !== 5 && e.preventDefault()} className="space-y-8">
+      {guided && (
+        <nav aria-label="Pasos del alta" className="flex gap-1 overflow-x-auto">
+          {STEP_LABELS.map((l, i) => (
+            <button key={l} type="button" onClick={() => go(i + 1)} aria-current={step === i + 1 ? "step" : undefined} className={"min-h-[44px] shrink-0 rounded-xl px-3 text-sm font-semibold " + (step === i + 1 ? "bg-cyan-400/15 text-cyan-100" : "text-muted hover:bg-white/5")}>
+              {i + 1}. {l}
+            </button>
+          ))}
+        </nav>
+      )}
       <input type="hidden" name="mode" value={mode} />
       {leadId && <input type="hidden" name="leadId" value={leadId} />}
 
@@ -47,7 +83,7 @@ export default function BusinessForm({ mode, defaults, leadId }: { mode: "create
         </div>
       ) : null}
 
-      <fieldset className="space-y-4 rounded-2xl border border-white/10 p-4 sm:p-5">
+      <fieldset hidden={!show(1)} className="space-y-4 rounded-2xl border border-white/10 p-4 sm:p-5">
         <legend className="px-2 font-display text-lg font-bold">1 · El negocio</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className={label}>
@@ -79,7 +115,7 @@ export default function BusinessForm({ mode, defaults, leadId }: { mode: "create
         </label>
       </fieldset>
 
-      <fieldset className="space-y-4 rounded-2xl border border-white/10 p-4 sm:p-5">
+      <fieldset hidden={!show(2)} className="space-y-4 rounded-2xl border border-white/10 p-4 sm:p-5">
         <legend className="px-2 font-display text-lg font-bold">2 · Lo que Stella sabe</legend>
         <label className={label}>
           Servicios y precios (uno por línea)
@@ -103,7 +139,7 @@ export default function BusinessForm({ mode, defaults, leadId }: { mode: "create
         </label>
       </fieldset>
 
-      <fieldset className="space-y-4 rounded-2xl border border-white/10 p-4 sm:p-5">
+      <fieldset hidden={!show(3)} className="space-y-4 rounded-2xl border border-white/10 p-4 sm:p-5">
         <legend className="px-2 font-display text-lg font-bold">3 · Contacto y avisos</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className={label}>
@@ -128,7 +164,7 @@ export default function BusinessForm({ mode, defaults, leadId }: { mode: "create
         </div>
       </fieldset>
 
-      <fieldset className="space-y-4 rounded-2xl border border-white/10 p-4 sm:p-5">
+      <fieldset hidden={!show(4)} className="space-y-4 rounded-2xl border border-white/10 p-4 sm:p-5">
         <legend className="px-2 font-display text-lg font-bold">4 · Seguridad y gasto</legend>
         <label className={label}>
           Dominios autorizados (uno por línea)
@@ -152,9 +188,82 @@ export default function BusinessForm({ mode, defaults, leadId }: { mode: "create
         </label>
       </fieldset>
 
-      <button type="submit" disabled={pending} className="btn btn-primary min-h-[48px] px-6 disabled:opacity-50">
-        {pending ? "Guardando…" : mode === "create" ? "Crear negocio (queda desactivado)" : "Guardar cambios"}
-      </button>
+      {guided && step === 5 && snap && <Review v={snap} />}
+      {stepError && (
+        <p role="alert" className="rounded-xl border border-amber-400/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-100">
+          {stepError}
+        </p>
+      )}
+      {guided ? (
+        <div className="flex flex-wrap gap-3">
+          {step > 1 && (
+            <button type="button" onClick={() => go(step - 1)} className="btn btn-ghost min-h-[48px] px-6">
+              ← Atrás
+            </button>
+          )}
+          {step < 5 ? (
+            <button key="siguiente" type="button" onClick={() => go(step + 1)} className="btn btn-primary min-h-[48px] px-6">
+              Siguiente →
+            </button>
+          ) : (
+            <button key="crear" type="submit" disabled={pending} className="btn btn-primary min-h-[48px] px-6 disabled:opacity-50">
+              {pending ? "Guardando…" : "Crear negocio (queda desactivado)"}
+            </button>
+          )}
+        </div>
+      ) : (
+        <button type="submit" disabled={pending} className="btn btn-primary min-h-[48px] px-6 disabled:opacity-50">
+          {pending ? "Guardando…" : "Guardar cambios"}
+        </button>
+      )}
     </form>
+  );
+}
+
+// Paso final del alta: resumen de lo que se va a crear y qué falta para poder activarlo.
+function Review({ v }: { v: Record<string, string> }) {
+  const services = parseServices(v.services ?? "").items;
+  const faqs = parseFaqs(v.faqs ?? "").items;
+  const domains = parseDomains(v.domains ?? "").hosts;
+  const missing = activationChecklist({ name: v.name ?? "", about: v.about ?? "", services, whatsapp: (v.whatsapp ?? "").replace(/\D/g, ""), domains, privacyUrl: (v.privacyUrl ?? "").trim() });
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  return (
+    <section aria-labelledby="rev-h" className="space-y-4 rounded-2xl border border-cyan-500/30 bg-cyan-500/[0.04] p-4 sm:p-5" data-testid="alta-revision">
+      <h3 id="rev-h" className="font-display text-lg font-bold">
+        5 · Revisa antes de crear
+      </h3>
+      <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
+        <dt className="text-muted">Negocio</dt>
+        <dd>
+          {v.name} <code className="text-xs text-muted">({v.id})</code>
+        </dd>
+        <dt className="text-muted">Servicios</dt>
+        <dd>{services.length} · {services.filter((x) => x.price).length} con precio</dd>
+        <dt className="text-muted">Preguntas frecuentes</dt>
+        <dd>{faqs.length}</dd>
+        <dt className="text-muted">Contacto</dt>
+        <dd>WhatsApp {v.whatsapp || "—"} · teléfono {v.phone || "—"}</dd>
+        <dt className="text-muted">Dominios</dt>
+        <dd>{domains.join(", ") || "—"}</dd>
+        <dt className="text-muted">Topes de gasto</dt>
+        <dd>{v.dailyBudgetUsd || "1"} $/día · {v.monthlyBudgetUsd || "5"} $/mes</dd>
+      </dl>
+      {missing.length === 0 ? (
+        <p className="text-sm text-emerald-200">Ficha completa: podrás activarla tras hacer una prueba.</p>
+      ) : (
+        <div>
+          <p className="text-sm font-semibold text-amber-100">Se creará desactivado. Antes de activar falta:</p>
+          <ul className="mt-1 list-disc pl-5 text-sm text-amber-100">
+            {missing.map((m) => (
+              <li key={m}>{m}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <p className="text-xs text-muted">
+        Al crearlo se genera el código de instalación y el enlace para que el cliente complete o corrija su ficha. Código previsto:
+        <code className="mt-1 block break-all rounded-lg bg-black/40 p-2">{`<script src="${origin}/stella.js" data-negocio="${v.id}" defer></script>`}</code>
+      </p>
+    </section>
   );
 }

@@ -22,6 +22,12 @@ export async function startSupabase(root) {
   await db.exec(fs.readFileSync(path.join(root, "supabase/stella.sql"), "utf8"));
   const schema = fs.readFileSync(path.join(root, "supabase/schema.sql"), "utf8").replace(/create extension if not exists pgcrypto;/i, "");
   await db.exec(schema);
+  // Tabla de diseños del configurador (si existe en esta rama) con un «storage» mínimo simulado.
+  const cfgSql = path.join(root, "supabase/configurador.sql");
+  if (fs.existsSync(cfgSql)) {
+    await db.exec("create schema if not exists storage; create table if not exists storage.buckets (id text primary key, name text, public boolean default false, file_size_limit bigint, allowed_mime_types text[]);");
+    await db.exec(fs.readFileSync(cfgSql, "utf8").replace(/create extension if not exists pgcrypto;/i, ""));
+  }
 
   const colTypes = {};
   async function types(table) {

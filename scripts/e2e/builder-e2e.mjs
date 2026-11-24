@@ -348,8 +348,8 @@ try {
   const { ctx: ca, page: pa, problems: pra } = await newPage(D, { httpCredentials: ADMIN, acceptDownloads: true });
   await pa.goto(`${BASE}/admin`, { waitUntil: "load" });
   check("[admin] el panel principal muestra el lead con «VER SU WEB DISEÑADA»", (await pa.getByText("VER SU WEB DISEÑADA").count()) >= 1);
-  check("[admin] el lead de ESA solicitud enlaza con su propio diseño", (await pa.locator(`a[href="/admin/diseno/${designId}"]`).count()) === 1);
-  await pa.locator(`a[href="/admin/diseno/${designId}"]`).click();
+  check("[admin] el lead de ESA solicitud enlaza con su propio diseño", (await pa.locator(`#leads a[href="/admin/diseno/${designId}"]`).count()) === 1);
+  await pa.locator(`#leads a[href="/admin/diseno/${designId}"]`).click();
   await pa.waitForURL(`**/admin/diseno/${designId}`, { timeout: 15000 });
   await pa.getByRole("heading", { name: "Peluquería Ana" }).waitFor();
   check("[admin] abre la solicitud: nombre, contacto y la web que ha diseñado", (await pa.getByText("Así quiere su web").count()) === 1 && (await pa.locator(".bp").count()) === 1);

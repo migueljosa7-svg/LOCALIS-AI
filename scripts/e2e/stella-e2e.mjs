@@ -388,14 +388,20 @@ try {
     await page.goto(`https://${HOSTS.site}/admin/stella`, { waitUntil: "load" });
     check("[admin] lista de negocios con los 3 sembrados", (await page.getByText("Peluquería Ana").count()) > 0 && (await page.getByText("Clínica Sol").count()) > 0);
     await page.goto(`https://${HOSTS.site}/admin/stella/nuevo`);
+    // Alta guiada por pasos: 1 Negocio, 2 Lo que sabe, 3 Contacto, 4 Seguridad, 5 Revisar
+    const siguiente = () => page.getByRole("button", { name: "Siguiente →" }).click();
     await page.fill('input[name="id"]', "taller-paco");
     await page.fill('input[name="name"]', "Taller Paco");
     await page.fill('textarea[name="about"]', "Taller mecánico de coches en Zaragoza, revisiones y neumáticos.");
+    await siguiente();
     await page.fill('textarea[name="services"]', "Cambio de aceite | 49 € | Incluye filtro\nRevisión ITV | consultar");
     await page.fill('textarea[name="faqs"]', "¿Dais cita previa? | Sí, por WhatsApp.");
+    await siguiente();
     await page.fill('input[name="whatsapp"]', "+34 600 999 888");
     await page.fill('input[name="privacyUrl"]', "https://tallerpaco.es/privacidad");
+    await siguiente();
     await page.fill('textarea[name="domains"]', "https://www.tallerpaco.es/");
+    await siguiente();
     await page.getByRole("button", { name: /Crear negocio/ }).click();
     await page.waitForURL(/\/admin\/stella\/taller-paco\?aviso=creado/, { timeout: 15000 });
     check("[admin] alta de negocio desde el formulario (queda DESACTIVADO)", (await page.getByText("Desactivado").count()) > 0);
@@ -413,6 +419,7 @@ try {
     await page.goto(`https://${HOSTS.site}/admin/stella/nuevo`);
     await page.fill('input[name="id"]', "taller-paco");
     await page.fill('input[name="name"]', "Duplicado");
+    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Siguiente →" }).click();
     await page.getByRole("button", { name: /Crear negocio/ }).click();
     await page.getByText(/Ya existe un negocio/).waitFor({ timeout: 10000 });
     check("[admin] no permite duplicar identificadores", true);
@@ -439,7 +446,7 @@ try {
     check("[admin] sin errores de consola", adminProblems.length === 0, adminProblems.join(" | "));
     // Panel principal enlaza
     await page.goto(`https://${HOSTS.site}/admin`);
-    check("[admin] el panel principal enlaza con Stella y muestra el contacto de Stella", (await page.getByText("Stella · negocios y contactos").count()) > 0 && (await page.getByText("stella:peluqueria-ana").count()) > 0);
+    check("[admin] el panel principal enlaza con Stella y muestra el contacto de Stella", (await page.getByRole("navigation", { name: "Panel interno" }).getByRole("link", { name: "Stella" }).count()) === 1 && (await page.getByText("stella:peluqueria-ana").count()) > 0);
     await ctx.close();
   }
   }

@@ -9,6 +9,8 @@ import { fetchBusiness, monthUsage } from "@/lib/stella/store";
 import { microToUsd } from "@/lib/stella/cost";
 import { readConfig } from "@/lib/stella/config";
 import { SITE_URL } from "@/lib/site";
+import { headers } from "next/headers";
+import { createOnboardingToken } from "@/lib/stella/onboarding";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Stella · negocio", robots: { index: false, follow: false } };
@@ -40,6 +42,10 @@ export default async function BusinessPage({ params, searchParams }: { params: P
   const cfg = readConfig();
   const snippet = `<script src="${SITE_URL}/stella.js" data-negocio="${b.id}" defer></script>`;
   const notice = aviso ? AVISOS[aviso] : undefined;
+  const reqHost = (await headers()).get("host") ?? "";
+  const inviteToken = cfg.secret ? await createOnboardingToken(cfg.secret, b.id) : null;
+  const inviteUrl = inviteToken ? `https://${reqHost}/alta/${inviteToken}` : null;
+  const clientDone = /\[cliente\]/.test(b.notes ?? "");
 
   return (
     <main className="mx-auto max-w-3xl space-y-8 px-4 py-10">
@@ -107,6 +113,25 @@ export default async function BusinessPage({ params, searchParams }: { params: P
         </h2>
         <p className="mt-1 text-sm text-muted">Se pega en la web del cliente justo antes de &lt;/body&gt;. Solo funciona en los dominios autorizados: {b.domains.join(", ") || "ninguno todavía"}.</p>
         <pre className="mt-3 overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-black/40 p-3 text-xs select-all">{snippet}</pre>
+      </section>
+
+      <section aria-labelledby="alta-h" className="rounded-2xl border border-white/10 p-4">
+        <h2 id="alta-h" className="font-display text-lg font-bold">
+          Enlace para que el cliente complete su ficha
+        </h2>
+        <p className="mt-1 text-sm text-muted">
+          El cliente rellena servicios, precios, horario y contacto <strong>sin entrar al panel</strong>. Solo puede editar su ficha mientras esté desactivada, y nunca puede activarla. Caduca a los 14 días.
+        </p>
+        {clientDone && <p className="mt-2 rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-100">El cliente ya ha enviado su información: revísala abajo y activa cuando esté todo bien.</p>}
+        {inviteUrl ? (
+          <pre className="mt-3 overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-black/40 p-3 text-xs select-all" data-testid="enlace-alta">{inviteUrl}</pre>
+        ) : (
+          <p className="mt-2 text-sm text-amber-200">No se puede generar el enlace: falta la clave de Supabase o STELLA_SIGNING_SECRET.</p>
+        )}
+        <p className="mt-2 text-xs text-muted">Envíaselo tú por WhatsApp o email. LOCALIS no envía nada por su cuenta.</p>
+        <Link href={`/admin/stella/nuevo?clonar=${b.id}`} className="mt-3 inline-flex min-h-[44px] items-center text-sm text-cyan-300 underline">
+          Duplicar esta ficha para otro negocio del mismo sector
+        </Link>
       </section>
 
       <section aria-labelledby="uso-h" className="rounded-2xl border border-white/10 p-4">

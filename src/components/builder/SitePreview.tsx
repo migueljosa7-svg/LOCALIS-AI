@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import { readableOn } from "@/components/configurator/studioModel";
 import { PREVIEW_CSS } from "./previewCss";
 import { sampleSrc } from "@/lib/builder/images";
+import LocationActions from "./LocationActions";
 import {
   SAMPLE_BY_SECTOR, SECTION_DEFS, buttonPending, fontCss, resolveButtonColor,
   type BuilderButton, type ButtonPosition, type SectionId, type SiteConfig,
@@ -294,7 +295,7 @@ export default function SitePreview({ cfg, imageSrc, interactive = true, showExa
             <div>
               <h3>{name}</h3>
               <p className="muted" style={{ marginTop: 8 }}>{biz.address || "Tu dirección aparecerá aquí"}{biz.city ? `, ${biz.city}` : ""}</p>
-              <p className="muted" style={{ marginTop: 8 }}>El mapa interactivo se añade al construir la web.</p>
+              <LocationActions address={biz.address} city={biz.city} />
             </div>
             <div className="map" role="img" aria-label="Mapa de ejemplo">
               <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">

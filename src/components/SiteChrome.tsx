@@ -10,5 +10,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
   if (pathname?.startsWith("/stella/embed")) return null;
   // Página de pruebas de instalación (solo Preview): ahí el único Stella debe ser el del negocio de prueba.
   if (pathname?.startsWith("/prueba-stella")) return null;
+  // Panel interno: sin analítica, cookies de la web pública ni botones flotantes (taparían los controles y no aplican).
+  if (pathname === "/admin" || pathname?.startsWith("/admin/")) return null;
   return <>{children}</>;
 }
