@@ -120,6 +120,14 @@ export async function startAnthropic() {
       return res.end(JSON.stringify(calls));
     }
     const j = JSON.parse(body || "{}");
+    // Modelos «err-<código>» simulan los errores reales de la API de Anthropic (mismo formato de cuerpo).
+    const em = /^err-(\d{3})$/.exec(String(j.model));
+    if (em) {
+      const code = Number(em[1]);
+      const E = { 400: ["invalid_request_error", "Your credit balance is too low to access the Anthropic API."], 401: ["authentication_error", "invalid x-api-key"], 404: ["not_found_error", `model: ${j.model}`], 429: ["rate_limit_error", "Number of request tokens has exceeded your per-minute rate limit"], 529: ["overloaded_error", "Overloaded"] }[code] ?? ["api_error", "error interno"];
+      res.writeHead(code, { "Content-Type": "application/json", "request-id": "req_err_e2e", "x-should-retry": "false" });
+      return res.end(JSON.stringify({ type: "error", error: { type: E[0], message: E[1] }, request_id: "req_err_e2e" }));
+    }
     calls.push({ model: j.model, max_tokens: j.max_tokens, system: j.system, messages: j.messages, hasKey: /^Bearer .+/.test(String(req.headers.authorization ?? "")) || Boolean(req.headers["x-api-key"]) });
     const last = String(j.messages?.at(-1)?.content ?? "").toLowerCase();
     const text = last.includes("llamen") ? "Claro, te ayudo con eso. [[FORMULARIO]]" : last.includes("corte") ? "Un corte de pelo cuesta 15 €." : "Eso no lo sé con seguridad. Puedes escribirnos por WhatsApp.";

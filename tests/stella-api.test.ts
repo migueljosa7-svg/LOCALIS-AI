@@ -294,3 +294,28 @@ test("chat: negocios «prueba-…» y tokens de prueba devuelven modelo y tokens
   const c = await handleChat(deps, req({ token: await tokenFor("peluqueria-ana"), messages: msgs }));
   assert.equal(c.body.meta, undefined, "un negocio real no expone nada");
 });
+
+test("chat: ante un error de Anthropic, el registro lleva la causa; el navegador solo la ve en pruebas; nunca la clave ni la conversación", async () => {
+  const logged: string[] = [];
+  const orig = console.error;
+  console.error = (...a: unknown[]) => void logged.push(a.join(" "));
+  try {
+    const err = Object.assign(new Error("texto interno con mi DNI 12345678Z"), { status: 400, type: "invalid_request_error", apiMessage: "Your credit balance is too low sk-ant-api03-SECRETO", requestID: "req_abc" });
+    const { deps } = setup({ model: fakeModel({ error: err }), store: new FakeStore(biz(), biz({ id: "prueba-peluqueria" })) });
+    const real = await handleChat(deps, req({ token: await tokenFor("peluqueria-ana"), messages: [{ role: "user", content: "quiero cita, soy 12345678Z" }] }));
+    assert.equal(real.status, 502);
+    assert.equal(real.body.diagnostic, undefined, "un negocio real no expone diagnóstico al visitante");
+    const test = await handleChat(deps, req({ token: await tokenFor("prueba-peluqueria"), messages: msgs }));
+    const d = test.body.diagnostic as Record<string, unknown>;
+    assert.equal(d.status, 400);
+    assert.equal(d.requestId, "req_abc");
+    assert.match(String(d.hint), /Saldo insuficiente/);
+    assert.ok(!JSON.stringify(test.body).includes("SECRETO"));
+    const all = logged.join("\n");
+    assert.match(all, /estado=400 error=invalid_request_error/);
+    assert.match(all, /peticion=req_abc/);
+    assert.ok(!all.includes("SECRETO") && !all.includes("12345678Z") && !all.includes("texto interno"), "sin claves ni conversación ni texto genérico");
+  } finally {
+    console.error = orig;
+  }
+});

@@ -176,3 +176,40 @@ test("siteStatus: en Preview sin configurar avisa de qué falta; en producción 
   assert.equal(siteStatus({ ANTHROPIC_API_KEY: "k", SUPABASE_SERVICE_ROLE_KEY: "s", STELLA_SITE_WIDGET: "on", STELLA_ENABLED: "false" }).live, false);
   assert.ok(!JSON.stringify(all).includes('"k"') && !JSON.stringify(all).includes('"s"'), "nunca devuelve valores de variables");
 });
+
+// ── Clasificación segura de errores de Anthropic ──────────────────
+import { describeError, hint, logLine } from "../src/lib/stella/errors";
+
+class FakeApiError extends Error {
+  constructor(public status: number, public type: string | null, public apiMessage: string | null, public requestID: string | null, public errorCode: string | null = null) {
+    super(`${status} ${apiMessage}`);
+  }
+}
+
+test("describeError: estado, tipo, mensaje del proveedor e id de petición; sin claves ni texto genérico de la excepción", () => {
+  const e = describeError(new FakeApiError(401, "authentication_error", "invalid x-api-key sk-ant-api03-SECRETO123", "req_1"));
+  assert.deepEqual({ k: e.kind, s: e.status, t: e.type, r: e.requestId }, { k: "api", s: 401, t: "authentication_error", r: "req_1" });
+  assert.ok(!JSON.stringify(e).includes("SECRETO123"), "las claves se ocultan");
+  assert.match(e.message ?? "", /\[(clave|oculto)\]/);
+  const generic = describeError(Object.assign(new Error("mi teléfono es 600123456"), { status: 500 }));
+  assert.equal(generic.message, null, "sin apiMessage no se registra el texto de la excepción");
+  assert.ok(!logLine(generic).includes("600123456"));
+  assert.equal(describeError(new (class APIConnectionTimeoutError extends Error {})("x")).kind, "timeout");
+  assert.equal(describeError(new (class APIConnectionError extends Error {})("x")).kind, "connection");
+  assert.equal(describeError("texto").status, null);
+  assert.equal(describeError(null).kind, "other");
+  assert.ok((describeError(new FakeApiError(400, "invalid_request_error", "x".repeat(900), null)).message ?? "").length <= 240);
+});
+
+test("hint: orienta según el error (clave, modelo, saldo, límite, saturación, formato)", () => {
+  const h = (s: number | null, t: string | null, m: string | null = null, kind: "api" | "timeout" | "connection" | "other" = "api") => hint({ kind, status: s, type: t, code: null, message: m, requestId: null });
+  assert.match(h(401, "authentication_error"), /clave de API no es válida/);
+  assert.match(h(403, "permission_error"), /permiso/);
+  assert.match(h(404, "not_found_error"), /STELLA_MODEL/);
+  assert.match(h(400, "invalid_request_error", "Your credit balance is too low"), /Saldo insuficiente/);
+  assert.match(h(400, "invalid_request_error", "messages: bad"), /formato/);
+  assert.match(h(429, "rate_limit_error"), /Límite de uso/);
+  assert.match(h(529, "overloaded_error"), /saturada/);
+  assert.match(h(null, null, null, "timeout"), /tardó demasiado/);
+  assert.match(h(null, null, null, "connection"), /conectar/);
+});

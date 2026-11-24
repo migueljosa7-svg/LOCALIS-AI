@@ -57,6 +57,10 @@ export default async function StellaAdminPage() {
           crear negocio de PRUEBA (datos ficticios)
         </Link>{" "}
         ·{" "}
+        <Link href="/admin/stella/diagnostico" className="text-cyan-300 underline">
+          diagnóstico de la IA
+        </Link>{" "}
+        ·{" "}
         <Link href="/admin/stella/localis/prueba" className="text-cyan-300 underline">
           abrir prueba
         </Link>

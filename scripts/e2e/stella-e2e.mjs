@@ -87,6 +87,31 @@ async function newPage(vp, opts = {}) {
 }
 
 try {
+  if (process.env.E2E_MODEL) {
+    // Modo «error de la IA»: STELLA_MODEL=err-<código> hace que el Anthropic simulado responda con ese error.
+    const code = process.env.E2E_MODEL.slice(4);
+    console.log(`
+[error IA] el modelo falla con ${code}`);
+    await seed("prueba-peluqueria", "Peluquería de Prueba", [HOSTS.site]);
+    const { ctx, page } = await newPage(VIEWPORTS[0]);
+    await page.goto(`https://${HOSTS.site}/prueba-stella`, { waitUntil: "load" });
+    await page.locator('button[aria-controls="stella-panel"]').click();
+    const fr = page.frameLocator('iframe[title="Chat con Stella"]');
+    await fr.getByText("asistente virtual con IA de Peluquería de Prueba").waitFor({ timeout: 15000 });
+    await fr.locator("textarea").fill("¿Qué servicios ofrecéis? Mi móvil es 600777888");
+    await fr.getByRole("button", { name: "Enviar mensaje" }).click();
+    const diag = fr.getByTestId("stella-diag");
+    await diag.waitFor({ timeout: 20000 });
+    const t = await diag.innerText();
+    check(`[error IA] el chat de pruebas muestra el diagnóstico real (estado ${code}, tipo y mensaje de Anthropic)`, t.includes(`estado ${code}`) && /error|_error/.test(t) && t.includes("req_err_e2e"), t.slice(0, 300));
+    check("[error IA] explica qué hacer", /clave|modelo|saldo|límite|saturada/i.test(t));
+    check("[error IA] el usuario sigue viendo la salida a WhatsApp", (await fr.locator('a[href*="wa.me"]').count()) >= 1);
+    check("[error IA] la web sigue funcionando", (await page.locator("h1").innerText()).includes("Peluquería de Prueba"));
+    await sleep(500);
+    check("[error IA] el registro de Vercel tiene la causa (estado, tipo, id de petición)", nextLog.includes("[stella] fallo del modelo") && nextLog.includes(`estado=${code}`) && nextLog.includes("peticion=req_err_e2e"), nextLog.slice(-400));
+    check("[error IA] el registro NO contiene la pregunta ni el teléfono del visitante ni claves", !nextLog.includes("600777888") && !nextLog.includes("Qué servicios ofrecéis") && !nextLog.includes("sk-ant-clave"));
+    await ctx.close();
+  } else {
   // ── 1. Web de cliente autorizada, en los 3 tipos de dispositivo ──
   for (const vp of VIEWPORTS) {
     console.log(`\n[${vp.name}] widget instalado en la web del cliente`);
@@ -416,6 +441,7 @@ try {
     await page.goto(`https://${HOSTS.site}/admin`);
     check("[admin] el panel principal enlaza con Stella y muestra el contacto de Stella", (await page.getByText("Stella · negocios y contactos").count()) > 0 && (await page.getByText("stella:peluqueria-ana").count()) > 0);
     await ctx.close();
+  }
   }
 } catch (e) {
   check("EJECUCIÓN SIN EXCEPCIONES", false, String(e.stack ?? e).slice(0, 600));

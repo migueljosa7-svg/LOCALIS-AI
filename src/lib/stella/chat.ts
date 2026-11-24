@@ -2,6 +2,7 @@
 // Sin dependencias de Next ni de Supabase: todo lo externo entra por `deps`, así se prueba sin red.
 import type Anthropic from "@anthropic-ai/sdk";
 import { costMicro } from "./cost";
+import { describeError, hint, logLine } from "./errors";
 import { hashKey, verifyToken, type StellaTokenPayload } from "./token";
 import { FORM_MARKER, buildSystemPrompt } from "./prompt";
 import type { StellaConfig } from "./config";
@@ -186,12 +187,16 @@ export async function handleChat(deps: ChatDeps, req: IncomingRequest): Promise<
     const meta = payload.t || business.id.startsWith("prueba-") ? { model: response.model, inputTokens: response.usage.input_tokens ?? 0, outputTokens: response.usage.output_tokens ?? 0 } : undefined;
     return { status: 200, body: { ok: true, reply: reply || "¿Me lo puedes repetir de otra forma?", showForm, ...(meta ? { meta } : {}) } };
   } catch (err) {
-    // Se registra el tipo de error y el negocio, NUNCA el contenido de la conversación.
-    const kind = (err as { status?: number })?.status ?? (err instanceof Error ? err.name : "desconocido");
-    console.error(`[stella] fallo del modelo (negocio ${business.id}, modelo ${deps.config.model}): ${kind}`);
+    // Se registra la causa (estado, tipo, mensaje del proveedor, id de petición), NUNCA la clave ni la conversación.
+    const info = describeError(err);
+    console.error(`[stella] fallo del modelo (negocio ${business.id}, modelo ${deps.config.model}): ${logLine(info)}`);
     await deps.store
       .addUsage({ businessId: business.id, messages: 0, inputTokens: 0, outputTokens: 0, costMicro: 0, errors: 1, contacts: 0 })
       .catch(() => {});
+    // En pruebas (token del panel o negocios «prueba-…») se devuelve también el diagnóstico para verlo sin entrar en los registros.
+    if (payload.t || business.id.startsWith("prueba-")) {
+      return fail(502, FALLBACK_MSG, { fallback: true, diagnostic: { model: deps.config.model, status: info.status, type: info.type, message: info.message, requestId: info.requestId, hint: hint(info) } });
+    }
     return fail(502, FALLBACK_MSG, { fallback: true });
   }
 }
