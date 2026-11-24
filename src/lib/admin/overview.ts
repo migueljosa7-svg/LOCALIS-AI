@@ -75,9 +75,9 @@ export function buildOverview(input: { now: number; leads: LeadLite[]; businesse
 
   const problems: Problem[] = [];
   const staleLeads = input.leads.filter((l) => l.status === "nuevo" && now - Date.parse(l.created_at) > 2 * DAY);
-  if (staleLeads.length) problems.push({ level: "alta", text: `${staleLeads.length} lead(s) nuevo(s) sin contactar desde hace más de 2 días`, href: "/admin?estado=nuevo#leads" });
+  if (staleLeads.length) problems.push({ level: "alta", text: `${staleLeads.length} lead(s) nuevo(s) sin contactar desde hace más de 2 días`, href: "/admin/leads?estado=nuevo" });
   const unmailed = input.leads.filter((l) => !l.email_notified && now - Date.parse(l.created_at) < 14 * DAY);
-  if (unmailed.length) problems.push({ level: "media", text: `${unmailed.length} lead(s) de los últimos 14 días sin aviso por email (revisa Resend)`, href: "/admin#leads" });
+  if (unmailed.length) problems.push({ level: "media", text: `${unmailed.length} lead(s) de los últimos 14 días sin aviso por email (revisa Resend)`, href: "/admin/leads" });
   const staleDesigns = input.designs.filter((d) => d.stage === "recibida" && now - Date.parse(d.created_at) > 3 * DAY);
   if (staleDesigns.length) problems.push({ level: "alta", text: `${staleDesigns.length} diseño(s) recibido(s) sin revisar desde hace más de 3 días`, href: "/admin/diseno" });
   for (const r of rows) {

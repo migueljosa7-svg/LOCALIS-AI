@@ -215,7 +215,7 @@ export default function SectorsShowcase() {
                 </ul>
                 <p className="mt-3 text-[11.5px] text-muted">Las funciones de IA, citas, pedidos y reparto están en desarrollo. Hoy entregamos la web con formulario, WhatsApp y Google Maps.</p>
 
-                <a href="#cita" className="btn btn-primary mt-7 w-full sm:w-auto">
+                <a href="/contacto" className="btn btn-primary mt-7 w-full sm:w-auto">
                   Ver cómo quedaría en mi {active.noun} <ArrowRight size={17} aria-hidden="true" />
                 </a>
               </div>

@@ -182,7 +182,7 @@ try {
     console.log("[web LOCALIS] Stella real + pedido");
     for (const vp of VIEWPORTS) {
       const { ctx, page, problems } = await newPage(vp);
-      await page.goto(`https://${HOSTS.site}/`, { waitUntil: "load" });
+      await page.goto(`https://${HOSTS.site}/plataforma`, { waitUntil: "load" });
       check(`[${vp.name}] la sección «Stella real» aparece en la home`, (await page.locator("#stella-real").count()) === 1);
       await page.locator("#stella-real").getByRole("button", { name: "Hablar con Stella ahora" }).click();
       const frame = page.frameLocator('iframe[title="Chat con Stella"]');
@@ -247,7 +247,7 @@ try {
       const { ctx, page, problems } = await newPage(vp);
       let apiCalls = 0;
       page.on("request", (r) => r.url().includes("/api/stella") && apiCalls++);
-      await page.goto(`https://${HOSTS.site}/`, { waitUntil: "load" });
+      await page.goto(`https://${HOSTS.site}/plataforma`, { waitUntil: "load" });
       const btn = page.getByTestId("stella-pending-button");
       if (prod) {
         check(`[${vp.name}] en producción sin configurar NO aparece el botón de Stella ni avisos (queda como siempre)`, (await btn.count()) === 0 && (await page.locator("#stella-pendiente").count()) === 0);
@@ -445,7 +445,7 @@ try {
     const adminProblems = problems.filter((p) => !/favicon/.test(p));
     check("[admin] sin errores de consola", adminProblems.length === 0, adminProblems.join(" | "));
     // Panel principal enlaza
-    await page.goto(`https://${HOSTS.site}/admin`);
+    await page.goto(`https://${HOSTS.site}/admin/leads`);
     check("[admin] el panel principal enlaza con Stella y muestra el contacto de Stella", (await page.getByRole("navigation", { name: "Panel interno" }).getByRole("link", { name: "Stella" }).count()) === 1 && (await page.getByText("stella:peluqueria-ana").count()) > 0);
     await ctx.close();
   }

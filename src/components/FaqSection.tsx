@@ -2,15 +2,15 @@ import { Plus } from "lucide-react";
 import { FAQS } from "@/lib/faqs";
 
 // Acordeón nativo (<details>): accesible por teclado, funciona sin JavaScript.
-export default function FaqSection() {
+export default function FaqSection({ titleAs: Title = "h2" }: { titleAs?: "h1" | "h2" }) {
   return (
     <section id="faq" aria-labelledby="faq-title" className="cv-auto relative w-full py-20 lg:py-28">
       <div className="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <span className="eyebrow mb-5">Preguntas frecuentes</span>
-          <h2 id="faq-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
+          <Title id="faq-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
             Resolvemos tus <span className="gradient-text">dudas</span>
-          </h2>
+          </Title>
         </div>
 
         <div className="space-y-3">

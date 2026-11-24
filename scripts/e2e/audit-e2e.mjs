@@ -89,7 +89,7 @@ try {
   const ctx = await browser.newContext({ httpCredentials: ADMIN, viewport: { width: 1400, height: 900 } });
   await ctx.addInitScript(() => { try { localStorage.setItem("localis-cookie-consent", JSON.stringify({ analytics: false, marketing: false, necessary: true, version: "2026-10-24" })); } catch {} });
   const page = await ctx.newPage();
-  await page.goto(`${A}/admin`, { waitUntil: "load" });
+  await page.goto(`${A}/admin/leads`, { waitUntil: "load" });
   await page.locator(`#st-${id}`).selectOption("propuesta");
   await page.getByText("Guardado").first().waitFor({ timeout: 10000 });
   await page.reload({ waitUntil: "load" });
@@ -102,8 +102,8 @@ try {
   const e0 = await noKey.get("/stella/embed?negocio=prueba-peluqueria", { headers: { Referer: "https://cliente-prueba.com/", "Sec-Fetch-Dest": "iframe" }, failOnStatusCode: false });
   check("[stella] SIN API key: el chat incrustado dice «no disponible» (no hay chat ni respuestas)", e0.status() === 200 && /no est[aá] disponible/.test(await e0.text()));
   check("[stella] SIN API key: /api/stella → 503 «no está activada»", (await st(noKey, "/api/stella", { method: "POST", data: { messages: [] }, headers: { Origin: B } })) === 503);
-  const homeB = await (await noKey.get("/")).text();
-  check("[stella] SIN API key: la home no monta el chat real (stella.js) y muestra el aviso de pendiente", !homeB.includes("stella.js") && (PROD || homeB.includes("stella-pendiente")));
+  const homeB = await (await noKey.get("/plataforma")).text();
+  check("[stella] SIN API key: la página de plataforma no monta el chat real (stella.js) y muestra el aviso de pendiente", !homeB.includes("stella.js") && (PROD || homeB.includes("stella-pendiente")));
   const ca = await noRedirect(C);
   const e1 = await ca.get("/stella/embed?negocio=prueba-peluqueria", { headers: { Referer: "https://cliente-prueba.com/", "Sec-Fetch-Dest": "iframe" }, failOnStatusCode: false });
   const token = ((await e1.text()).match(/\\?"token\\?":\\?"([A-Za-z0-9_.-]+)\\?"/) ?? [])[1];

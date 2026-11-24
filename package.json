@@ -18,11 +18,12 @@
     "market:check": "node scripts/check-market-data.mjs",
     "test": "tsx --test tests/*.test.ts",
     "stella:smoke": "node scripts/stella-smoke.mjs",
-    "test:e2e": "npm run test:e2e:stella && npm run test:e2e:builder && npm run test:e2e:audit && npm run test:e2e:producto",
+    "test:e2e": "npm run test:e2e:stella && npm run test:e2e:builder && npm run test:e2e:audit && npm run test:e2e:producto && npm run test:e2e:seo",
     "test:e2e:stella": "node scripts/e2e/stella-e2e.mjs",
     "test:e2e:builder": "node scripts/e2e/builder-e2e.mjs",
     "test:e2e:audit": "node scripts/e2e/audit-e2e.mjs",
-    "test:e2e:producto": "node scripts/e2e/producto-e2e.mjs"
+    "test:e2e:producto": "node scripts/e2e/producto-e2e.mjs",
+    "test:e2e:seo": "node scripts/e2e/seo-e2e.mjs"
   },
   "repository": {
     "type": "git",

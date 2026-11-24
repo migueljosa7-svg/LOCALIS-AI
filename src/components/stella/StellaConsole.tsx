@@ -318,7 +318,7 @@ export default function StellaConsole() {
   const busy = typing || listening || autoplay === "running";
 
   return (
-    <section id="stella" ref={sectionRef} aria-labelledby="stella-title" className="relative w-full py-20 lg:py-28">
+    <section id="stella-demo" ref={sectionRef} aria-labelledby="stella-title" className="relative w-full py-20 lg:py-28">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="eyebrow mb-5">
@@ -530,7 +530,7 @@ export default function StellaConsole() {
               )}
             </ol>
 
-            <a href="#cita" className="btn btn-primary mt-4 w-full text-sm">
+            <a href="/contacto" className="btn btn-primary mt-4 w-full text-sm">
               Quiero a Stella en mi negocio
             </a>
           </aside>
@@ -648,7 +648,7 @@ const MessageList = memo(function MessageList({
               <div className="border-glow rounded-xl p-4 max-w-sm">
                 <p className="text-xs font-bold text-foreground mb-1.5">Auditoría gratuita para tu negocio</p>
                 <p className="text-xs text-muted mb-3">Analizamos tu negocio y te preparamos una demo de Stella sin compromiso.</p>
-                <a href="#cita" className="btn btn-primary w-full min-h-[40px] text-xs">
+                <a href="/contacto" className="btn btn-primary w-full min-h-[40px] text-xs">
                   Reservar auditoría →
                 </a>
               </div>

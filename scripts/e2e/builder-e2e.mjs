@@ -346,7 +346,7 @@ try {
   const anonImg = await api.get(`/api/admin/design-image?id=${designId}&u=u1`, { failOnStatusCode: false });
   check("[admin] sin contraseña: /admin/diseno y las imágenes de clientes → 401", anon.status() === 401 && anonImg.status() === 401);
   const { ctx: ca, page: pa, problems: pra } = await newPage(D, { httpCredentials: ADMIN, acceptDownloads: true });
-  await pa.goto(`${BASE}/admin`, { waitUntil: "load" });
+  await pa.goto(`${BASE}/admin/leads`, { waitUntil: "load" });
   check("[admin] el panel principal muestra el lead con «VER SU WEB DISEÑADA»", (await pa.getByText("VER SU WEB DISEÑADA").count()) >= 1);
   check("[admin] el lead de ESA solicitud enlaza con su propio diseño", (await pa.locator(`#leads a[href="/admin/diseno/${designId}"]`).count()) === 1);
   await pa.locator(`#leads a[href="/admin/diseno/${designId}"]`).click();

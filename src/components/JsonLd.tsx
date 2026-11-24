@@ -1,46 +1,36 @@
 /**
- * Datos estructurados JSON-LD (Schema.org) en el <head>:
- *  - ProfessionalService (negocio local en Zaragoza) → ficha enriquecida / Maps
- *  - WebSite
- *  - FAQPage (las mismas preguntas visibles en la sección #faq)
- *
- * No se publica AggregateRating: Google exige que las valoraciones sean reales y
- * verificables. Añádelo solo cuando tengas reseñas reales (p. ej. de Google Business).
+ * Datos estructurados JSON-LD (Schema.org). Solo se publica lo que es verdad y verificable:
+ *  - ProfessionalService: negocio local de Zaragoza (sin valoraciones ni precios inventados).
+ *  - WebSite.
+ *  - FAQPage: las mismas preguntas visibles en /preguntas-frecuentes.
+ *  - BreadcrumbList en las páginas interiores.
+ * No se publica AggregateRating ni Offer con precios: no hay reseñas verificadas aportadas ni tarifas aprobadas.
  */
 import { FAQS } from "@/lib/faqs";
-import { PLANS } from "@/lib/plans";
 import { CONTACT, SITE_URL } from "@/lib/site";
+import { breadcrumbs, jsonLd } from "@/lib/seo";
 
 const BUSINESS = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
   "@id": `${SITE_URL}/#negocio`,
   name: "LOCALIS AI",
-  description:
-    "Diseño web para negocios de Zaragoza y Aragón: webs profesionales a precio cerrado con formulario de presupuesto, WhatsApp, Google Maps y SEO local.",
+  description: "Diseño web para negocios, autónomos y empresas de Zaragoza y Aragón: webs profesionales con formulario de presupuesto, WhatsApp, Google Maps y SEO local.",
   url: SITE_URL,
   logo: `${SITE_URL}/google-business-assets/logo-720x720.png`,
   image: `${SITE_URL}/og-image.png`,
   telephone: CONTACT.phoneE164,
   email: CONTACT.email,
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Zaragoza",
-    addressRegion: "Aragón",
-    addressCountry: "ES",
-  },
+  address: { "@type": "PostalAddress", addressLocality: "Zaragoza", addressRegion: "Aragón", addressCountry: "ES" },
   areaServed: [
     { "@type": "City", name: "Zaragoza" },
     { "@type": "AdministrativeArea", name: "Aragón" },
   ],
-  priceRange: "€€",
-  makesOffer: PLANS.map((p) => ({
-    "@type": "Offer",
-    name: `Plan ${p.name}`,
-    description: p.description,
-    price: p.priceMonth.toFixed(2),
-    priceCurrency: "EUR",
-  })),
+  knowsLanguage: "es-ES",
+  makesOffer: [
+    { "@type": "Offer", itemOffered: { "@type": "Service", name: "Diseño y creación de páginas web para negocios locales" } },
+    { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mantenimiento de páginas web" } },
+  ],
 };
 
 const WEBSITE = {
@@ -56,22 +46,23 @@ const WEBSITE = {
 const FAQ_PAGE = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: FAQS.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: { "@type": "Answer", text: faq.answer },
-  })),
+  mainEntity: FAQS.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })),
 };
 
-// Escapa "<" para que ningún texto pueda cerrar la etiqueta <script>.
-const json = (data: unknown) => ({ __html: JSON.stringify(data).replace(/</g, "\\u003c") });
-
+/** Negocio + sitio web (portada y contacto). */
 export default function JsonLd() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={json(BUSINESS)} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={json(WEBSITE)} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={json(FAQ_PAGE)} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(BUSINESS)} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(WEBSITE)} />
     </>
   );
+}
+
+export function FaqJsonLd() {
+  return <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(FAQ_PAGE)} />;
+}
+
+export function BreadcrumbJsonLd({ items }: { items: { name: string; path: string }[] }) {
+  return <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(breadcrumbs(items))} />;
 }

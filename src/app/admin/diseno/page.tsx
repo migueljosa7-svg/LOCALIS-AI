@@ -15,7 +15,7 @@ export default async function DesignsPage() {
   const count = (s: DesignStage) => rows.filter((x) => x.stage === s).length;
   return (
     <main className="mx-auto max-w-5xl space-y-6 px-4 py-10">
-      <p className="text-sm"><Link href="/admin" className="text-cyan-300 underline">← Panel principal</Link></p>
+      <p className="text-sm"><Link href="/admin" className="text-cyan-300 underline">← Resumen</Link></p>
       <h1 className="font-display text-3xl font-bold">Diseños de clientes</h1>
       <p className="text-sm text-muted">Cada solicitud de «Diseña tu web» con todas las decisiones del cliente. Ábrela para ver su web, sus colores, imágenes y botones.</p>
       {!r.ok && <p role="alert" className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">No se pudo leer ({r.message ?? r.reason}). ¿Has ejecutado <code>supabase/configurador.sql</code>? Mira la guía B.</p>}

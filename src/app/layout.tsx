@@ -26,7 +26,7 @@ const GOOGLE_ADS_ID = 'AW-18505356053';
 const GTM_ID = 'GTM-PQQNZPC7';
 const TITLE = 'Diseño Web e IA en Zaragoza | LOCALIS AI';
 const DESCRIPTION =
-  'Diseño web para negocios de Zaragoza y Aragón a precio cerrado: formulario de presupuesto, WhatsApp, Google Maps y SEO local. Diseña tu web en directo y prueba la demostración de Stella, nuestra asistente con IA en desarrollo.';
+  'Diseño web para negocios y autónomos de Zaragoza y Aragón: formulario de presupuesto, WhatsApp, Google Maps y base SEO local. Diseña tu web online y recibe un presupuesto por escrito.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -45,7 +45,6 @@ export const metadata: Metadata = {
   creator: 'LOCALIS AI',
   applicationName: 'LOCALIS AI',
   manifest: '/manifest.json',
-  alternates: { canonical: '/' },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large' } },
   openGraph: {
     title: TITLE,
@@ -53,7 +52,6 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'LOCALIS AI',
     locale: 'es_ES',
-    url: '/',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'LOCALIS AI · Webs con IA Stella y GPS integrado para PYMEs en Zaragoza' }],
   },
   twitter: {
@@ -70,6 +68,7 @@ export const metadata: Metadata = {
     apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
   },
   formatDetection: { telephone: false },
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
 // Sin maximumScale: bloquear el zoom penaliza accesibilidad (Lighthouse / WCAG 1.4.4).

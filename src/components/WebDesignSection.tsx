@@ -125,7 +125,7 @@ export default function WebDesignSection() {
                 ))}
               </dl>
               <div className="flex flex-col gap-2.5 pt-1">
-                <a href="#cita" className="btn btn-primary w-full">
+                <a href="/contacto" className="btn btn-primary w-full">
                   Pedir auditoría web gratuita <ArrowRight size={17} aria-hidden="true" />
                 </a>
                 <a

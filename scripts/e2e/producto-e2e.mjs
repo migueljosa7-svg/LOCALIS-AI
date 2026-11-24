@@ -63,13 +63,13 @@ try {
     check(`[panel ${name}] tarjetas: 4 leads, 1 cliente, 1 proyecto pendiente, 1/1 Stella activa`, /Leads\s*4/i.test(cards) && /Clientes\s*1/i.test(cards) && /Proyectos pendientes\s*1/i.test(cards) && /Stella activa\s*1\/1/i.test(cards), cards.replace(/\n/g, " "));
     const aten = await page.getByTestId("resumen-atencion").innerText();
     check(`[panel ${name}] «Requiere atención»: lead viejo, aviso sin email, diseño sin revisar, 88 % del tope y errores`, /sin contactar/.test(aten) && /sin aviso por email/.test(aten) && /sin revisar/.test(aten) && /88 %/.test(aten) && /3 error/.test(aten), aten.replace(/\n/g, " ").slice(0, 300));
-    check(`[panel ${name}] navegación única con 4 apartados`, (await page.getByRole("navigation", { name: "Panel interno" }).getByRole("link").count()) === 4);
+    check(`[panel ${name}] navegación única con los 9 apartados + enlace a la web`, (await page.getByRole("navigation", { name: "Panel interno" }).getByRole("link").count()) === 10);
     check(`[panel ${name}] sin desbordamiento horizontal de la página`, await noH(page));
-    await page.goto(`${BASE}/admin?estado=nuevo`, { waitUntil: "load" });
+    await page.goto(`${BASE}/admin/leads?estado=nuevo`, { waitUntil: "load" });
     check(`[panel ${name}] filtro por estado «nuevo» (2 de 4)`, (await page.getByRole("heading", { name: /Leads \(2 de 4\)/ }).count()) === 1);
-    await page.goto(`${BASE}/admin?origen=stella`, { waitUntil: "load" });
+    await page.goto(`${BASE}/admin/leads?origen=stella`, { waitUntil: "load" });
     check(`[panel ${name}] filtro por origen «Stella» (pedido y contacto, 2 de 4)`, (await page.getByRole("heading", { name: /Leads \(2 de 4\)/ }).count()) === 1);
-    await page.goto(`${BASE}/admin?estado=ganado&origen=diseno`, { waitUntil: "load" });
+    await page.goto(`${BASE}/admin/leads?estado=ganado&origen=diseno`, { waitUntil: "load" });
     check(`[panel ${name}] filtros combinados (1 de 4)`, (await page.getByRole("heading", { name: /Leads \(1 de 4\)/ }).count()) === 1);
     if (mobile) await page.screenshot({ path: path.join(outDir, "p01-panel-movil.png"), fullPage: false });
     else {

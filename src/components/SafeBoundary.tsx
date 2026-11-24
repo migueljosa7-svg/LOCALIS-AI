@@ -47,7 +47,7 @@ export default class SafeBoundary extends Component<Props, State> {
             <button type="button" onClick={() => this.setState({ hasError: false })} className="btn btn-ghost text-sm">
               <RefreshCw size={15} aria-hidden="true" /> Reintentar
             </button>
-            <a href="#cita" className="btn btn-primary text-sm">
+            <a href="/contacto" className="btn btn-primary text-sm">
               Pedir auditoría gratis
             </a>
           </div>

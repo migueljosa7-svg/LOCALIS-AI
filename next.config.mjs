@@ -21,6 +21,9 @@ const nextConfig = {
     // Importa solo los iconos usados de lucide-react (tree-shaking agresivo).
     optimizePackageImports: ["lucide-react", "framer-motion"],
   },
+  async redirects() {
+    return [{ source: "/dashboard", destination: "/plataforma", permanent: true }];
+  },
   async headers() {
     return [
       { source: "/stella/embed", headers: embedHeaders },

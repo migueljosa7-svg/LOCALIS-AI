@@ -44,7 +44,7 @@ export default async function DesignPage({ params, searchParams }: { params: Pro
   return (
     <main className={`mx-auto max-w-7xl space-y-8 px-4 py-10 ${builderFontClass}`}>
       <p className="text-sm print:hidden">
-        <Link href="/admin/diseno" className="text-cyan-300 underline">← Diseños de clientes</Link> · <Link href="/admin" className="text-cyan-300 underline">Panel principal</Link>
+        <Link href="/admin/diseno" className="text-cyan-300 underline">← Diseños de clientes</Link> · <Link href="/admin" className="text-cyan-300 underline">Resumen</Link>
       </p>
       {aviso && <p role="status" className={"rounded-xl border px-4 py-3 text-sm " + (aviso === "guardado" ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-100" : "border-amber-400/40 bg-amber-500/10 text-amber-100")}>{aviso === "guardado" ? "Cambios guardados." : "No se pudo guardar."}</p>}
 

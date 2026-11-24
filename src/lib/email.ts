@@ -90,7 +90,7 @@ function adminHtml(lead: LeadEmailData, receivedAt: string): string {
     row('Servicio elegido', lead.sector),
     row('WhatsApp / Telefono', lead.phone),
     row('Email del cliente', lead.email),
-    row('Origen del lead', lead.source || 'Formulario #cita'),
+    row('Origen del lead', lead.source || 'Formulario web'),
     lead.details ? row('Configuración elegida', lead.details) : '',
     row('Recibido', receivedAt),
     '</table>',

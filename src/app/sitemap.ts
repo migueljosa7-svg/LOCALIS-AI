@@ -1,9 +1,12 @@
 import type { MetadataRoute } from "next";
+import { INDEXABLE } from "@/lib/navigation";
 import { SITE_URL } from "@/lib/site";
 
+// Solo las páginas indexables. Legales, admin, alta y pruebas llevan noindex y no aparecen aquí.
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Las páginas legales llevan noindex, así que no se incluyen.
-  return [
-    { url: `${SITE_URL}/`, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
-  ];
+  return INDEXABLE.map((p) => ({
+    url: `${SITE_URL}${p.path === "/" ? "" : p.path}`,
+    changeFrequency: p.changeFrequency,
+    priority: p.priority,
+  }));
 }

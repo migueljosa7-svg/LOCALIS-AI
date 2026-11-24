@@ -36,7 +36,7 @@ export default function PricingSection() {
               Una web corporativa de agencia parte de unos {MARKET.web.value.toLocaleString("es-ES")} € ({MARKET.web.range.split(";")[0]}). Páginas extra +{PRICING.extraPage} €{MODULES.map((m) => ` · ${m.label} +${m.price} €`).join("")}.
             </p>
           </div>
-          <a href="#configurador" className="btn btn-primary shrink-0">
+          <a href="/disena-tu-web" className="btn btn-primary shrink-0">
             Diseñar y calcular mi precio
           </a>
         </div>
@@ -124,7 +124,7 @@ export default function PricingSection() {
 
         <p className="mt-10 text-center text-sm text-muted">
           ¿Dudas sobre qué plan encaja contigo?{" "}
-          <a href="#cita" className="text-cyan-400 font-semibold hover:text-cyan-300">
+          <a href="/contacto" className="text-cyan-400 font-semibold hover:text-cyan-300">
             Te lo decimos gratis en la auditoría →
           </a>
         </p>

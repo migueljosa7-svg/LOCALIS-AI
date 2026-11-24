@@ -274,7 +274,13 @@ function TopBar({ children }: { children?: React.ReactNode }) {
         <BrandMark />
         <span className="font-display text-base font-bold">LOCALIS<span className="text-cyan-300"> AI</span></span>
       </Link>
-      <span className="hidden text-sm text-muted sm:inline">· Diseña tu web</span>
+      <nav aria-label="Secciones de la web" className="ml-2 hidden items-center gap-1 text-sm md:flex">
+        {[["Plataforma", "/plataforma"], ["Tarifas", "/tarifas"], ["Preguntas frecuentes", "/preguntas-frecuentes"], ["Contacto", "/contacto"]].map(([l, h]) => (
+          <Link key={h} href={h} className="inline-flex min-h-[44px] items-center rounded-lg px-2.5 text-muted hover:bg-white/5 hover:text-foreground">{l}</Link>
+        ))}
+        <span aria-current="page" className="inline-flex min-h-[44px] items-center rounded-lg bg-cyan-400/15 px-2.5 font-semibold text-cyan-100">Diseña tu web</span>
+      </nav>
+      <span className="text-sm text-muted md:hidden">· Diseña tu web</span>
       <div className="ml-auto flex items-center gap-2">{children}</div>
     </header>
   );

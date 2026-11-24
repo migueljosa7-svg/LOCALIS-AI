@@ -7,21 +7,21 @@ import CookieSettingsButton from "./CookieSettingsButton";
 
 const COLUMNS = [
   {
-    title: "Soluciones",
+    title: "Plataforma",
     links: [
-      { label: "Stella IA 24/7", href: "/#stella" },
-      { label: "Reparto GPS sin comisiones", href: "/#reparto" },
-      { label: "Configurador y ahorro", href: "/#configurador" },
-      { label: "Diseño web en Zaragoza", href: "/#web" },
+      { label: "Stella IA", href: "/plataforma#stella" },
+      { label: "Reparto GPS", href: "/plataforma#reparto" },
+      { label: "Soluciones por sector", href: "/plataforma#sectores" },
+      { label: "Diseña tu web", href: "/disena-tu-web" },
     ],
   },
   {
     title: "Empresa",
     links: [
-      { label: "Sectores", href: "/#sectores" },
-      { label: "Precios", href: "/#precios" },
-      { label: "Preguntas frecuentes", href: "/#faq" },
-      { label: "Auditoría gratuita", href: "/#cita" },
+      { label: "Diseño web en Zaragoza", href: "/diseno-web-zaragoza" },
+      { label: "Tarifas", href: "/tarifas" },
+      { label: "Preguntas frecuentes", href: "/preguntas-frecuentes" },
+      { label: "Contacto", href: "/contacto" },
     ],
   },
 ];
@@ -39,7 +39,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="mt-4 text-sm text-muted leading-relaxed max-w-xs">
-              Páginas web con IA autónoma y GPS integrado para negocios de Zaragoza y Aragón.
+              Diseño web profesional para negocios y autónomos de Zaragoza y Aragón.
             </p>
           </div>
 
@@ -49,9 +49,9 @@ export default function Footer() {
               <ul className="space-y-2.5 text-sm">
                 {col.links.map((l) => (
                   <li key={l.href}>
-                    <a href={l.href} className="text-muted hover:text-cyan-300 transition-colors">
+                    <Link href={l.href} className="text-muted hover:text-cyan-300 transition-colors">
                       {l.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

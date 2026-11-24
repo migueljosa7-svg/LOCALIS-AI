@@ -49,7 +49,7 @@ export default function GpsModuleSection() {
   };
 
   return (
-    <section id="reparto" aria-labelledby="gps-title" className="cv-auto section-band relative w-full py-20 lg:py-28">
+    <section id="reparto-demo" aria-labelledby="gps-title" className="cv-auto section-band relative w-full py-20 lg:py-28">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="eyebrow mb-5">Demostración · Módulo GPS en desarrollo</span>
@@ -173,7 +173,7 @@ export default function GpsModuleSection() {
         </div>
 
         <div className="mt-10 text-center">
-          <a href="#configurador" className="btn btn-live">
+          <a href="/disena-tu-web" className="btn btn-live">
             Calcula cuánto ahorras con tu propio reparto
           </a>
         </div>
