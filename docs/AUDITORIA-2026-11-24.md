@@ -1,11 +1,27 @@
-# Auditoría de LOCALIS AI · 24-nov-2026
+# Auditoría final de LOCALIS AI · rama `integracion/stella-configurador` · 24-nov-2026
 
-Rama revisada: `integracion/stella-configurador` (Stella + configurador juntos; NO es `main`).
-Detalle completo y estados por funcionalidad: ver el informe entregado en el chat. Resumen de pruebas reproducibles:
+## Verificado con integraciones REALES (en el despliegue Preview, desde `/admin/entorno`, ejecutado por el propietario)
 
-- `npm run check` → 69 tests + lint + TypeScript + build.
-- `npm run test:e2e:stella` → 108 comprobaciones (Preview) / 82 (producción simulada) en Chrome real, con Supabase y Anthropic SIMULADOS.
-- `npm run test:e2e:builder` → 99 comprobaciones en Chrome real, Supabase simulado.
-- `npm run test:e2e:audit` → 49 comprobaciones de rutas, autenticación, regresión de leads y Stella sin clave / con fallo de la IA.
+| Comprobación | Resultado |
+| --- | --- |
+| Seis tablas (`leads`, `opportunities`, `stella_businesses`, `stella_usage`, `stella_rate`, `design_requests`) y permisos de `service_role` | Correcto |
+| Función `stella_gate` (límites persistentes) | Responde «ok» |
+| Almacén `design-uploads` | Existe y es **privado** |
+| Subir, recuperar (bytes idénticos) y borrar una imagen de diagnóstico | Correcto |
+| La imagen no es accesible por la ruta pública | Correcto |
+| Resend: correo de prueba a la dirección del propietario | HTTP 200, aceptado |
+| Variables obligatorias en Preview (`ADMIN_USER`, `ADMIN_PASSWORD`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `ANTHROPIC_API_KEY`, `STELLA_MODEL`, `STELLA_SITE_WIDGET`) | Presentes |
 
-Ninguna de estas pruebas usa Supabase, Resend ni Anthropic reales.
+## Verificado solo en local (con servicios simulados)
+
+`npm run check` (94 tests, lint, TypeScript, build) y e2e en Chrome real: Stella 108, configurador 99, auditoría de rutas 49, producto 64.
+
+## NO verificado
+
+- Stella con Anthropic **real** (sin crédito): solo probados errores simulados 400/401/404/sin clave.
+- Variables de **Production** (Vercel no accesible desde aquí).
+- Previews y Production de Vercel más allá de «build correcto».
+
+## Estado de las ramas
+
+`integracion/stella-configurador` = 23 commits por delante de `main`, 0 por detrás, **sin conflictos** al fusionar. Sin merge ni cambios en Production.

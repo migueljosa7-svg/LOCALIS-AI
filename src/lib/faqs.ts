@@ -22,7 +22,7 @@ export const FAQS: FaqItem[] = [
     id: "faq2",
     question: "¿Qué hace Stella hoy?",
     answer:
-      "Stella es una asistente con IA que se instala en la web de tu negocio con una línea de código. Responde al momento las dudas de tus clientes con la información que tú le das (servicios, precios, horarios y preguntas frecuentes), te dice cuándo no sabe algo y ofrece tu WhatsApp. Si la persona quiere, deja su nombre y teléfono con su consentimiento y te avisamos. Todavía NO atiende WhatsApp por su cuenta, no agenda citas ni factura: son módulos en desarrollo. Pídela con el botón «Quiero Stella en mi web» o en la auditoría; no se activa ni se cobra nada sin tu confirmación.",
+      "Stella es una asistente con IA que se instala en la web de tu negocio con una línea de código. Responde al momento las dudas de tus clientes con la información que tú le das (servicios, precios, horarios y preguntas frecuentes), te dice cuándo no sabe algo y ofrece tu WhatsApp. Si la persona quiere, deja su nombre y teléfono con su consentimiento y te avisamos. Todavía NO atiende WhatsApp por su cuenta, no agenda citas ni factura: son módulos en desarrollo. Pídela en la auditoría o por WhatsApp; no se activa ni se cobra nada sin tu confirmación.",
     category: "Stella IA",
   },
   {
