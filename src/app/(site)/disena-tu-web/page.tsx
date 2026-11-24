@@ -11,11 +11,11 @@ export const metadata = pageMeta({
 
 export default function DisenaTuWebPage() {
   return (
-    <main id="contenido">
+    <div>
       <BreadcrumbJsonLd items={[{ name: "Diseña tu web", path: "/disena-tu-web" }]} />
       <SafeBoundary name="Editor «Diseña tu web»" minHeight={600}>
         <Builder />
       </SafeBoundary>
-    </main>
+    </div>
   );
 }

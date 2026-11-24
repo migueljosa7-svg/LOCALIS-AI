@@ -17,7 +17,8 @@ import {
 // ── Pantalla de inicio: tipo de negocio y de página ──────────────
 export function StartScreen({ cfg, set, onStart }: StepProps & { onStart: () => void }) {
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:py-12">
+    <div className="mx-auto w-full max-w-7xl px-4 py-8 pb-28 sm:px-6 sm:py-12 lg:px-8 lg:pb-12">
+     <div className="max-w-4xl">
       <p className="eyebrow">Diseña tu web</p>
       <h1 className="mt-3 font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
         Diseña tu web <span className="gradient-text">y mira cómo queda</span> al instante
@@ -55,6 +56,7 @@ export function StartScreen({ cfg, set, onStart }: StepProps & { onStart: () => 
       <button type="button" onClick={onStart} className="btn btn-primary mt-9 min-h-[56px] w-full px-8 text-base sm:w-auto">
         Empezar a diseñar
       </button>
+     </div>
     </div>
   );
 }

@@ -24,7 +24,8 @@ for (let i = 0; i < 60 && !up; i++) {
 }
 if (!up) { server.kill(); throw new Error("no arrancó el servidor"); }
 
-const browser = await chromium.launch({ executablePath: CHROME, headless: true });
+// Con barras de desplazamiento reales (como en Windows): así se detectan desplazamientos del contenido al cambiar de página.
+const browser = await chromium.launch({ executablePath: CHROME, headless: true, ignoreDefaultArgs: ["--hide-scrollbars"], args: ["--disable-features=OverlayScrollbar"] });
 try {
   // ── robots.txt y sitemap.xml ──
   const robots = await (await fetch(`${BASE}/robots.txt`)).text();
@@ -117,7 +118,7 @@ try {
     await hp.getByRole("banner").getByRole("link", { name: label, exact: true }).first().click();
     await hp.waitForURL(`**${href}`);
     if (href === "/disena-tu-web") { check("[menú] «Diseña tu web» abre el editor a pantalla completa (la cabecera se sustituye por la del editor)", true); continue; }
-    const active = await hp.getByRole("banner").locator('a[aria-current="page"]').allInnerTexts();
+    const active = await hp.getByRole("navigation", { name: "Principal" }).locator('a[aria-current="page"]').allInnerTexts();
     check(`[menú] «${label}» lleva a ${href} y queda marcada como activa`, active.some((t) => t.trim() === label), JSON.stringify(active));
   }
   // Menú móvil
@@ -132,6 +133,58 @@ try {
   check("[menú móvil] se abre y muestra las 6 secciones", (await mp.getByRole("link", { name: "Preguntas frecuentes" }).filter({ visible: true }).count()) >= 1 && (await mp.getByRole("link", { name: "Contacto", exact: true }).filter({ visible: true }).count()) >= 1, String(await mobNav.count()));
   await mp.keyboard.press("Escape");
   await mctx.close();
+
+  // ── Cabecera estable en todas las rutas (escritorio y tablet), también al navegar sin recargar ──
+  for (const vp of [{ w: 1440, h: 900, n: "escritorio" }, { w: 820, h: 1180, n: "tablet" }]) {
+    const c = await browser.newContext({ viewport: { width: vp.w, height: vp.h } });
+    await c.addInitScript(() => { try { localStorage.setItem("localis-cookie-consent", JSON.stringify({ analytics: false, marketing: false, necessary: true, version: "2026-10-24" })); } catch {} });
+    const pg = await c.newPage();
+    const pos = () => pg.evaluate(() => { const r = document.querySelector("header").firstElementChild.getBoundingClientRect(); return `${Math.round(r.x)}:${Math.round(r.width)}`; });
+    const seen = new Set();
+    for (const p of ["/", "/plataforma", "/disena-tu-web", "/tarifas", "/preguntas-frecuentes", "/contacto"]) { await pg.goto(BASE + p, { waitUntil: "networkidle" }); seen.add(await pos()); }
+    check(`[cabecera ${vp.n}] misma posición y ancho en las 6 páginas (${[...seen].join(" | ")})`, seen.size === 1, [...seen].join(" | "));
+    if (vp.n === "escritorio") {
+      await pg.goto(BASE + "/tarifas", { waitUntil: "networkidle" });
+      const before = await pos();
+      await pg.getByRole("banner").getByRole("link", { name: "Diseña tu web", exact: true }).first().click();
+      await pg.waitForURL("**/disena-tu-web");
+      await pg.waitForTimeout(600);
+      check("[cabecera] al pulsar «Diseña tu web» (navegación sin recarga) no se mueve", (await pos()) === before, `${before} → ${await pos()}`);
+      check("[configurador] la cabecera conserva menú, WhatsApp y «Diseña tu web» y marca la pestaña activa", (await pg.getByRole("banner").getByRole("link", { name: "WhatsApp" }).count()) === 1 && (await pg.getByRole("navigation", { name: "Principal" }).locator('a[aria-current="page"]').innerText()).trim() === "Diseña tu web");
+      check("[configurador] los botones flotantes (Stella y WhatsApp) se ven en la pantalla de inicio del editor", await pg.locator(".builder-float a[href*='wa.me']").first().isVisible());
+      await pg.getByRole("banner").getByRole("link", { name: "Tarifas", exact: true }).first().click();
+      await pg.waitForURL("**/tarifas");
+      check("[cabecera] al volver a Tarifas tampoco se mueve", (await pos()) === before, await pos());
+    }
+    await c.close();
+  }
+
+  // ── Plataforma: pestañas ──
+  {
+    const c = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    await c.addInitScript(() => { try { localStorage.setItem("localis-cookie-consent", JSON.stringify({ analytics: false, marketing: false, necessary: true, version: "2026-10-24" })); } catch {} });
+    const pg = await c.newPage();
+    const visible = async () => (await pg.locator('[role="tabpanel"]:not([hidden])').evaluateAll((els) => els.map((e) => e.id)));
+    await pg.goto(BASE + "/plataforma", { waitUntil: "networkidle" });
+    check("[plataforma] hay 3 pestañas: Stella, GPS y reparto, Panel de control", (await pg.getByRole("tab").allInnerTexts()).map((t) => t.split(String.fromCharCode(10))[0].trim()).join("|") === "Stella|GPS y reparto|Panel de control");
+    check("[plataforma] al entrar solo se ve el apartado de Stella", JSON.stringify(await visible()) === '["panel-stella"]');
+    await pg.getByRole("tab", { name: /GPS y reparto/ }).click();
+    check("[plataforma] la pestaña «GPS y reparto» muestra solo ese apartado y actualiza la dirección (#gps)", JSON.stringify(await visible()) === '["panel-gps"]' && pg.url().endsWith("#gps"));
+    check("[plataforma] GPS distingue lo disponible, la demostración y lo que está en desarrollo", (await pg.locator("#panel-gps").getByText("Disponible hoy").count()) === 1 && (await pg.locator("#panel-gps").getByText("Demostración", { exact: true }).count()) >= 1 && (await pg.locator("#panel-gps").getByText("En desarrollo", { exact: true }).count()) === 1);
+    await pg.getByRole("tab", { name: /Panel de control/ }).click();
+    check("[plataforma] la pestaña «Panel de control» muestra solo ese apartado", JSON.stringify(await visible()) === '["panel-panel"]');
+    const panelText = await pg.locator("#panel-panel").innerText();
+    check("[plataforma] el panel dice claramente que es una maqueta y que no existe un panel de acceso para clientes", /maqueta/i.test(panelText) && /no existe un panel de acceso para clientes/.test(panelText));
+    await pg.goto(BASE + "/plataforma#panel", { waitUntil: "networkidle" });
+    check("[plataforma] el enlace /plataforma#panel abre directamente el panel", JSON.stringify(await visible()) === '["panel-panel"]');
+    await pg.goto(BASE + "/plataforma#reparto", { waitUntil: "networkidle" });
+    check("[plataforma] el ancla antigua #reparto abre GPS y reparto", JSON.stringify(await visible()) === '["panel-gps"]');
+    await pg.goto(BASE + "/plataforma", { waitUntil: "networkidle" });
+    await pg.getByRole("tab", { name: /Stella/ }).focus();
+    await pg.keyboard.press("ArrowRight");
+    check("[plataforma] las flechas del teclado cambian de pestaña", JSON.stringify(await visible()) === '["panel-gps"]');
+    await c.close();
+  }
 
   // ── Enlaces internos: ninguno roto ──
   const internal = [...allLinks].filter((h) => h && h.startsWith("/") && !h.startsWith("//"));

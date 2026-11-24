@@ -9,9 +9,9 @@ const COLUMNS = [
   {
     title: "Plataforma",
     links: [
-      { label: "Stella IA", href: "/plataforma#stella" },
-      { label: "Reparto GPS", href: "/plataforma#reparto" },
-      { label: "Soluciones por sector", href: "/plataforma#sectores" },
+      { label: "Stella, asistente con IA", href: "/plataforma#stella" },
+      { label: "GPS y reparto", href: "/plataforma#gps" },
+      { label: "Panel de control", href: "/plataforma#panel" },
       { label: "Diseña tu web", href: "/disena-tu-web" },
     ],
   },
@@ -32,7 +32,7 @@ export default function Footer() {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-14 lg:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="inline-flex items-center gap-2.5" aria-label="LOCALIS AI · inicio">
+            <Link href="/" className="inline-flex min-h-[44px] items-center gap-2.5" aria-label="LOCALIS AI · inicio">
               <BrandMark size={34} id="ftr" />
               <span className="font-display text-lg font-bold">
                 LOCALIS <span className="gradient-text">AI</span>
@@ -46,10 +46,10 @@ export default function Footer() {
           {COLUMNS.map((col) => (
             <nav key={col.title} aria-label={col.title}>
               <h2 className="text-sm font-semibold text-foreground mb-4">{col.title}</h2>
-              <ul className="space-y-2.5 text-sm">
+              <ul className="space-y-0.5 text-sm">
                 {col.links.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-muted hover:text-cyan-300 transition-colors">
+                    <Link href={l.href} className="inline-flex min-h-[44px] items-center text-muted hover:text-cyan-300 transition-colors">
                       {l.label}
                     </Link>
                   </li>
@@ -60,23 +60,23 @@ export default function Footer() {
 
           <div className="col-span-2 md:col-span-1">
             <h2 className="text-sm font-semibold text-foreground mb-4">Contacto</h2>
-            <ul className="space-y-3 text-sm">
+            <ul className="space-y-0.5 text-sm">
               <li>
-                <a href={`mailto:${CONTACT.email}`} className="inline-flex items-center gap-2 text-muted hover:text-cyan-300 transition-colors break-all">
+                <a href={`mailto:${CONTACT.email}`} className="inline-flex min-h-[44px] items-center gap-2 text-muted hover:text-cyan-300 transition-colors break-all">
                   <Mail size={15} className="text-cyan-400 shrink-0" aria-hidden="true" /> {CONTACT.email}
                 </a>
               </li>
               <li>
-                <a href={`tel:${CONTACT.phoneE164}`} className="inline-flex items-center gap-2 text-muted hover:text-cyan-300 transition-colors">
+                <a href={`tel:${CONTACT.phoneE164}`} className="inline-flex min-h-[44px] items-center gap-2 text-muted hover:text-cyan-300 transition-colors">
                   <Phone size={15} className="text-cyan-400 shrink-0" aria-hidden="true" /> {CONTACT.phoneDisplay}
                 </a>
               </li>
               <li>
-                <a href={waLink()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-muted hover:text-cyan-300 transition-colors">
+                <a href={waLink()} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[44px] items-center gap-2 text-muted hover:text-cyan-300 transition-colors">
                   <WhatsAppIcon size={15} className="text-[#25D366] shrink-0" /> WhatsApp
                 </a>
               </li>
-              <li className="inline-flex items-center gap-2 text-muted">
+              <li className="inline-flex min-h-[44px] items-center gap-2 text-muted">
                 <MapPin size={15} className="text-cyan-400 shrink-0" aria-hidden="true" /> {CONTACT.city}, {CONTACT.region}, España
               </li>
             </ul>
@@ -86,13 +86,13 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-white/[0.07] flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted">
           <p>© {new Date().getFullYear()} LOCALIS AI. Todos los derechos reservados.</p>
           <nav aria-label="Legal" className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-            <Link href="/terms" className="hover:text-cyan-300 transition-colors">
+            <Link href="/terms" className="inline-flex min-h-[44px] items-center hover:text-cyan-300 transition-colors">
               Aviso legal
             </Link>
-            <Link href="/privacy" className="hover:text-cyan-300 transition-colors">
+            <Link href="/privacy" className="inline-flex min-h-[44px] items-center hover:text-cyan-300 transition-colors">
               Política de privacidad
             </Link>
-            <Link href="/cookies" className="hover:text-cyan-300 transition-colors">
+            <Link href="/cookies" className="inline-flex min-h-[44px] items-center hover:text-cyan-300 transition-colors">
               Política de cookies
             </Link>
             <CookieSettingsButton />

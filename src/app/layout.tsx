@@ -140,7 +140,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </SiteChrome>
         </MotionProvider>
         <SiteChrome>
-          <HideOnBuilder>
+          <HideOnBuilder mode="editing">
             <StellaGate />
             <MobileStickyBar />
           </HideOnBuilder>

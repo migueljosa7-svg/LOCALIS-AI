@@ -26,12 +26,13 @@ export const NAV: NavItem[] = [
   { href: ROUTES.contacto, label: "Contacto" },
 ];
 
-/** Los tres apartados de la plataforma (anclas de /plataforma). */
+/** Los tres apartados de /plataforma (pestañas; la dirección #stella, #gps o #panel abre cada uno). */
 export const PLATFORM_SECTIONS = [
-  { id: "stella", label: "Stella IA", short: "Asistente virtual con IA para tu web" },
-  { id: "reparto", label: "Reparto GPS", short: "Seguimiento de repartos propios" },
-  { id: "sectores", label: "Soluciones por sector", short: "Restaurantes, comercios, clínicas y talleres" },
+  { id: "stella", label: "Stella", short: "Asistente con IA para tu web" },
+  { id: "gps", label: "GPS y reparto", short: "Repartos propios con seguimiento" },
+  { id: "panel", label: "Panel de control", short: "Tu actividad en una pantalla" },
 ] as const;
+export type PlatformSectionId = (typeof PLATFORM_SECTIONS)[number]["id"];
 
 export function isActive(pathname: string, item: NavItem): boolean {
   if (item.href === "/") return pathname === "/";
@@ -55,9 +56,9 @@ export const LEGACY_HASHES: Record<string, string> = {
   "#cita": ROUTES.contacto,
   "#contacto": ROUTES.contacto,
   "#stella": `${ROUTES.plataforma}#stella`,
-  "#reparto": `${ROUTES.plataforma}#reparto`,
-  "#sectores": `${ROUTES.plataforma}#sectores`,
-  "#demo": ROUTES.plataforma,
+  "#reparto": `${ROUTES.plataforma}#gps`,
+  "#sectores": ROUTES.plataforma,
+  "#demo": `${ROUTES.plataforma}#panel`,
   "#precios": ROUTES.tarifas,
   "#web": ROUTES.tarifas,
   "#faq": ROUTES.faq,

@@ -703,3 +703,6 @@
 @media print {
   .ambient, .no-print { display: none !important; }
 }
+
+/* Mientras se diseña en «Diseña tu web» se ocultan los botones flotantes: taparían los controles del editor. */
+html[data-builder-editing] .builder-float { display: none; }

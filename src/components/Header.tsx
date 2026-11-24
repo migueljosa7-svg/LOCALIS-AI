@@ -38,7 +38,7 @@ export default function Header() {
   return (
     <header className={cn("sticky top-0 z-50 w-full transition-colors", scrolled || open ? "glass-bar border-b border-white/[0.07]" : "bg-transparent")}>
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
-        <Link href={ROUTES.inicio} className="flex shrink-0 items-center gap-2.5 rounded-xl" aria-label="LOCALIS AI · inicio">
+        <Link href={ROUTES.inicio} className="flex min-h-[44px] shrink-0 items-center gap-2.5 rounded-xl" aria-label="LOCALIS AI · inicio">
           <BrandMark size={34} id="hdr" />
           <span className="font-display text-lg font-bold">
             LOCALIS <span className="gradient-text">AI</span>

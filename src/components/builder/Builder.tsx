@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import { ArrowLeft, ArrowRight, Eye, Monitor, Pencil, RotateCcw, Smartphone, Tablet } from "lucide-react";
-import BrandMark from "@/components/brand/BrandMark";
 import SitePreview from "./SitePreview";
 import { ColorsStep, TemplateStep, TypeStep } from "./StepsDesign";
 import { ButtonsStep, ImagesStep, SectionsStep } from "./StepsContent";
@@ -140,11 +138,20 @@ export default function Builder() {
     }
   }
 
+  // Al pasar a diseñar: arriba del todo (si no, el editor queda medio tapado por la cabecera) y sin botones flotantes encima.
+  useEffect(() => {
+    const el = document.documentElement;
+    if (started) {
+      el.setAttribute("data-builder-editing", "");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    } else el.removeAttribute("data-builder-editing");
+    return () => el.removeAttribute("data-builder-editing");
+  }, [started]);
+
   // ── Pantalla de inicio ──
   if (!started) {
     return (
-      <div className="min-h-screen bg-background text-foreground">
-        <TopBar />
+      <div className="bg-background text-foreground">
         <StartScreen cfg={cfg} set={set} onStart={() => { setStarted(true); setStep(0); }} />
       </div>
     );
@@ -166,7 +173,7 @@ export default function Builder() {
   })();
 
   return (
-    <div className="flex h-[100dvh] flex-col bg-background text-foreground">
+    <div className="flex h-[calc(100dvh-4rem)] min-h-[560px] flex-col bg-background text-foreground">
       <TopBar>
         <button type="button" onClick={() => go(STEPS.length - 1)} className="hidden min-h-[40px] rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 text-xs font-semibold text-emerald-200 sm:inline-flex sm:items-center" aria-label={`Estimación: ${euro(est.definedTotal)}. Ir a revisar y enviar`}>
           Desde {euro(est.definedTotal)} <span className="ml-1 font-normal text-emerald-200/70">orientativo</span>
@@ -267,21 +274,12 @@ export default function Builder() {
   );
 }
 
+/** Barra de herramientas del editor (precio, restablecer…). La cabecera con el menú es la común de la web (Header). */
 function TopBar({ children }: { children?: React.ReactNode }) {
   return (
-    <header className="flex items-center gap-3 border-b border-white/10 px-4 py-2.5">
-      <Link href="/" className="flex items-center gap-2.5 rounded-xl" aria-label="LOCALIS AI · volver a la web">
-        <BrandMark />
-        <span className="font-display text-base font-bold">LOCALIS<span className="text-cyan-300"> AI</span></span>
-      </Link>
-      <nav aria-label="Secciones de la web" className="ml-2 hidden items-center gap-1 text-sm md:flex">
-        {[["Plataforma", "/plataforma"], ["Tarifas", "/tarifas"], ["Preguntas frecuentes", "/preguntas-frecuentes"], ["Contacto", "/contacto"]].map(([l, h]) => (
-          <Link key={h} href={h} className="inline-flex min-h-[44px] items-center rounded-lg px-2.5 text-muted hover:bg-white/5 hover:text-foreground">{l}</Link>
-        ))}
-        <span aria-current="page" className="inline-flex min-h-[44px] items-center rounded-lg bg-cyan-400/15 px-2.5 font-semibold text-cyan-100">Diseña tu web</span>
-      </nav>
-      <span className="text-sm text-muted md:hidden">· Diseña tu web</span>
+    <div className="flex items-center gap-3 border-b border-white/10 px-4 py-2">
+      <p className="text-sm font-semibold">Tu diseño</p>
       <div className="ml-auto flex items-center gap-2">{children}</div>
-    </header>
+    </div>
   );
 }

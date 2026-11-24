@@ -197,6 +197,62 @@ export function PlatformIntro({ id, icon: Icon, title, status, tone, problem, ho
   );
 }
 
+
+/** Apartado de la plataforma: qué es, tres ventajas y un cuadro honesto de qué es real, qué es demostración y qué falta. */
+export function PlatformApartado({ icon: Icon, title, status, tone, lead, benefits, real, demo, missing }: {
+  icon: LucideIcon; title: string; status: string; tone: "ok" | "wip"; lead: string;
+  benefits: { icon: LucideIcon; title: string; text: string }[];
+  real: string[]; demo: string[]; missing: string[];
+}) {
+  const cols = [
+    { label: "Disponible hoy", items: real, cls: "border-emerald-400/25 bg-emerald-500/[0.06]", chip: "bg-emerald-500/15 text-emerald-200" },
+    { label: "Demostración", items: demo, cls: "border-cyan-400/25 bg-cyan-500/[0.06]", chip: "bg-cyan-500/15 text-cyan-200" },
+    { label: "En desarrollo", items: missing, cls: "border-amber-400/25 bg-amber-500/[0.06]", chip: "bg-amber-500/15 text-amber-100" },
+  ];
+  return (
+    <div className="mx-auto w-full max-w-7xl px-4 pt-10 sm:px-6 lg:px-8 lg:pt-14">
+      <div className="max-w-3xl">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-500/25 bg-cyan-500/10 text-cyan-300">
+            <Icon size={24} aria-hidden="true" />
+          </span>
+          <span className={"rounded-full px-3 py-1 text-xs font-semibold " + (tone === "ok" ? "bg-emerald-500/15 text-emerald-200" : "bg-amber-500/15 text-amber-100")}>{status}</span>
+        </div>
+        <h2 className="mt-4 font-display text-2xl font-bold leading-tight sm:text-4xl">{title}</h2>
+        <p className="mt-3 text-base leading-relaxed text-muted sm:text-lg">{lead}</p>
+      </div>
+      <ul className="mt-8 grid gap-4 md:grid-cols-3">
+        {benefits.map((b) => (
+          <li key={b.title} className="glass rounded-2xl p-5">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-300">
+              <b.icon size={20} aria-hidden="true" />
+            </span>
+            <h3 className="mt-3 font-display text-lg font-bold">{b.title}</h3>
+            <p className="mt-1.5 text-[15px] leading-relaxed text-muted">{b.text}</p>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-8">
+        <h3 className="font-display text-lg font-bold">Qué es real y qué no, sin letra pequeña</h3>
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
+          {cols.map((c) => (
+            <div key={c.label} className={"rounded-2xl border p-4 " + c.cls}>
+              <span className={"inline-block rounded-full px-2.5 py-0.5 text-xs font-bold " + c.chip}>{c.label}</span>
+              <ul className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/90">
+                {c.items.map((i) => (
+                  <li key={i} className="flex gap-2">
+                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-60" /> {i}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export const PLATFORM_ICONS = { Bot, MapPin, Store, Smartphone, Send };
 
 export function ContactCards() {

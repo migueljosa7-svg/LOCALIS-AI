@@ -57,10 +57,11 @@ const ROUTE_SEGS = [
 ] as const;
 
 // Vista previa estática del panel del cliente (componente de servidor: 0 KB de JS).
-export default function DashboardPreview() {
+export default function DashboardPreview({ compact = false }: { compact?: boolean }) {
   return (
-    <section id="demo" aria-labelledby="demo-title" className="cv-auto relative w-full py-20 lg:py-28">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id={compact ? undefined : "demo"} aria-label={compact ? "Maqueta del panel de control" : undefined} aria-labelledby={compact ? undefined : "demo-title"} className={compact ? "relative w-full" : "cv-auto relative w-full py-20 lg:py-28"}>
+      <div className={compact ? "w-full" : "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8"}>
+        {!compact && (
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="eyebrow mb-5">
             <LayoutDashboard size={13} aria-hidden="true" /> Vista previa · en desarrollo
@@ -73,6 +74,7 @@ export default function DashboardPreview() {
             desarrollo.
           </p>
         </div>
+        )}
 
         <div className="border-glow rounded-[2rem] overflow-hidden shadow-glass" role="img" aria-label="Vista previa del panel de control de LOCALIS AI con ventas, citas, facturas y repartos">
           {/* Barra superior */}

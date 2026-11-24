@@ -77,11 +77,14 @@ try {
   check("[escritorio] el menú de la web lleva al nuevo editor /disena-tu-web", true);
   await page.getByRole("heading", { name: /¿Qué tipo de negocio tienes\?/ }).waitFor();
   check(`[escritorio] la pantalla de inicio pregunta tipo de negocio y de página (cargada en ${Date.now() - t0} ms con la home)`, (await page.getByText("¿Qué página necesitas?").count()) === 1);
-  check("[escritorio] el editor no muestra el botón flotante de WhatsApp ni la barra inferior de la web", (await page.locator('a[href*="wa.me"]').count()) === 0);
+  check("[escritorio] la pantalla de inicio conserva la cabecera común (menú, WhatsApp y «Diseña tu web»)", (await page.getByRole("banner").getByRole("link", { name: "WhatsApp" }).count()) === 1 && (await page.getByRole("banner").getByRole("link", { name: "Tarifas", exact: true }).count()) === 1 && (await page.getByRole("navigation", { name: "Principal" }).locator('a[aria-current="page"]').innerText()).trim() === "Diseña tu web");
+  check("[escritorio] la pantalla de inicio sigue mostrando los botones flotantes de la web", (await page.locator(".builder-float").evaluate((e) => getComputedStyle(e).display)) !== "none");
   await page.getByRole("button", { name: /Peluquería o estética/ }).click();
   await page.getByRole("button", { name: /Web corporativa/ }).click();
   await page.screenshot({ path: path.join(outDir, "b01-inicio.png") });
   await page.getByRole("button", { name: "Empezar a diseñar" }).click();
+  check("[escritorio] al diseñar se ocultan los botones flotantes (no tapan los controles) pero la cabecera sigue", (await page.locator(".builder-float").evaluate((e) => getComputedStyle(e).display)) === "none" && (await page.getByRole("banner").getByRole("link", { name: "WhatsApp" }).count()) === 1);
+  check("[escritorio] el editor queda entero a la vista al empezar (sin scroll residual)", (await page.evaluate(() => window.scrollY)) === 0);
 
   const bp = bpOf(page);
   await bp.waitFor();
