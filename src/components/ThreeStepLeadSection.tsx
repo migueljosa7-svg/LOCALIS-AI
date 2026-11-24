@@ -13,7 +13,7 @@ type Service = "web" | "ia" | "gps";
 
 const SERVICES: { value: Service; title: string; description: string; icon: typeof Globe; sector: string }[] = [
   { value: "web", title: "Página web", description: "Web rápida, con tu marca y lista para captar clientes en Google.", icon: Globe, sector: "Servicio: Página web" },
-  { value: "ia", title: "Asistente Stella IA", description: "Atención por WhatsApp, citas y facturas en automático 24/7.", icon: Bot, sector: "Servicio: Asistente IA para citas" },
+  { value: "ia", title: "Asistente Stella IA", description: "Asistente con IA para tu web que responde dudas y recoge contactos. Fase piloto.", icon: Bot, sector: "Servicio: Asistente IA para citas" },
   { value: "gps", title: "Reparto con GPS", description: "Tus repartidores en el mapa y seguimiento para el cliente, sin comisiones.", icon: Navigation, sector: "Servicio: Sistema GPS de reparto" },
 ];
 
@@ -77,10 +77,10 @@ export default function ThreeStepLeadSection() {
             <CheckCircle2 size={13} aria-hidden="true" /> 3 pasos · menos de 1 minuto
           </span>
           <h2 id="cita-title" className="mt-4 font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight">
-            Reserva tu <span className="gradient-text">auditoría y demo gratuita</span>
+            Pide información y <span className="gradient-text">presupuesto por escrito</span>
           </h2>
           <p className="mt-5 text-muted text-base sm:text-lg">
-            Sin compromiso. Analizamos tu negocio y te enseñamos, con tus datos, cuánto puedes ganar y ahorrar.
+            Cuéntanos qué necesita tu negocio y te respondemos con la información y un presupuesto claro. Sin compromiso.
           </p>
         </div>
 
@@ -241,7 +241,7 @@ export default function ThreeStepLeadSection() {
                         </>
                       ) : (
                         <>
-                          Reservar mi auditoría gratis <ArrowRight size={17} aria-hidden="true" />
+                          Pedir información y presupuesto <ArrowRight size={17} aria-hidden="true" />
                         </>
                       )}
                     </button>
@@ -263,7 +263,7 @@ export default function ThreeStepLeadSection() {
                   </div>
                   <h3 className="font-display font-bold text-2xl">¡Solicitud recibida, {form.contactName.split(" ")[0] || "gracias"}!</h3>
                   <p className="text-muted mt-3 max-w-md mx-auto leading-relaxed">
-                    Te contactamos en menos de 24 h laborables para preparar tu demo personalizada. Si tienes prisa, escríbenos ya por
+                    Hemos recibido tu solicitud y te responderemos con la información y un presupuesto por escrito. Si tienes prisa, escríbenos ya por
                     WhatsApp.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center mt-7">

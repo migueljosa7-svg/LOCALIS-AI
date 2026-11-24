@@ -13,6 +13,7 @@ export default function FaqSection({ titleAs: Title = "h2" }: { titleAs?: "h1" |
           </Title>
         </div>
 
+        {Title === "h1" && <h2 className="sr-only">Todas las preguntas frecuentes</h2>}
         <div className="space-y-3">
           {FAQS.map((faq) => (
             <details key={faq.id} className="group glass rounded-2xl open:border-cyan-500/30 transition-colors">

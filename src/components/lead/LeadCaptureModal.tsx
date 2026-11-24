@@ -144,9 +144,9 @@ export default function LeadCaptureModal() {
                 >
                   <div className="mb-6">
                     <span className="eyebrow mb-3">
-                      <Sparkles size={12} /> {source === "stella-pedido" ? "Pedido de Stella · Sin compromiso" : "Demo gratuita · Sin compromiso"}
+                      <Sparkles size={12} /> {source === "stella-pedido" ? "Pedido de Stella · Sin compromiso" : "Información y presupuesto · Sin compromiso"}
                     </span>
-                    <h3 id="lead-modal-title" className="text-2xl font-bold font-display">{source === "stella-pedido" ? "Pedir Stella para mi web" : "Solicitar demo gratuita"}</h3>
+                    <h3 id="lead-modal-title" className="text-2xl font-bold font-display">{source === "stella-pedido" ? "Pedir Stella para mi web" : "Pedir información y presupuesto"}</h3>
                     <p className="text-sm text-muted mt-1.5">
                       {source === "stella-pedido"
                         ? "Cuéntanos quién eres y te contactamos para preparar la ficha de tu negocio. No se activa ni se cobra nada sin tu confirmación."
@@ -305,7 +305,7 @@ function SuccessView({ onClose }: { onClose: () => void }) {
       </h3>
       <p className="text-muted text-sm leading-relaxed max-w-sm mx-auto">
         Un especialista de <span className="text-cyan-400 font-semibold">LOCALIS AI</span> te contactará
-        en breve para agendar tu demo personalizada.
+        para responder a tu solicitud con la información y un presupuesto por escrito.
       </p>
       <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
         <Sparkles size={12} /> Respuesta habitual en menos de 24 h

@@ -48,7 +48,7 @@ export default class SafeBoundary extends Component<Props, State> {
               <RefreshCw size={15} aria-hidden="true" /> Reintentar
             </button>
             <a href="/contacto" className="btn btn-primary text-sm">
-              Pedir auditoría gratis
+              Pedir presupuesto
             </a>
           </div>
         </div>
