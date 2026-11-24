@@ -1,5 +1,7 @@
 # Estado final de LOCALIS AI · rama `integracion/stella-configurador` · 24-nov-2026
 
+> **Actualización:** el código de referencia es el commit `f4a831d` (tras este documento hubo mejoras de rendimiento, FAQ, textos de Contacto, atajo del configurador y textos de la demo de Stella). Para publicar y poner en marcha, ver **`docs/PUBLICAR-Y-PUESTA-EN-MARCHA.md`**. Resultados vigentes: 94 unitarias, E2E configurador 109, SEO 143, Stella 108, auditoría 49, producto 64; Lighthouse móvil 97–99 y escritorio 100 (medido en local).
+
 > Este documento describe lo que existe y lo que se ha comprobado de verdad. Lo que no se ha podido comprobar está marcado como tal.
 
 ## 1. Arquitectura
